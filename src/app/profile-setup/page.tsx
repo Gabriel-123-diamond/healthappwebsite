@@ -14,8 +14,9 @@ export default function ProfileSetup() {
   const [isLoading, setIsLoading] = useState(false);
   const [locationData, setLocationData] = useState<{lat: number, lng: number} | null>(null);
   
-  // Username check state
   const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
+  const [phoneStatus, setPhoneStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
+  const [nameStatus, setNameStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
   
   const [formData, setFormData] = useState({
     firstName: "",
@@ -75,6 +76,65 @@ export default function ProfileSetup() {
     const timeoutId = setTimeout(checkUsername, 500); // 500ms debounce
     return () => clearTimeout(timeoutId);
   }, [formData.username]);
+
+  // Phone Availability Check
+  useEffect(() => {
+    const checkPhone = async () => {
+      if (formData.phone.length < 7) {
+        setPhoneStatus("idle");
+        return;
+      }
+      setPhoneStatus("checking");
+      
+      try {
+        const fullPhone = `${formData.countryCode} ${formData.phone}`;
+        const q = query(collection(db, "users"), where("phone", "==", fullPhone));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+            setPhoneStatus("taken");
+        } else {
+            setPhoneStatus("available");
+        }
+      } catch (e) {
+        console.error("Phone check error:", e);
+        setPhoneStatus("idle");
+      }
+    };
+
+    const timeoutId = setTimeout(checkPhone, 500);
+    return () => clearTimeout(timeoutId);
+  }, [formData.phone, formData.countryCode]);
+
+  // Name Combination Check
+  useEffect(() => {
+    const checkName = async () => {
+      if (formData.firstName.length < 2 || formData.lastName.length < 2) {
+        setNameStatus("idle");
+        return;
+      }
+      setNameStatus("checking");
+      
+      try {
+        const q = query(
+            collection(db, "users"), 
+            where("firstName", "==", formData.firstName),
+            where("lastName", "==", formData.lastName)
+        );
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+            setNameStatus("taken");
+        } else {
+            setNameStatus("available");
+        }
+      } catch (e) {
+        console.error("Name check error:", e);
+        setNameStatus("idle");
+      }
+    };
+
+    const timeoutId = setTimeout(checkName, 500);
+    return () => clearTimeout(timeoutId);
+  }, [formData.firstName, formData.lastName]);
 
   const countries = [
     { name: 'Nigeria', code: '+234', region: 'West Africa' },
@@ -176,23 +236,39 @@ export default function ProfileSetup() {
                 </label>
                 
                 <div className="flex gap-4">
-                    <input 
-                        type="text" 
-                        placeholder="First Name" 
-                        required
-                        className="w-1/2 !bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all !text-gray-900 placeholder-gray-500 font-semibold"
-                        value={formData.firstName}
-                        onChange={(e) => setFormData(prev => ({...prev, firstName: e.target.value}))}
-                    />
-                    <input 
-                        type="text" 
-                        placeholder="Last Name" 
-                        required
-                        className="w-1/2 !bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all !text-gray-900 placeholder-gray-500 font-semibold"
-                        value={formData.lastName}
-                        onChange={(e) => setFormData(prev => ({...prev, lastName: e.target.value}))}
-                    />
+                    <div className="relative w-1/2">
+                        <input 
+                            type="text" 
+                            placeholder="First Name" 
+                            required
+                            className={cn(
+                                "w-full !bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all !text-gray-900 placeholder-gray-500 font-semibold",
+                                nameStatus === "taken" && "border-red-500 focus:border-red-500"
+                            )}
+                            value={formData.firstName}
+                            onChange={(e) => setFormData(prev => ({...prev, firstName: e.target.value}))}
+                        />
+                    </div>
+                    <div className="relative w-1/2">
+                        <input 
+                            type="text" 
+                            placeholder="Last Name" 
+                            required
+                            className={cn(
+                                "w-full !bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all !text-gray-900 placeholder-gray-500 font-semibold",
+                                nameStatus === "taken" && "border-red-500 focus:border-red-500"
+                            )}
+                            value={formData.lastName}
+                            onChange={(e) => setFormData(prev => ({...prev, lastName: e.target.value}))}
+                        />
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                            {nameStatus === "checking" && <Loader2 className="animate-spin text-gray-400" size={18} />}
+                            {nameStatus === "available" && <Check className="text-green-500" size={18} />}
+                            {nameStatus === "taken" && <X className="text-red-500" size={18} />}
+                        </div>
+                    </div>
                 </div>
+                {nameStatus === "taken" && <p className="text-xs text-red-500 font-bold ml-2">This name combination is already registered.</p>}
 
                 <div className="relative">
                     <input 
@@ -224,7 +300,7 @@ export default function ProfileSetup() {
                         onChange={(e) => setFormData(prev => ({...prev, countryCode: e.target.value}))}
                       >
                         {countries.map(c => (
-                          <option key={c.name} value={c.code} className="!text-gray-900">{c.code} {c.name}</option>
+                          <option key={c.name} value={c.code} className="text-gray-900">{c.code} {c.name}</option>
                         ))}
                       </select>
                       {/* Custom dropdown arrow if needed, but appearance-none + css grid is simpler */}
@@ -232,15 +308,27 @@ export default function ProfileSetup() {
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                       </div>
                     </div>
-                    <input 
-                        type="tel" 
-                        placeholder="Phone Number" 
-                        required
-                        className="flex-1 !bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all font-semibold !text-gray-900 placeholder-gray-500"
-                        value={formData.phone}
-                        onChange={(e) => setFormData(prev => ({...prev, phone: e.target.value}))}
-                    />
+                    <div className="relative flex-1">
+                        <input 
+                            type="tel" 
+                            placeholder="Phone Number" 
+                            required
+                            className={cn(
+                                "w-full !bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all font-semibold !text-gray-900 placeholder-gray-500",
+                                phoneStatus === "taken" && "border-red-500 focus:border-red-500",
+                                phoneStatus === "available" && "border-green-500 focus:border-green-500"
+                            )}
+                            value={formData.phone}
+                            onChange={(e) => setFormData(prev => ({...prev, phone: e.target.value}))}
+                        />
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                            {phoneStatus === "checking" && <Loader2 className="animate-spin text-gray-400" size={18} />}
+                            {phoneStatus === "available" && <Check className="text-green-500" size={18} />}
+                            {phoneStatus === "taken" && <X className="text-red-500" size={18} />}
+                        </div>
+                    </div>
                 </div>
+                {phoneStatus === "taken" && <p className="text-xs text-red-500 font-bold ml-2">Phone number is already associated with an account.</p>}
             </div>
 
             <div className="space-y-4">
@@ -280,7 +368,7 @@ export default function ProfileSetup() {
 
             <button 
                 type="submit"
-                disabled={isLoading || usernameStatus === "taken" || usernameStatus === "checking"}
+                disabled={isLoading || usernameStatus === "taken" || usernameStatus === "checking" || phoneStatus === "taken" || phoneStatus === "checking" || nameStatus === "taken" || nameStatus === "checking"}
                 className="w-full bg-gray-900 text-white font-bold py-4 rounded-2xl hover:bg-gray-800 transition-all shadow-lg active:scale-[0.98] disabled:bg-gray-400"
             >
                 {isLoading ? "Saving Profile..." : "Complete Setup"}
