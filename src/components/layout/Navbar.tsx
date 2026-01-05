@@ -69,8 +69,11 @@ export function Navbar() {
               
               {showProfileMenu && (
                 <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 p-1 animate-in fade-in slide-in-from-top-2">
+                    <Link href="/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <UserIcon size={16} /> My Profile
+                    </Link>
                     <Link href="/admin" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg">
-                        Admin Panel
+                        <ShieldAlert size={16} /> Admin Panel
                     </Link>
                     <button 
                         onClick={logout}
@@ -112,10 +115,10 @@ export function Navbar() {
             );
           })}
           <Link
-             href={user ? "/admin" : "/login"}
+             href={user ? "/profile" : "/login"}
              className={cn(
                "flex flex-col items-center gap-1 w-full h-full justify-center active:scale-95 transition-transform",
-               pathname === "/login" ? "text-blue-600" : "text-gray-400"
+               pathname === "/profile" ? "text-blue-600" : "text-gray-400"
              )}
           >
              {user ? (
