@@ -3,18 +3,39 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { db } from "@/lib/firebase";
+import { db, getDocWithRetry } from "@/lib/firebase";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { User, Stethoscope, Sprout, Building2, UserCircle, Globe, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function ProfileSetup() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [locationData, setLocationData] = useState<{lat: number, lng: number} | null>(null);
-  const [detectedRegion, setDetectedRegion] = useState<string | null>(null);
   
+  // Protect the route
+  useEffect(() => {
+    if (loading) return;
+
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    const checkExisting = async () => {
+      try {
+        const userDoc = await getDocWithRetry(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          router.push("/");
+        }
+      } catch (e) {
+        console.error("Error checking existing profile:", e);
+      }
+    };
+    checkExisting();
+  }, [user, loading, router]);
+
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
