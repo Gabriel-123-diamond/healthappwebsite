@@ -158,7 +158,7 @@ export default function AdminPage() {
                     <input 
                         type="password" 
                         placeholder="Admin Password"
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-gray-900 transition-colors"
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-gray-900 transition-colors text-gray-900"
                         value={passwordInput}
                         onChange={(e) => setPasswordInput(e.target.value)}
                         autoFocus

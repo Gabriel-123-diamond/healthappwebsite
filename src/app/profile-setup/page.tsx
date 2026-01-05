@@ -146,7 +146,7 @@ export default function ProfileSetup() {
                         type="text" 
                         placeholder="First Name" 
                         required
-                        className="w-1/2 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all"
+                        className="w-1/2 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 font-semibold"
                         value={formData.firstName}
                         onChange={(e) => setFormData(prev => ({...prev, firstName: e.target.value}))}
                     />
@@ -154,7 +154,7 @@ export default function ProfileSetup() {
                         type="text" 
                         placeholder="Last Name" 
                         required
-                        className="w-1/2 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all"
+                        className="w-1/2 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 font-semibold"
                         value={formData.lastName}
                         onChange={(e) => setFormData(prev => ({...prev, lastName: e.target.value}))}
                     />
@@ -167,7 +167,7 @@ export default function ProfileSetup() {
                         required
                         minLength={3}
                         className={cn(
-                            "w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all",
+                            "w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 font-semibold",
                             usernameStatus === "taken" && "border-red-500 focus:border-red-500",
                             usernameStatus === "available" && "border-green-500 focus:border-green-500"
                         )}
@@ -185,12 +185,12 @@ export default function ProfileSetup() {
                 <div className="flex gap-3">
                     <div className="relative w-1/3">
                       <select 
-                        className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all text-sm font-semibold appearance-none cursor-pointer"
+                        className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all text-sm font-semibold appearance-none cursor-pointer text-gray-900"
                         value={formData.countryCode}
                         onChange={(e) => setFormData(prev => ({...prev, countryCode: e.target.value}))}
                       >
                         {countries.map(c => (
-                          <option key={c.name} value={c.code}>{c.code} {c.name}</option>
+                          <option key={c.name} value={c.code} className="text-gray-900">{c.code} {c.name}</option>
                         ))}
                       </select>
                       {/* Custom dropdown arrow if needed, but appearance-none + css grid is simpler */}
@@ -202,7 +202,7 @@ export default function ProfileSetup() {
                         type="tel" 
                         placeholder="Phone Number" 
                         required
-                        className="flex-1 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all font-semibold"
+                        className="flex-1 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all font-semibold text-gray-900 placeholder-gray-500"
                         value={formData.phone}
                         onChange={(e) => setFormData(prev => ({...prev, phone: e.target.value}))}
                     />
