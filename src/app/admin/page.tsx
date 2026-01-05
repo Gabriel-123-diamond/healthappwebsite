@@ -12,6 +12,7 @@ import { seedDatabase } from "@/lib/seed";
 import { Database, RefreshCcw, CheckCircle2, AlertCircle, TrendingUp, Users, MapPin, Activity, Settings, ShieldAlert, Lock } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { verifyAdminPassword } from "@/app/actions/verifyAdmin";
 
 // Fallback email for recovery
 const SUPER_ADMIN_EMAIL = "gabrielpeterekerete231@gmail.com";
@@ -26,6 +27,11 @@ export default function AdminPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [checkingRole, setCheckingRole] = useState(true);
+  
+  // Password Gate
+  const [isPasswordVerified, setIsPasswordVerified] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   useEffect(() => {
     if (!loading) {
@@ -62,6 +68,18 @@ export default function AdminPage() {
         setIsAdmin(false);
     } finally {
         setCheckingRole(false);
+    }
+  };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError("");
+    
+    const result = await verifyAdminPassword(passwordInput);
+    if (result.success) {
+        setIsPasswordVerified(true);
+    } else {
+        setPasswordError(result.message || "Invalid password");
     }
   };
 
@@ -122,6 +140,39 @@ export default function AdminPage() {
           Return to Home
         </button>
       </div>
+    );
+  }
+
+  // 3.5 Password Gate
+  if (!isPasswordVerified) {
+    return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6 text-center">
+            <div className="bg-white p-8 rounded-3xl shadow-xl max-w-sm w-full border border-gray-100">
+                <div className="mx-auto w-12 h-12 bg-gray-900 text-white rounded-xl flex items-center justify-center mb-4">
+                    <ShieldAlert size={24} />
+                </div>
+                <h2 className="text-xl font-bold text-gray-900 mb-2">Admin Security</h2>
+                <p className="text-sm text-gray-500 mb-6">Please enter the admin password to verify your identity.</p>
+                
+                <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                    <input 
+                        type="password" 
+                        placeholder="Admin Password"
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-gray-900 transition-colors"
+                        value={passwordInput}
+                        onChange={(e) => setPasswordInput(e.target.value)}
+                        autoFocus
+                    />
+                    {passwordError && <p className="text-red-500 text-xs font-bold">{passwordError}</p>}
+                    <button 
+                        type="submit"
+                        className="w-full bg-gray-900 text-white py-3 rounded-xl font-bold hover:bg-gray-800 transition-all"
+                    >
+                        Verify Access
+                    </button>
+                </form>
+            </div>
+        </div>
     );
   }
 
