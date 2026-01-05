@@ -1,7 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { getMessaging } from "firebase/messaging";
+import { getMessaging, Messaging } from "firebase/messaging";
 import { getAI, getGenerativeModel, VertexAIBackend } from "firebase/ai";
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
 
@@ -48,7 +48,7 @@ const auth = getAuth(app);
 
 const storage = getStorage(app);
 
-let messaging = null;
+let messaging: Messaging | null = null;
 
 if (typeof window !== "undefined") {
     try {
