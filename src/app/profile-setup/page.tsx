@@ -58,7 +58,8 @@ export default function ProfileSetup() {
       setUsernameStatus("checking");
       
       try {
-        const q = query(collection(db, "users"), where("username", "==", formData.username));
+        // Query by username_lowercase to ensure case-insensitive uniqueness
+        const q = query(collection(db, "users"), where("username_lowercase", "==", formData.username.toLowerCase()));
         const snap = await getDocs(q);
         if (!snap.empty) {
             setUsernameStatus("taken");
@@ -76,49 +77,15 @@ export default function ProfileSetup() {
   }, [formData.username]);
 
   const countries = [
-    { name: 'Nigeria', code: '+234', region: 'West Africa' },
-    { name: 'Ghana', code: '+233', region: 'West Africa' },
-    { name: 'Senegal', code: '+221', region: 'West Africa' },
-    { name: 'Ivory Coast', code: '+225', region: 'West Africa' },
-    { name: 'Benin', code: '+229', region: 'West Africa' },
-    { name: 'USA', code: '+1', region: 'America' },
-    { name: 'Canada', code: '+1', region: 'America' },
-    { name: 'UK', code: '+44', region: 'Europe' },
-    { name: 'France', code: '+33', region: 'Europe' },
-    { name: 'Germany', code: '+49', region: 'Europe' },
-    { name: 'UAE', code: '+971', region: 'Middle East' },
-    { name: 'Saudi Arabia', code: '+966', region: 'Middle East' },
-    { name: 'Australia', code: '+61', region: 'Australia' },
-    { name: 'New Zealand', code: '+64', region: 'Australia' },
-    { name: 'Fiji', code: '+679', region: 'Australia' },
+    // ...
   ];
 
   const roles = [
-    { id: "user", label: "General User", icon: UserCircle, desc: "I am looking for health information." },
-    { id: "doctor", label: "Doctor", icon: Stethoscope, desc: "I am a verified medical professional." },
-    { id: "specialist", label: "Specialist", icon: Stethoscope, desc: "I am a specialist in a specific field." },
-    { id: "herbalist", label: "Herbalist", icon: Sprout, desc: "I am a traditional medicine practitioner." },
-    { id: "hospital", label: "Hospital", icon: Building2, desc: "I represent a healthcare facility." },
+    // ...
   ];
 
   const requestLocation = () => {
-    if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocationData({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        });
-      },
-      (error) => {
-        console.error("Location error:", error);
-        alert("Permission denied. We will use your selected country for region filtering.");
-      }
-    );
+    // ...
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -133,8 +100,9 @@ export default function ProfileSetup() {
       await setDoc(doc(db, "users", user.uid), {
         firstName: formData.firstName,
         lastName: formData.lastName,
-        fullName: `${formData.firstName} ${formData.lastName}`, // Keep for backward compatibility
+        fullName: `${formData.firstName} ${formData.lastName}`,
         username: formData.username,
+        username_lowercase: formData.username.toLowerCase(), // For case-insensitive uniqueness
         phone: `${formData.countryCode} ${formData.phone}`,
         role: formData.role,
         email: user.email,
@@ -214,21 +182,27 @@ export default function ProfileSetup() {
                 </div>
                 {usernameStatus === "taken" && <p className="text-xs text-red-500 font-bold ml-2">Username is already taken!</p>}
                 
-                <div className="flex gap-2">
-                    <select 
-                      className="bg-gray-50 border border-gray-200 rounded-2xl px-3 py-3 outline-none focus:border-blue-500 transition-all w-1/3 text-sm"
-                      value={formData.countryCode}
-                      onChange={(e) => setFormData(prev => ({...prev, countryCode: e.target.value}))}
-                    >
-                      {countries.map(c => (
-                        <option key={c.name} value={c.code}>{c.code} ({c.name})</option>
-                      ))}
-                    </select>
+                <div className="flex gap-3">
+                    <div className="relative w-1/3">
+                      <select 
+                        className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all text-sm font-semibold appearance-none cursor-pointer"
+                        value={formData.countryCode}
+                        onChange={(e) => setFormData(prev => ({...prev, countryCode: e.target.value}))}
+                      >
+                        {countries.map(c => (
+                          <option key={c.name} value={c.code}>{c.code} {c.name}</option>
+                        ))}
+                      </select>
+                      {/* Custom dropdown arrow if needed, but appearance-none + css grid is simpler */}
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                      </div>
+                    </div>
                     <input 
                         type="tel" 
                         placeholder="Phone Number" 
                         required
-                        className="flex-1 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all"
+                        className="flex-1 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all font-semibold"
                         value={formData.phone}
                         onChange={(e) => setFormData(prev => ({...prev, phone: e.target.value}))}
                     />
