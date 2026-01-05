@@ -1,13 +1,12 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { db, getDocWithRetry } from "@/lib/firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { 
   User, MapPin, Phone, Shield, Calendar, Edit2, Save, X, 
-  History, Bookmark, Settings, ChevronRight, Activity, Search
+  History, Bookmark, Settings, ChevronRight, Activity, Search,
+  Loader2, Check
 } from "lucide-react";
 import { getSearchHistory, getSavedResources, SearchHistoryItem, SavedResource } from "@/lib/user-service";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,6 +24,7 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({ firstName: "", lastName: "", phone: "" });
   const [isSaving, setIsSaving] = useState(false);
+  const [phoneStatus, setPhoneStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
 
   useEffect(() => {
     if (loading) return;
@@ -65,8 +65,49 @@ export default function ProfilePage() {
     fetchData();
   }, [user, loading, router]);
 
+  // Phone Check Effect
+  useEffect(() => {
+    if (!isEditing || editForm.phone === profile?.phone) {
+        setPhoneStatus("idle");
+        return;
+    }
+
+    const checkPhone = async () => {
+      if (editForm.phone.length < 7) {
+        setPhoneStatus("idle");
+        return;
+      }
+      setPhoneStatus("checking");
+      
+      try {
+        // Query users collection for this phone
+        // Note: Assuming phone format is consistent. In setup we join code+number.
+        // Here we are editing the full string.
+        const q = query(collection(db, "users"), where("phone", "==", editForm.phone));
+        const snap = await getDocs(q);
+        
+        // Exclude current user from check (though unlikely to match if we checked equality)
+        const isTaken = !snap.empty && snap.docs[0].id !== user?.uid;
+
+        if (isTaken) {
+            setPhoneStatus("taken");
+        } else {
+            setPhoneStatus("available");
+        }
+      } catch (e) {
+        console.error("Phone check error:", e);
+        setPhoneStatus("idle");
+      }
+    };
+
+    const timeoutId = setTimeout(checkPhone, 500);
+    return () => clearTimeout(timeoutId);
+  }, [editForm.phone, isEditing, profile, user]);
+
   const handleSave = async () => {
     if (!user) return;
+    if (phoneStatus === "taken" || phoneStatus === "checking") return;
+
     setIsSaving(true);
     try {
         await updateDoc(doc(db, "users", user.uid), {
@@ -75,8 +116,9 @@ export default function ProfilePage() {
             fullName: `${editForm.firstName} ${editForm.lastName}`,
             phone: editForm.phone
         });
-        setProfile(prev => ({ ...prev, ...editForm, fullName: `${editForm.firstName} ${editForm.lastName}` }));
+        setProfile((prev: any) => ({ ...prev, ...editForm, fullName: `${editForm.firstName} ${editForm.lastName}` }));
         setIsEditing(false);
+        setPhoneStatus("idle");
     } catch (e) {
         console.error("Failed to update profile", e);
     } finally {
@@ -85,6 +127,7 @@ export default function ProfilePage() {
   };
 
   if (loading || !profile) {
+    // ... loading state ...
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="flex flex-col items-center gap-4">
@@ -167,8 +210,8 @@ export default function ProfilePage() {
                                 </button>
                                 <button 
                                     onClick={handleSave}
-                                    disabled={isSaving}
-                                    className="p-2 text-green-600 hover:bg-green-50 rounded-xl bg-green-50/50"
+                                    disabled={isSaving || phoneStatus === "taken" || phoneStatus === "checking"}
+                                    className="p-2 text-green-600 hover:bg-green-50 rounded-xl bg-green-50/50 disabled:opacity-50"
                                 >
                                     {isSaving ? <Activity className="animate-spin" size={20} /> : <Save size={20} />}
                                 </button>
@@ -182,11 +225,21 @@ export default function ProfilePage() {
                             {profile.region || "Unknown Location"}
                         </div>
                         {isEditing ? (
-                             <input 
-                                value={editForm.phone}
-                                onChange={e => setEditForm({...editForm, phone: e.target.value})}
-                                className="bg-gray-50 border border-gray-200 rounded-lg px-2 py-0.5 text-sm w-32 outline-none focus:border-blue-500 text-gray-900"
-                            />
+                             <div className="relative">
+                                <input 
+                                    value={editForm.phone}
+                                    onChange={e => setEditForm({...editForm, phone: e.target.value})}
+                                    className={cn(
+                                        "bg-gray-50 border border-gray-200 rounded-lg px-2 py-0.5 text-sm w-40 outline-none focus:border-blue-500 text-gray-900 pr-8",
+                                        phoneStatus === "taken" && "border-red-500 text-red-600"
+                                    )}
+                                />
+                                <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                    {phoneStatus === "checking" && <Loader2 className="animate-spin text-gray-400" size={12} />}
+                                    {phoneStatus === "available" && <Check className="text-green-500" size={12} />}
+                                    {phoneStatus === "taken" && <X className="text-red-500" size={12} />}
+                                </div>
+                             </div>
                         ) : (
                             <div className="flex items-center gap-1.5 bg-gray-50 px-3 py-1 rounded-lg">
                                 <Phone size={14} className="text-green-500" />
@@ -226,10 +279,9 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content (Unchanged) */}
       <div className="max-w-5xl mx-auto p-6">
         <AnimatePresence mode="wait">
-            
             {/* OVERVIEW TAB */}
             {activeTab === "overview" && (
                 <motion.div 
@@ -332,7 +384,6 @@ export default function ProfilePage() {
                     )}
                 </motion.div>
             )}
-
         </AnimatePresence>
       </div>
     </div>
