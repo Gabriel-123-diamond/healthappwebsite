@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (currentUser) {
         requestNotificationPermission();
         
-        const checkProfile = async (retries = 3) => {
+        const checkProfile = async (retries = 10) => {
           try {
             const docRef = doc(db, "users", currentUser.uid);
             const docSnap = await getDoc(docRef);
@@ -52,7 +52,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               await new Promise(res => setTimeout(res, 1000));
               return checkProfile(retries - 1);
             }
-            console.error("Error checking profile:", e);
+            console.error("Error checking profile (final):", e);
+            // Fallback: If we can't check profile, assume valid or let dashboard handle it.
+            // This prevents being stuck on login page.
+            if (pathname === "/login") {
+                router.push("/");
+            }
           }
         };
 

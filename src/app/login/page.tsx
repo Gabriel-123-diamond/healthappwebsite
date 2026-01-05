@@ -42,18 +42,9 @@ export default function LoginPage() {
 
 
   useEffect(() => {
-    const checkProfile = async () => {
-      if (user) {
-        // Check if user profile exists
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (!userDoc.exists()) {
-          router.push("/profile-setup");
-        } else {
-          router.push("/");
-        }
-      }
-    };
-    checkProfile();
+    if (user) {
+      router.push("/");
+    }
   }, [user, router]);
 
 
