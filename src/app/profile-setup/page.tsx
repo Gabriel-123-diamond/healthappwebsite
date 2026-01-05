@@ -77,15 +77,49 @@ export default function ProfileSetup() {
   }, [formData.username]);
 
   const countries = [
-    // ...
+    { name: 'Nigeria', code: '+234', region: 'West Africa' },
+    { name: 'Ghana', code: '+233', region: 'West Africa' },
+    { name: 'Senegal', code: '+221', region: 'West Africa' },
+    { name: 'Ivory Coast', code: '+225', region: 'West Africa' },
+    { name: 'Benin', code: '+229', region: 'West Africa' },
+    { name: 'USA', code: '+1', region: 'America' },
+    { name: 'Canada', code: '+1', region: 'America' },
+    { name: 'UK', code: '+44', region: 'Europe' },
+    { name: 'France', code: '+33', region: 'Europe' },
+    { name: 'Germany', code: '+49', region: 'Europe' },
+    { name: 'UAE', code: '+971', region: 'Middle East' },
+    { name: 'Saudi Arabia', code: '+966', region: 'Middle East' },
+    { name: 'Australia', code: '+61', region: 'Australia' },
+    { name: 'New Zealand', code: '+64', region: 'Australia' },
+    { name: 'Fiji', code: '+679', region: 'Australia' },
   ];
 
   const roles = [
-    // ...
+    { id: "user", label: "General User", icon: UserCircle, desc: "I am looking for health information." },
+    { id: "doctor", label: "Doctor", icon: Stethoscope, desc: "I am a verified medical professional." },
+    { id: "specialist", label: "Specialist", icon: Stethoscope, desc: "I am a specialist in a specific field." },
+    { id: "herbalist", label: "Herbalist", icon: Sprout, desc: "I am a traditional medicine practitioner." },
+    { id: "hospital", label: "Hospital", icon: Building2, desc: "I represent a healthcare facility." },
   ];
 
   const requestLocation = () => {
-    // ...
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocationData({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+      },
+      (error) => {
+        console.error("Location error:", error);
+        alert("Permission denied. We will use your selected country for region filtering.");
+      }
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
