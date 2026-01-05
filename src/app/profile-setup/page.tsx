@@ -43,6 +43,9 @@ export default function ProfileSetup() {
     role: "user" 
   });
 
+  // Debug: Track updates
+  // useEffect(() => console.log("Form Data:", formData), [formData]);
+
   const countries = [
     { name: 'Nigeria', code: '+234', region: 'West Africa' },
     { name: 'Ghana', code: '+233', region: 'West Africa' },
@@ -144,14 +147,14 @@ export default function ProfileSetup() {
                     required
                     className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all"
                     value={formData.fullName}
-                    onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                    onChange={(e) => setFormData(prev => ({...prev, fullName: e.target.value}))}
                 />
                 
                 <div className="flex gap-2">
                     <select 
                       className="bg-gray-50 border border-gray-200 rounded-2xl px-3 py-3 outline-none focus:border-blue-500 transition-all w-1/3 text-sm"
                       value={formData.countryCode}
-                      onChange={(e) => setFormData({...formData, countryCode: e.target.value})}
+                      onChange={(e) => setFormData(prev => ({...prev, countryCode: e.target.value}))}
                     >
                       {countries.map(c => (
                         <option key={c.name} value={c.code}>{c.code} ({c.name})</option>
@@ -163,7 +166,7 @@ export default function ProfileSetup() {
                         required
                         className="flex-1 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all"
                         value={formData.phone}
-                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                        onChange={(e) => setFormData(prev => ({...prev, phone: e.target.value}))}
                     />
                 </div>
             </div>
@@ -175,7 +178,7 @@ export default function ProfileSetup() {
                         <button
                             key={role.id}
                             type="button"
-                            onClick={() => setFormData({...formData, role: role.id})}
+                            onClick={() => setFormData(prev => ({...prev, role: role.id}))}
                             className={cn(
                                 "flex flex-col items-start p-4 rounded-2xl border-2 transition-all text-left relative overflow-hidden group",
                                 formData.role === role.id 
