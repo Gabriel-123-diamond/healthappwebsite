@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { db, getDocWithRetry } from "@/lib/firebase";
 import { doc, setDoc, serverTimestamp, collection, query, where, getDocs } from "firebase/firestore";
-import { User, Stethoscope, Sprout, Building2, UserCircle, Globe, MapPin, Check, X, Loader2 } from "lucide-react";
+import { User, Stethoscope, Sprout, Building2, UserCircle, Globe, MapPin, Check, X, Loader2, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function ProfileSetup() {
@@ -17,6 +17,7 @@ export default function ProfileSetup() {
   const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
   const [phoneStatus, setPhoneStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
   const [nameStatus, setNameStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
+  const [emailStatus, setEmailStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
   
   const [formData, setFormData] = useState({
     firstName: "",
@@ -41,6 +42,19 @@ export default function ProfileSetup() {
         const userDoc = await getDocWithRetry(doc(db, "users", user.uid));
         if (userDoc.exists()) {
           router.push("/");
+        }
+        
+        // Double check: Is this email used by ANOTHER UID?
+        // This prevents profile hijacking or sync errors
+        if (user.email) {
+            setEmailStatus("checking");
+            const q = query(collection(db, "users"), where("email", "==", user.email));
+            const snap = await getDocs(q);
+            if (!snap.empty && snap.docs.some(d => d.id !== user.uid)) {
+                setEmailStatus("taken");
+            } else {
+                setEmailStatus("available");
+            }
         }
       } catch (e) {
         console.error("Error checking existing profile:", e);
@@ -185,7 +199,10 @@ export default function ProfileSetup() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-    if (usernameStatus === "taken" || usernameStatus === "checking") return;
+    if (usernameStatus === "taken" || usernameStatus === "checking" || 
+        phoneStatus === "taken" || phoneStatus === "checking" || 
+        nameStatus === "taken" || nameStatus === "checking" ||
+        emailStatus === "taken") return;
 
     setIsLoading(true);
     try {
@@ -220,6 +237,12 @@ export default function ProfileSetup() {
         <div className="mb-10 text-center">
             <h1 className="text-3xl font-black text-gray-900 mb-2">Complete Your Profile</h1>
             <p className="text-gray-500">Tell us a bit about yourself to personalize your experience.</p>
+            {emailStatus === "taken" && (
+                <div className="mt-4 p-3 bg-red-50 text-red-600 text-sm font-bold rounded-xl border border-red-100 flex items-center justify-center gap-2">
+                    <ShieldAlert size={16} />
+                    This email ({user?.email}) is already linked to another profile. Please contact support.
+                </div>
+            )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
