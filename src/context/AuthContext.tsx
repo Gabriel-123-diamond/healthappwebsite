@@ -36,16 +36,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(currentUser);
       if (currentUser) {
         requestNotificationPermission();
-        try {
-          const docRef = doc(db, "users", currentUser.uid);
-          const docSnap = await getDoc(docRef);
-          if (!docSnap.exists() && pathname !== "/profile-setup") {
-             console.log("Profile missing, redirecting to setup...");
-             router.push("/profile-setup");
+        
+        const checkProfile = async (retries = 3) => {
+          try {
+            const docRef = doc(db, "users", currentUser.uid);
+            const docSnap = await getDoc(docRef);
+            if (!docSnap.exists() && pathname !== "/profile-setup") {
+               console.log("Profile missing, redirecting to setup...");
+               router.push("/profile-setup");
+            }
+          } catch (e: any) {
+            // If permission denied (likely App Check not ready), retry
+            if (retries > 0 && (e.code === 'permission-denied' || e.message?.includes('permission'))) {
+              console.warn(`Profile check failed (permission). Retrying in 1s... (${retries} left)`);
+              await new Promise(res => setTimeout(res, 1000));
+              return checkProfile(retries - 1);
+            }
+            console.error("Error checking profile:", e);
           }
-        } catch (e) {
-          console.error("Error checking profile:", e);
-        }
+        };
+
+        checkProfile();
       }
       setLoading(false);
     });
