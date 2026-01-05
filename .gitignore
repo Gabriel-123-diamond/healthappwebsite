@@ -37,7 +37,8 @@ yarn-error.log*
 # vercel
 .vercel
 
-# logs
+# screenshots and local notes
+screenshots/
 issues.txt
 *.log
 
