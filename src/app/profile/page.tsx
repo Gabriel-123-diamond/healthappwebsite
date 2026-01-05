@@ -13,7 +13,7 @@ export default function ProfilePage() {
   const { user } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [uploading, setUpload] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [profile, setProfile] = useState<any>(null);
   const [formData, setFormData] = useState({ fullName: "", phone: "" });
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -56,7 +56,7 @@ export default function ProfilePage() {
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!user || !e.target.files?.[0]) return;
-    setUpload(true);
+    setUploading(true);
     try {
       const file = e.target.files[0];
       const storageRef = ref(storage, `user_avatars/${user.uid}.jpg`);
@@ -69,7 +69,7 @@ export default function ProfilePage() {
       console.error(e);
       alert("Upload failed");
     } finally {
-      setUpload(false);
+      setUploading(false);
     }
   };
 

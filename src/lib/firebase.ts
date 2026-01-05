@@ -3,6 +3,7 @@ import { getFirestore, enableMultiTabIndexedDbPersistence } from "firebase/fires
 import { getAuth } from "firebase/auth";
 import { getMessaging } from "firebase/messaging";
 import { getAI, getGenerativeModel, VertexAIBackend } from "firebase/ai";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
 
 import { getStorage } from "firebase/storage";
 
@@ -18,6 +19,17 @@ const firebaseConfig = {
 
 // Initialize Firebase (Singleton pattern)
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+
+// Initialize App Check (Client-side only)
+if (typeof window !== "undefined") {
+    const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+    if (siteKey) {
+        initializeAppCheck(app, {
+            provider: new ReCaptchaEnterpriseProvider(siteKey),
+            isTokenAutoRefreshEnabled: true,
+        });
+    }
+}
 
 const db = getFirestore(app);
 

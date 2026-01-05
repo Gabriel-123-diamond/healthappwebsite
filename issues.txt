@@ -1,38 +1,37 @@
-Microsoft Windows [Version 10.0.26200.7462]
-(c) Microsoft Corporation. All rights reserved.
 
-C:\Users\user\Downloads\Compressed\Health App\web-platform>npm run build && npm start
-
-> web-platform@0.1.0 build
-> next build
-
-⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
- We detected multiple lockfiles and selected the directory of C:\Users\user\package-lock.json as the root directory.
- To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
-   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
- Detected additional lockfiles:
-   * C:\Users\user\Downloads\Compressed\Health App\web-platform\package-lock.json
-
-▲ Next.js 16.1.1 (Turbopack)
-- Environments: .env.local
-
-  Creating an optimized production build ...
-
-> Build error occurred
-Error: Turbopack build failed with 1 errors:
-./Downloads/Compressed/Health App/web-platform/src/app/profile/page.tsx:16:30
-Parsing ecmascript source code failed
-  14 |   const router = useRouter();
-  15 |   const [loading, setLoading] = useState(true);
-> 16 |   const [uploading, setUpload(false);
-     |                              ^
-  17 |   const [profile, setProfile] = useState<any>(null);
-  18 |   const [formData, setFormData] = useState({ fullName: "", phone: "" });
-  19 |   const fileInputRef = useRef<HTMLInputElement>(null);
-
-Expected ',', got '('
-
-
-    at <unknown> (./Downloads/Compressed/Health App/web-platform/src/app/profile/page.tsx:16:30)
+C:\Users\user\Downloads\Compressed\Health App\web-platform>git push
+Enumerating objects: 22, done.
+Counting objects: 100% (22/22), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (11/11), done.
+Writing objects: 100% (13/13), 5.08 KiB | 1.69 MiB/s, done.
+Total 13 (delta 6), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (6/6), completed with 6 local objects.
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote:
+remote: - GITHUB PUSH PROTECTION
+remote:   —————————————————————————————————————————
+remote:     Resolve the following violations before pushing again
+remote:
+remote:     - Push cannot contain secrets
+remote:
+remote:
+remote:      (?) Learn how to resolve a blocked push
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push
+remote:
+remote:
+remote:       —— Google Cloud Service Account Credentials ——————————
+remote:        locations:
+remote:          - commit: 39c7549bf5fcf15d4064e17ac9f1d045c75fc2de
+remote:            path: newconfig.txt:26
+remote:
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+remote:        https://github.com/Gabriel-123-diamond/healthappwebsite/security/secret-scanning/unblock-secret/37qXs5NJFAnldnxdVFXKq0Qsv8C
+remote:
+remote:
+remote:
+To https://github.com/Gabriel-123-diamond/healthappwebsite.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/Gabriel-123-diamond/healthappwebsite.git'
 
 C:\Users\user\Downloads\Compressed\Health App\web-platform>
