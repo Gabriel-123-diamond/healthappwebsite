@@ -1,5 +1,5 @@
-import { db } from "./firebase";
-import { collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp, where, Timestamp } from "firebase/firestore";
+import { db, getDocsWithRetry } from "./firebase";
+import { collection, addDoc, query, orderBy, limit, serverTimestamp, where, Timestamp } from "firebase/firestore";
 
 export interface SearchHistoryItem {
   id: string;
@@ -52,7 +52,7 @@ export async function getSearchHistory(userId: string, start?: Date, end?: Date)
         q = query(q, limit(20));
     }
     
-    const snapshot = await getDocs(q);
+    const snapshot = await getDocsWithRetry(q);
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
@@ -88,7 +88,7 @@ export async function getSavedResources(userId: string, start?: Date, end?: Date
       q = query(q, where("timestamp", "<=", Timestamp.fromDate(end)));
     }
 
-    const snapshot = await getDocs(q);
+    const snapshot = await getDocsWithRetry(q);
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()

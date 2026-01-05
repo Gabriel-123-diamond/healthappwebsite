@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { db } from "@/lib/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { db, getDocsWithRetry } from "@/lib/firebase";
+import { collection, query, where } from "firebase/firestore";
 import { MapView } from "@/components/features/directory/MapView";
 import { DirectoryItem } from "@/types/directory";
 import { Map as MapIcon, List, Phone, Star, ShieldCheck, Search, Filter, ChevronRight } from "lucide-react";
@@ -43,7 +43,7 @@ export default function DirectoryPage() {
         );
       }
 
-      const snap = await getDocs(q);
+      const snap = await getDocsWithRetry(q);
       const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as DirectoryItem));
       setItems(data);
     } catch (error) {

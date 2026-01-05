@@ -92,6 +92,35 @@ if (typeof window !== "undefined") {
 
     
 
-    export { app, db, auth, storage, model, messaging };
+import { app, db, auth, storage, model, messaging };
+
+// Robust fetching helpers to handle App Check race conditions
+export async function getDocWithRetry(docRef: any, retries = 5): Promise<any> {
+    try {
+        const { getDoc } = await import("firebase/firestore");
+        return await getDoc(docRef);
+    } catch (e: any) {
+        if (retries > 0 && (e.code === 'permission-denied' || e.message?.includes('permission'))) {
+            console.warn(`Firestore getDoc failed (permission). Retrying... (${retries} left)`);
+            await new Promise(res => setTimeout(res, 1000));
+            return getDocWithRetry(docRef, retries - 1);
+        }
+        throw e;
+    }
+}
+
+export async function getDocsWithRetry(q: any, retries = 5): Promise<any> {
+    try {
+        const { getDocs } = await import("firebase/firestore");
+        return await getDocs(q);
+    } catch (e: any) {
+        if (retries > 0 && (e.code === 'permission-denied' || e.message?.includes('permission'))) {
+            console.warn(`Firestore getDocs failed (permission). Retrying... (${retries} left)`);
+            await new Promise(res => setTimeout(res, 1000));
+            return getDocsWithRetry(q, retries - 1);
+        }
+        throw e;
+    }
+}
 
     
