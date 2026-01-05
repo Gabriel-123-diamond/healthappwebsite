@@ -1,37 +1,146 @@
-
-C:\Users\user\Downloads\Compressed\Health App\web-platform>git push
-Enumerating objects: 22, done.
-Counting objects: 100% (22/22), done.
-Delta compression using up to 8 threads
-Compressing objects: 100% (11/11), done.
-Writing objects: 100% (13/13), 5.08 KiB | 1.69 MiB/s, done.
-Total 13 (delta 6), reused 0 (delta 0), pack-reused 0 (from 0)
-remote: Resolving deltas: 100% (6/6), completed with 6 local objects.
-remote: error: GH013: Repository rule violations found for refs/heads/main.
-remote:
-remote: - GITHUB PUSH PROTECTION
-remote:   —————————————————————————————————————————
-remote:     Resolve the following violations before pushing again
-remote:
-remote:     - Push cannot contain secrets
-remote:
-remote:
-remote:      (?) Learn how to resolve a blocked push
-remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push
-remote:
-remote:
-remote:       —— Google Cloud Service Account Credentials ——————————
-remote:        locations:
-remote:          - commit: 39c7549bf5fcf15d4064e17ac9f1d045c75fc2de
-remote:            path: newconfig.txt:26
-remote:
-remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
-remote:        https://github.com/Gabriel-123-diamond/healthappwebsite/security/secret-scanning/unblock-secret/37qXs5NJFAnldnxdVFXKq0Qsv8C
-remote:
-remote:
-remote:
-To https://github.com/Gabriel-123-diamond/healthappwebsite.git
- ! [remote rejected] main -> main (push declined due to repository rule violations)
-error: failed to push some refs to 'https://github.com/Gabriel-123-diamond/healthappwebsite.git'
-
-C:\Users\user\Downloads\Compressed\Health App\web-platform>
+300aa4cd67f9c20d.js:15 [2026-01-05T17:20:26.087Z]  @firebase/firestore: Firestore (12.6.0): enableMultiTabIndexedDbPersistence() will be deprecated in the future, you can use `FirestoreSettings.cache` instead.
+ed @ 300aa4cd67f9c20d.js:15
+warn @ 300aa4cd67f9c20d.js:15
+O @ 300aa4cd67f9c20d.js:15
+lm @ 300aa4cd67f9c20d.js:21
+module evaluation @ 300aa4cd67f9c20d.js:26
+q @ turbopack-aac90ee9018457f7.js:4
+B @ turbopack-aac90ee9018457f7.js:4
+m @ turbopack-aac90ee9018457f7.js:1
+module evaluation @ af1f5e3398c176fe.js:1
+q @ turbopack-aac90ee9018457f7.js:4
+B @ turbopack-aac90ee9018457f7.js:4
+m @ turbopack-aac90ee9018457f7.js:1
+module evaluation @ 2f76b60053f2ef20.js:1
+q @ turbopack-aac90ee9018457f7.js:4
+B @ turbopack-aac90ee9018457f7.js:4
+(anonymous) @ turbopack-aac90ee9018457f7.js:1
+f @ 91999646353bc8dc.js:1
+x @ 91999646353bc8dc.js:1
+N @ 91999646353bc8dc.js:1
+(anonymous) @ 91999646353bc8dc.js:1
+Promise.then
+(anonymous) @ 91999646353bc8dc.js:1
+t @ 91999646353bc8dc.js:1
+Promise.then
+el @ 91999646353bc8dc.js:1
+(anonymous) @ 91999646353bc8dc.js:1
+module evaluation @ 35a31b474fa7ed4a.js:1
+q @ turbopack-aac90ee9018457f7.js:4
+B @ turbopack-aac90ee9018457f7.js:4
+(anonymous) @ turbopack-aac90ee9018457f7.js:1
+(anonymous) @ 35a31b474fa7ed4a.js:1
+n @ 35a31b474fa7ed4a.js:1
+a @ 35a31b474fa7ed4a.js:1
+module evaluation @ 35a31b474fa7ed4a.js:1
+q @ turbopack-aac90ee9018457f7.js:4
+(anonymous) @ turbopack-aac90ee9018457f7.js:4
+registerChunk @ turbopack-aac90ee9018457f7.js:4
+await in registerChunk
+I @ turbopack-aac90ee9018457f7.js:4
+(anonymous) @ turbopack-aac90ee9018457f7.js:4
+(anonymous) @ turbopack-aac90ee9018457f7.js:4
+300aa4cd67f9c20d.js:23  POST https://content-firebaseappcheck.googleapis.com/v1/projects/healthapp-d7f4e/apps/1:632069635074:web:aea2d4fcdfe60ce839fb1b:exchangeRecaptchaEnterpriseToken?key=AIzaSyAdrSTbeJQA5y1bxmKmEhFkvpkc75Lp6kU 400 (Bad Request)
+rr @ 300aa4cd67f9c20d.js:23
+await in rr
+getToken @ 300aa4cd67f9c20d.js:25
+await in getToken
+rw @ 300aa4cd67f9c20d.js:25
+await in rw
+(anonymous) @ 300aa4cd67f9c20d.js:25
+process @ 300aa4cd67f9c20d.js:23
+await in process
+start @ 300aa4cd67f9c20d.js:23
+r_ @ 300aa4cd67f9c20d.js:25
+(anonymous) @ 300aa4cd67f9c20d.js:25
+Promise.then
+rb @ 300aa4cd67f9c20d.js:25
+(anonymous) @ 300aa4cd67f9c20d.js:26
+module evaluation @ 300aa4cd67f9c20d.js:26
+q @ turbopack-aac90ee9018457f7.js:4
+B @ turbopack-aac90ee9018457f7.js:4
+m @ turbopack-aac90ee9018457f7.js:1
+module evaluation @ af1f5e3398c176fe.js:1
+q @ turbopack-aac90ee9018457f7.js:4
+B @ turbopack-aac90ee9018457f7.js:4
+m @ turbopack-aac90ee9018457f7.js:1
+module evaluation @ 2f76b60053f2ef20.js:1
+q @ turbopack-aac90ee9018457f7.js:4
+B @ turbopack-aac90ee9018457f7.js:4
+(anonymous) @ turbopack-aac90ee9018457f7.js:1
+f @ 91999646353bc8dc.js:1
+x @ 91999646353bc8dc.js:1
+N @ 91999646353bc8dc.js:1
+(anonymous) @ 91999646353bc8dc.js:1
+Promise.then
+(anonymous) @ 91999646353bc8dc.js:1
+t @ 91999646353bc8dc.js:1
+Promise.then
+el @ 91999646353bc8dc.js:1
+(anonymous) @ 91999646353bc8dc.js:1
+module evaluation @ 35a31b474fa7ed4a.js:1
+q @ turbopack-aac90ee9018457f7.js:4
+B @ turbopack-aac90ee9018457f7.js:4
+(anonymous) @ turbopack-aac90ee9018457f7.js:1
+(anonymous) @ 35a31b474fa7ed4a.js:1
+n @ 35a31b474fa7ed4a.js:1
+a @ 35a31b474fa7ed4a.js:1
+module evaluation @ 35a31b474fa7ed4a.js:1
+q @ turbopack-aac90ee9018457f7.js:4
+(anonymous) @ turbopack-aac90ee9018457f7.js:4
+registerChunk @ turbopack-aac90ee9018457f7.js:4
+await in registerChunk
+I @ turbopack-aac90ee9018457f7.js:4
+(anonymous) @ turbopack-aac90ee9018457f7.js:4
+(anonymous) @ turbopack-aac90ee9018457f7.js:4
+300aa4cd67f9c20d.js:15 [2026-01-05T17:20:28.610Z]  @firebase/app-check: AppCheck: 400 error. Attempts allowed again after 00m:01s (appCheck/initial-throttle).
+ed @ 300aa4cd67f9c20d.js:15
+warn @ 300aa4cd67f9c20d.js:15
+rw @ 300aa4cd67f9c20d.js:25
+await in rw
+(anonymous) @ 300aa4cd67f9c20d.js:25
+process @ 300aa4cd67f9c20d.js:23
+await in process
+start @ 300aa4cd67f9c20d.js:23
+r_ @ 300aa4cd67f9c20d.js:25
+(anonymous) @ 300aa4cd67f9c20d.js:25
+Promise.then
+rb @ 300aa4cd67f9c20d.js:25
+(anonymous) @ 300aa4cd67f9c20d.js:26
+module evaluation @ 300aa4cd67f9c20d.js:26
+q @ turbopack-aac90ee9018457f7.js:4
+B @ turbopack-aac90ee9018457f7.js:4
+m @ turbopack-aac90ee9018457f7.js:1
+module evaluation @ af1f5e3398c176fe.js:1
+q @ turbopack-aac90ee9018457f7.js:4
+B @ turbopack-aac90ee9018457f7.js:4
+m @ turbopack-aac90ee9018457f7.js:1
+module evaluation @ 2f76b60053f2ef20.js:1
+q @ turbopack-aac90ee9018457f7.js:4
+B @ turbopack-aac90ee9018457f7.js:4
+(anonymous) @ turbopack-aac90ee9018457f7.js:1
+f @ 91999646353bc8dc.js:1
+x @ 91999646353bc8dc.js:1
+N @ 91999646353bc8dc.js:1
+(anonymous) @ 91999646353bc8dc.js:1
+Promise.then
+(anonymous) @ 91999646353bc8dc.js:1
+t @ 91999646353bc8dc.js:1
+Promise.then
+el @ 91999646353bc8dc.js:1
+(anonymous) @ 91999646353bc8dc.js:1
+module evaluation @ 35a31b474fa7ed4a.js:1
+q @ turbopack-aac90ee9018457f7.js:4
+B @ turbopack-aac90ee9018457f7.js:4
+(anonymous) @ turbopack-aac90ee9018457f7.js:1
+(anonymous) @ 35a31b474fa7ed4a.js:1
+n @ 35a31b474fa7ed4a.js:1
+a @ 35a31b474fa7ed4a.js:1
+module evaluation @ 35a31b474fa7ed4a.js:1
+q @ turbopack-aac90ee9018457f7.js:4
+(anonymous) @ turbopack-aac90ee9018457f7.js:4
+registerChunk @ turbopack-aac90ee9018457f7.js:4
+await in registerChunk
+I @ turbopack-aac90ee9018457f7.js:4
+(anonymous) @ turbopack-aac90ee9018457f7.js:4
+(anonymous) @ turbopack-aac90ee9018457f7.js:4
