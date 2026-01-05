@@ -203,7 +203,7 @@ export default function LoginPage() {
 
                                                 placeholder="Email Address"
 
-                                                className="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 outline-none focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 font-semibold"
+                                                className="w-full !bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 outline-none focus:border-blue-500 transition-all !text-gray-900 placeholder-gray-500 font-semibold"
 
                                                 value={email}
 
@@ -225,7 +225,7 @@ export default function LoginPage() {
 
                                                 placeholder="Password"
 
-                                                className="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-12 py-3 outline-none focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 font-semibold"
+                                                className="w-full !bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-12 py-3 outline-none focus:border-blue-500 transition-all !text-gray-900 placeholder-gray-500 font-semibold"
 
                                                 value={password}
 

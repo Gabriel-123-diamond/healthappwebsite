@@ -121,7 +121,7 @@ export default function ProfileSetup() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6 font-sans">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6 font-sans !text-gray-900">
       <div className="max-w-2xl w-full bg-white rounded-[40px] shadow-xl p-8 sm:p-12">
         <div className="mb-10 text-center">
             <h1 className="text-3xl font-black text-gray-900 mb-2">Complete Your Profile</h1>
@@ -146,7 +146,7 @@ export default function ProfileSetup() {
                         type="text" 
                         placeholder="First Name" 
                         required
-                        className="w-1/2 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 font-semibold"
+                        className="w-1/2 !bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all !text-gray-900 placeholder-gray-500 font-semibold"
                         value={formData.firstName}
                         onChange={(e) => setFormData(prev => ({...prev, firstName: e.target.value}))}
                     />
@@ -154,7 +154,7 @@ export default function ProfileSetup() {
                         type="text" 
                         placeholder="Last Name" 
                         required
-                        className="w-1/2 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 font-semibold"
+                        className="w-1/2 !bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all !text-gray-900 placeholder-gray-500 font-semibold"
                         value={formData.lastName}
                         onChange={(e) => setFormData(prev => ({...prev, lastName: e.target.value}))}
                     />
@@ -167,7 +167,7 @@ export default function ProfileSetup() {
                         required
                         minLength={3}
                         className={cn(
-                            "w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all text-gray-900 placeholder-gray-500 font-semibold",
+                            "w-full !bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all !text-gray-900 placeholder-gray-500 font-semibold",
                             usernameStatus === "taken" && "border-red-500 focus:border-red-500",
                             usernameStatus === "available" && "border-green-500 focus:border-green-500"
                         )}
@@ -185,12 +185,12 @@ export default function ProfileSetup() {
                 <div className="flex gap-3">
                     <div className="relative w-1/3">
                       <select 
-                        className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all text-sm font-semibold appearance-none cursor-pointer text-gray-900"
+                        className="w-full !bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all text-sm font-semibold appearance-none cursor-pointer !text-gray-900"
                         value={formData.countryCode}
                         onChange={(e) => setFormData(prev => ({...prev, countryCode: e.target.value}))}
                       >
                         {countries.map(c => (
-                          <option key={c.name} value={c.code} className="text-gray-900">{c.code} {c.name}</option>
+                          <option key={c.name} value={c.code} className="!text-gray-900">{c.code} {c.name}</option>
                         ))}
                       </select>
                       {/* Custom dropdown arrow if needed, but appearance-none + css grid is simpler */}
@@ -202,7 +202,7 @@ export default function ProfileSetup() {
                         type="tel" 
                         placeholder="Phone Number" 
                         required
-                        className="flex-1 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all font-semibold text-gray-900 placeholder-gray-500"
+                        className="flex-1 !bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all font-semibold !text-gray-900 placeholder-gray-500"
                         value={formData.phone}
                         onChange={(e) => setFormData(prev => ({...prev, phone: e.target.value}))}
                     />
