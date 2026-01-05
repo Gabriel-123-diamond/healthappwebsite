@@ -1,11 +1,9 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { db, getDocWithRetry } from "@/lib/firebase";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { User, Stethoscope, Sprout, Building2, UserCircle, Globe, MapPin } from "lucide-react";
+import { doc, setDoc, serverTimestamp, collection, query, where, getDocs } from "firebase/firestore";
+import { User, Stethoscope, Sprout, Building2, UserCircle, Globe, MapPin, Check, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function ProfileSetup() {
@@ -14,6 +12,18 @@ export default function ProfileSetup() {
   const [isLoading, setIsLoading] = useState(false);
   const [locationData, setLocationData] = useState<{lat: number, lng: number} | null>(null);
   
+  // Username check state
+  const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
+  
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    username: "",
+    phone: "",
+    countryCode: "+234",
+    role: "user" 
+  });
+
   // Protect the route
   useEffect(() => {
     if (loading) return;
@@ -36,15 +46,32 @@ export default function ProfileSetup() {
     checkExisting();
   }, [user, loading, router]);
 
-  const [formData, setFormData] = useState({
-    fullName: "",
-    phone: "",
-    countryCode: "+234",
-    role: "user" 
-  });
+  // Username Availability Check
+  useEffect(() => {
+    const checkUsername = async () => {
+      if (formData.username.length < 3) {
+        setUsernameStatus("idle");
+        return;
+      }
+      setUsernameStatus("checking");
+      
+      try {
+        const q = query(collection(db, "users"), where("username", "==", formData.username));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+            setUsernameStatus("taken");
+        } else {
+            setUsernameStatus("available");
+        }
+      } catch (e) {
+        console.error("Username check error:", e);
+        setUsernameStatus("idle");
+      }
+    };
 
-  // Debug: Track updates
-  // useEffect(() => console.log("Form Data:", formData), [formData]);
+    const timeoutId = setTimeout(checkUsername, 500); // 500ms debounce
+    return () => clearTimeout(timeoutId);
+  }, [formData.username]);
 
   const countries = [
     { name: 'Nigeria', code: '+234', region: 'West Africa' },
@@ -84,8 +111,6 @@ export default function ProfileSetup() {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         });
-        // On web, geocoding usually requires an API key or a library. 
-        // We'll store the raw coords and the selected country region.
       },
       (error) => {
         console.error("Location error:", error);
@@ -97,13 +122,17 @@ export default function ProfileSetup() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+    if (usernameStatus === "taken" || usernameStatus === "checking") return;
 
     setIsLoading(true);
     try {
       const selectedCountry = countries.find(c => c.code === formData.countryCode);
       
       await setDoc(doc(db, "users", user.uid), {
-        fullName: formData.fullName,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        fullName: `${formData.firstName} ${formData.lastName}`, // Keep for backward compatibility
+        username: formData.username,
         phone: `${formData.countryCode} ${formData.phone}`,
         role: formData.role,
         email: user.email,
@@ -141,14 +170,47 @@ export default function ProfileSetup() {
                     <MapPin size={14} /> {locationData ? "Location Saved" : "Grant Location Permission"}
                   </button>
                 </label>
-                <input 
-                    type="text" 
-                    placeholder="Full Name" 
-                    required
-                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all"
-                    value={formData.fullName}
-                    onChange={(e) => setFormData(prev => ({...prev, fullName: e.target.value}))}
-                />
+                
+                <div className="flex gap-4">
+                    <input 
+                        type="text" 
+                        placeholder="First Name" 
+                        required
+                        className="w-1/2 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all"
+                        value={formData.firstName}
+                        onChange={(e) => setFormData(prev => ({...prev, firstName: e.target.value}))}
+                    />
+                    <input 
+                        type="text" 
+                        placeholder="Last Name" 
+                        required
+                        className="w-1/2 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all"
+                        value={formData.lastName}
+                        onChange={(e) => setFormData(prev => ({...prev, lastName: e.target.value}))}
+                    />
+                </div>
+
+                <div className="relative">
+                    <input 
+                        type="text" 
+                        placeholder="Username (unique)" 
+                        required
+                        minLength={3}
+                        className={cn(
+                            "w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 outline-none focus:border-blue-500 transition-all",
+                            usernameStatus === "taken" && "border-red-500 focus:border-red-500",
+                            usernameStatus === "available" && "border-green-500 focus:border-green-500"
+                        )}
+                        value={formData.username}
+                        onChange={(e) => setFormData(prev => ({...prev, username: e.target.value.toLowerCase().replace(/\s/g, '')}))}
+                    />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                        {usernameStatus === "checking" && <Loader2 className="animate-spin text-gray-400" size={18} />}
+                        {usernameStatus === "available" && <Check className="text-green-500" size={18} />}
+                        {usernameStatus === "taken" && <X className="text-red-500" size={18} />}
+                    </div>
+                </div>
+                {usernameStatus === "taken" && <p className="text-xs text-red-500 font-bold ml-2">Username is already taken!</p>}
                 
                 <div className="flex gap-2">
                     <select 
@@ -208,7 +270,7 @@ export default function ProfileSetup() {
 
             <button 
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || usernameStatus === "taken" || usernameStatus === "checking"}
                 className="w-full bg-gray-900 text-white font-bold py-4 rounded-2xl hover:bg-gray-800 transition-all shadow-lg active:scale-[0.98] disabled:bg-gray-400"
             >
                 {isLoading ? "Saving Profile..." : "Complete Setup"}
