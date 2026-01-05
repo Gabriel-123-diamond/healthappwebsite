@@ -92,10 +92,12 @@ if (typeof window !== "undefined") {
 
     
 
+import { DocumentSnapshot, QuerySnapshot, Query, DocumentReference } from "firebase/firestore";
+
 export { app, db, auth, storage, model, messaging };
 
 // Robust fetching helpers to handle App Check race conditions
-export async function getDocWithRetry(docRef: any, retries = 5): Promise<any> {
+export async function getDocWithRetry<T = any>(docRef: DocumentReference<T>, retries = 5): Promise<DocumentSnapshot<T>> {
     try {
         const { getDoc } = await import("firebase/firestore");
         return await getDoc(docRef);
@@ -109,7 +111,7 @@ export async function getDocWithRetry(docRef: any, retries = 5): Promise<any> {
     }
 }
 
-export async function getDocsWithRetry(q: any, retries = 5): Promise<any> {
+export async function getDocsWithRetry<T = any>(q: Query<T>, retries = 5): Promise<QuerySnapshot<T>> {
     try {
         const { getDocs } = await import("firebase/firestore");
         return await getDocs(q);
