@@ -9,36 +9,41 @@ service cloud.firestore {
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
       );
     }
+    
+    // Helper function to verify App Check token
+    function isVerifiedApp() {
+      return request.appContext != null;
+    }
 
     // --- Directory Collection ---
-    // Anyone can read (search/view directory)
+    // Anyone can read (search/view directory) - IF app is verified
     // Admins can write (add/edit/delete experts)
     match /directory/{document=**} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow read: if isVerifiedApp();
+      allow write: if isVerifiedApp() && isAdmin();
     }
 
     // --- Users Collection ---
     match /users/{userId} {
       // User can read/write their own profile
       // Admins can read all profiles (to list them) and write (to change roles)
-      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
-      allow write: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow read: if isVerifiedApp() && request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow write: if isVerifiedApp() && request.auth != null && (request.auth.uid == userId || isAdmin());
       
       // Subcollections (like search_history)
       match /{document=**} {
-        allow read, write: if request.auth != null && (request.auth.uid == userId || isAdmin());
+        allow read, write: if isVerifiedApp() && request.auth != null && (request.auth.uid == userId || isAdmin());
       }
     }
     
     // --- Safety Logs / Broadcasts ---
     match /safety_logs/{document=**} {
-      allow read, write: if isAdmin();
+      allow read, write: if isVerifiedApp() && isAdmin();
     }
     
     match /broadcasts/{document=**} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow read: if isVerifiedApp();
+      allow write: if isVerifiedApp() && isAdmin();
     }
   }
 }

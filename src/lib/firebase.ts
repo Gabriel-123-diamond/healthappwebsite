@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getFirestore, enableMultiTabIndexedDbPersistence } from "firebase/firestore";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getMessaging } from "firebase/messaging";
 import { getAI, getGenerativeModel, VertexAIBackend } from "firebase/ai";
@@ -22,6 +22,12 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 // Initialize App Check (Client-side only)
 if (typeof window !== "undefined") {
+    // Enable debug token in development mode
+    if (process.env.NODE_ENV === 'development') {
+        (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+        console.log("App Check Debug Token enabled. Check console for the token.");
+    }
+
     const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
     if (siteKey) {
         initializeAppCheck(app, {
@@ -31,13 +37,12 @@ if (typeof window !== "undefined") {
     }
 }
 
-const db = getFirestore(app);
-
-if (typeof window !== "undefined") {
-    enableMultiTabIndexedDbPersistence(db).catch((err) => {
-        console.warn("Persistence error:", err.code);
-    });
-}
+// Initialize Firestore with persistent cache settings (Fixes deprecation warning)
+const db = initializeFirestore(app, {
+    localCache: persistentLocalCache({
+        tabManager: persistentMultipleTabManager()
+    })
+});
 
 const auth = getAuth(app);
 
