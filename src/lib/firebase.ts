@@ -92,7 +92,7 @@ if (typeof window !== "undefined") {
 
     
 
-import { app, db, auth, storage, model, messaging };
+export { app, db, auth, storage, model, messaging };
 
 // Robust fetching helpers to handle App Check race conditions
 export async function getDocWithRetry(docRef: any, retries = 5): Promise<any> {
