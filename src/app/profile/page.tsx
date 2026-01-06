@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { db, getDocWithRetry } from "@/lib/firebase";
-import { doc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { getSearchHistory, getSavedResources, SearchHistoryItem, SavedResource } from "@/lib/user-service";
 import { AnimatePresence } from "framer-motion";
 
@@ -14,6 +14,7 @@ import { ProfileTabs } from "@/components/features/profile/ProfileTabs";
 import { OverviewTab } from "@/components/features/profile/OverviewTab";
 import { HistoryTab } from "@/components/features/profile/HistoryTab";
 import { SavedTab } from "@/components/features/profile/SavedTab";
+import { EditProfileModal } from "@/components/features/profile/EditProfileModal";
 
 export default function ProfilePage() {
   const { user, loading, logout, linkGoogle } = useAuth();
@@ -24,10 +25,9 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState<SavedResource[]>([]);
   
   const [activeTab, setActiveTab] = useState<"overview" | "history" | "saved">("overview");
-  const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState({ firstName: "", lastName: "", phone: "" });
-  const [isSaving, setIsSaving] = useState(false);
-  const [phoneStatus, setPhoneStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
+  
+  // Modal State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [linkingStatus, setLinkingStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const isGoogleLinked = !!user?.providerData.some((p: any) => p.providerId === "google.com");
@@ -41,21 +41,13 @@ export default function ProfilePage() {
 
     const fetchData = async () => {
       try {
-        // 1. Profile
         const docSnap = await getDocWithRetry(doc(db, "users", user.uid));
         if (docSnap.exists()) {
-          const data = docSnap.data();
-          setProfile(data);
-          setEditForm({
-            firstName: data.firstName || data.fullName?.split(" ")[0] || "",
-            lastName: data.lastName || data.fullName?.split(" ")[1] || "",
-            phone: data.phone || ""
-          });
+          setProfile(docSnap.data());
         } else {
           router.push("/profile-setup");
         }
 
-        // 2. History & Saved (Parallel)
         const [histData, savedData] = await Promise.all([
             getSearchHistory(user.uid),
             getSavedResources(user.uid)
@@ -71,57 +63,14 @@ export default function ProfilePage() {
     fetchData();
   }, [user, loading, router]);
 
-  // Phone Check Effect
-  useEffect(() => {
-    if (!isEditing || editForm.phone === profile?.phone) {
-        setPhoneStatus("idle");
-        return;
-    }
-
-    const checkPhone = async () => {
-      if (editForm.phone.length < 7) {
-        setPhoneStatus("idle");
-        return;
-      }
-      setPhoneStatus("checking");
-      
-      try {
-        const q = query(collection(db, "users"), where("phone", "==", editForm.phone));
-        const snap = await getDocs(q);
-        const isTaken = !snap.empty && snap.docs[0].id !== user?.uid;
-
-        if (isTaken) {
-            setPhoneStatus("taken");
-        } else {
-            setPhoneStatus("available");
-        }
-      } catch (e) {
-        console.error("Phone check error:", e);
-        setPhoneStatus("idle");
-      }
-    };
-
-    const timeoutId = setTimeout(checkPhone, 500);
-    return () => clearTimeout(timeoutId);
-  }, [editForm.phone, isEditing, profile, user]);
-
-  const handleSave = async () => {
+  const handleUpdatePhone = async (newPhone: string) => {
     if (!user) return;
-    if (phoneStatus === "taken" || phoneStatus === "checking") return;
-
-    setIsSaving(true);
     try {
-        // Only update phone
-        await updateDoc(doc(db, "users", user.uid), {
-            phone: editForm.phone
-        });
-        setProfile((prev: any) => ({ ...prev, phone: editForm.phone }));
-        setIsEditing(false);
-        setPhoneStatus("idle");
+        await updateDoc(doc(db, "users", user.uid), { phone: newPhone });
+        setProfile((prev: any) => ({ ...prev, phone: newPhone }));
     } catch (e) {
-        console.error("Failed to update profile", e);
-    } finally {
-        setIsSaving(false);
+        console.error("Failed to update phone", e);
+        throw e; // Re-throw so modal knows it failed
     }
   };
 
@@ -154,13 +103,7 @@ export default function ProfilePage() {
       <ProfileHeader 
         user={user} 
         profile={profile} 
-        isEditing={isEditing} 
-        setIsEditing={setIsEditing} 
-        editForm={editForm} 
-        setEditForm={setEditForm} 
-        handleSave={handleSave} 
-        isSaving={isSaving} 
-        phoneStatus={phoneStatus} 
+        onEditClick={() => setIsEditModalOpen(true)}
       />
 
       <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -183,6 +126,14 @@ export default function ProfilePage() {
             {activeTab === "saved" && <SavedTab saved={saved} />}
         </AnimatePresence>
       </div>
+
+      <EditProfileModal 
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        currentPhone={profile.phone}
+        onSave={handleUpdatePhone}
+        userId={user.uid}
+      />
     </div>
   );
 }
