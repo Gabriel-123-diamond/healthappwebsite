@@ -33,27 +33,27 @@ export function ProfileHeader({
       </div>
 
       <div className="max-w-5xl mx-auto px-6 pb-6">
-        <div className="flex flex-col md:flex-row items-start md:items-end gap-6 -mt-12">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-8 -mt-12">
           {/* Avatar */}
-          <div className="relative">
-            <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-full p-1.5 shadow-xl">
+          <div className="relative shrink-0">
+            <div className="w-24 h-24 md:w-36 md:h-36 bg-white rounded-full p-1.5 shadow-xl">
               {user?.photoURL ? (
                 <img src={user.photoURL} alt="Profile" className="w-full h-full rounded-full object-cover bg-gray-100" />
               ) : (
                 <div className="w-full h-full bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
-                  <User size={40} />
+                  <User size={48} />
                 </div>
               )}
             </div>
             {profile.role === "doctor" && (
-              <div className="absolute bottom-1 right-1 bg-blue-600 text-white p-1.5 rounded-full border-4 border-white shadow-sm" title="Verified Doctor">
-                <Shield size={16} fill="currentColor" />
+              <div className="absolute bottom-2 right-2 bg-blue-600 text-white p-1.5 rounded-full border-4 border-white shadow-sm" title="Verified Doctor">
+                <Shield size={18} fill="currentColor" />
               </div>
             )}
           </div>
 
           {/* Info */}
-          <div className="flex-1 w-full">
+          <div className="flex-1 w-full md:pt-14">
             <div className="flex justify-between items-start">
               <div>
                 {isEditing ? (

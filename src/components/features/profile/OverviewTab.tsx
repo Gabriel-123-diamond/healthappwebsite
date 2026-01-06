@@ -33,13 +33,13 @@ export function OverviewTab({
           <Activity size={18} className="text-blue-500" /> Health Stats
         </h3>
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-blue-50 p-4 rounded-2xl">
-            <span className="text-2xl font-black text-blue-600 block">{historyCount}</span>
-            <span className="text-xs font-bold text-blue-400 uppercase">Searches</span>
+          <div className="bg-blue-50 p-6 rounded-2xl">
+            <span className="text-3xl font-black text-blue-600 block">{historyCount}</span>
+            <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">Searches</span>
           </div>
-          <div className="bg-purple-50 p-4 rounded-2xl">
-            <span className="text-2xl font-black text-purple-600 block">{savedCount}</span>
-            <span className="text-xs font-bold text-purple-400 uppercase">Saved</span>
+          <div className="bg-purple-50 p-6 rounded-2xl">
+            <span className="text-3xl font-black text-purple-600 block">{savedCount}</span>
+            <span className="text-xs font-bold text-purple-400 uppercase tracking-wider">Saved</span>
           </div>
         </div>
       </div>
