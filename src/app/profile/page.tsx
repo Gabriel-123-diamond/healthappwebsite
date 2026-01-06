@@ -30,7 +30,7 @@ export default function ProfilePage() {
   const [phoneStatus, setPhoneStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
   const [linkingStatus, setLinkingStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
-  const isGoogleLinked = user?.providerData.some((p: any) => p.providerId === "google.com");
+  const isGoogleLinked = !!user?.providerData.some((p: any) => p.providerId === "google.com");
 
   useEffect(() => {
     if (loading) return;
