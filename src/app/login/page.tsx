@@ -59,7 +59,17 @@ export default function LoginPage() {
     } catch (err: any) {
       console.error(err);
       if (err.code === 'auth/account-exists-with-different-credential') {
-        setError("You already have an account with this email using a password. Please log in with your email/password, then connect Google in your Profile settings.");
+        const credential = GoogleAuthProvider.credentialFromError(err);
+        const email = err.customData?.email;
+        if (credential && email) {
+            setPendingCredential(credential);
+            setEmail(email);
+            setIsEmailMode(true);
+            setIsSignUp(false);
+            setError("You already have an account with this email using a password. Please enter your password to link your Google account.");
+        } else {
+            setError("Account exists with different credentials. Please sign in with email.");
+        }
       } else {
         setError("Google Sign-In failed. Please try again.");
       }
@@ -69,28 +79,22 @@ export default function LoginPage() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-
     e.preventDefault();
-
     setError(null);
-
     setIsSubmitting(true);
 
-        try {
-
-          if (isSignUp) {
-
-            await signUpWithEmail(email, password);
-            // Effect will handle redirect
-
-          } else {
-
-            await signInWithEmail(email, password);
-            // Effect will handle redirect
-
-          }
-
-        } catch (err: any) {
+    try {
+      if (pendingCredential) {
+        // Linking Flow
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        await linkWithCredential(userCredential.user, pendingCredential);
+        // Auth state change handles redirect
+      } else if (isSignUp) {
+        await signUpWithEmail(email, password);
+      } else {
+        await signInWithEmail(email, password);
+      }
+    } catch (err: any) {
       console.error(err);
       if (err.code === 'auth/email-already-in-use') {
         setError("This email is already in use. If you signed up with Google, please continue with Google.");
@@ -100,11 +104,8 @@ export default function LoginPage() {
         setError(err.message.replace("Firebase: ", ""));
       }
     } finally {
-
       setIsSubmitting(false);
-
     }
-
   };
 
 
