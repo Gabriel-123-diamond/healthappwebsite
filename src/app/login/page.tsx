@@ -19,6 +19,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { GoogleAuthProvider, linkWithCredential, signInWithEmailAndPassword, AuthCredential } from "firebase/auth";
 
 export default function LoginPage() {
+  console.log("Login Page Logic Loaded");
 
   const { user, signInWithGoogle, signInWithEmail, signUpWithEmail, loading } = useAuth();
 
