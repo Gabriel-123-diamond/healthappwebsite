@@ -59,17 +59,7 @@ export default function LoginPage() {
     } catch (err: any) {
       console.error(err);
       if (err.code === 'auth/account-exists-with-different-credential') {
-        const credential = GoogleAuthProvider.credentialFromError(err);
-        const email = err.customData?.email;
-        if (credential && email) {
-            setPendingCredential(credential);
-            setEmail(email);
-            setIsEmailMode(true);
-            setIsSignUp(false);
-            setError("You have an account with this email using a password. Please enter your password to link your Google account.");
-        } else {
-            setError("Account exists with different credentials. Please sign in with email.");
-        }
+        setError("You already have an account with this email using a password. Please log in with your email/password, then connect Google in your Profile settings.");
       } else {
         setError("Google Sign-In failed. Please try again.");
       }
@@ -87,12 +77,8 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
         try {
-          if (pendingCredential) {
-            // Linking Flow
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            await linkWithCredential(userCredential.user, pendingCredential);
-            // Auth state change handles redirect
-          } else if (isSignUp) {
+
+          if (isSignUp) {
 
             await signUpWithEmail(email, password);
             // Effect will handle redirect
