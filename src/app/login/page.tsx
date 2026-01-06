@@ -259,7 +259,10 @@ export default function LoginPage() {
                                 disabled={isSubmitting}
                                 className="w-full bg-gray-900 text-white py-4 rounded-2xl font-bold hover:bg-gray-800 transition-all shadow-lg active:scale-[0.98] disabled:bg-gray-400"
                             >
-                                {isSubmitting ? "Processing..." : (isSignUp ? "Create Account" : "Sign In")}
+                                {isSubmitting 
+                                    ? "Processing..." 
+                                    : (pendingCredential ? "Link & Sign In" : (isSignUp ? "Create Account" : "Sign In"))
+                                }
                             </button>
                             
                             <button 
