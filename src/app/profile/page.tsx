@@ -132,7 +132,7 @@ export default function ProfilePage() {
         onClose={() => setIsEditModalOpen(false)}
         currentPhone={profile.phone}
         onSave={handleUpdatePhone}
-        userId={user.uid}
+        userId={user?.uid || ""}
       />
     </div>
   );
