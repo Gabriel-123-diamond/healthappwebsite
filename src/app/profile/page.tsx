@@ -124,8 +124,48 @@ export default function ProfilePage() {
     }
   };
 
-  // ... (render logic)
+  if (loading || !profile) {
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="flex flex-col items-center gap-4">
+                <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-gray-400 font-bold animate-pulse">Loading Profile...</p>
+            </div>
+        </div>
+    );
+  }
 
+  return (
+    <div className="min-h-screen bg-gray-50 pb-20 md:pb-0">
+      {/* Header Banner */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="h-32 bg-gradient-to-r from-blue-600 to-cyan-500 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+        </div>
+        
+        <div className="max-w-5xl mx-auto px-6 pb-6">
+            <div className="flex flex-col md:flex-row items-start md:items-end gap-6 -mt-12">
+                {/* Avatar */}
+                <div className="relative">
+                    <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-full p-1.5 shadow-xl">
+                        {user?.photoURL ? (
+                            <img src={user.photoURL} alt="Profile" className="w-full h-full rounded-full object-cover bg-gray-100" />
+                        ) : (
+                            <div className="w-full h-full bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+                                <User size={40} />
+                            </div>
+                        )}
+                    </div>
+                    {profile.role === "doctor" && (
+                        <div className="absolute bottom-1 right-1 bg-blue-600 text-white p-1.5 rounded-full border-4 border-white shadow-sm" title="Verified Doctor">
+                            <Shield size={16} fill="currentColor" />
+                        </div>
+                    )}
+                </div>
+
+                {/* Info */}
+                <div className="flex-1 w-full">
+                    <div className="flex justify-between items-start">
                         <div>
                             {isEditing ? (
                                 <div className="flex gap-2 mb-2">
