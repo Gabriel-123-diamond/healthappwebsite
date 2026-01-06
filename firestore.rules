@@ -29,12 +29,12 @@ service cloud.firestore {
       // Admins can read all profiles (to list them) and write (to change roles)
       // ALLOW READ for all auth users (needed for username uniqueness check)
       allow read: if request.auth != null;
-      allow write: if isVerifiedApp() && request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow write: if request.auth != null && (request.auth.uid == userId || isAdmin());
       
       // Subcollections (like search_history)
       match /{document=**} {
         allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
-        allow write: if isVerifiedApp() && request.auth != null && (request.auth.uid == userId || isAdmin());
+        allow write: if request.auth != null && (request.auth.uid == userId || isAdmin());
       }
     }
     
