@@ -51,6 +51,7 @@ export default function LoginPage() {
 
   const handleGoogleSignIn = async () => {
     setError(null);
+    setIsSubmitting(true);
     try {
       await signInWithGoogle();
     } catch (err: any) {
@@ -60,6 +61,8 @@ export default function LoginPage() {
       } else {
         setError("Google Sign-In failed. Please try again.");
       }
+    } finally {
+        setIsSubmitting(false);
     }
   };
 
@@ -316,21 +319,24 @@ export default function LoginPage() {
 
                         onClick={handleGoogleSignIn}
 
-                        className="w-full flex items-center justify-center gap-4 bg-white border-2 border-gray-100 text-gray-700 py-4 rounded-2xl font-bold hover:border-blue-200 hover:bg-blue-50/30 transition-all hover:shadow-lg active:scale-[0.98]"
+                        disabled={isSubmitting}
+
+                        className="w-full flex items-center justify-center gap-4 bg-white border-2 border-gray-100 text-gray-700 py-4 rounded-2xl font-bold hover:border-blue-200 hover:bg-blue-50/30 transition-all hover:shadow-lg active:scale-[0.98] disabled:bg-gray-50 disabled:text-gray-400"
 
                     >
 
-                        <img 
-
-                            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
-
-                            alt="Google" 
-
-                            className="w-6 h-6" 
-
-                        />
-
-                        Continue with Google
+                        {isSubmitting ? (
+                            "Connecting..." 
+                        ) : (
+                            <>
+                                <img 
+                                    src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
+                                    alt="Google" 
+                                    className="w-6 h-6" 
+                                />
+                                Continue with Google
+                            </>
+                        )}
 
                     </button>
 
