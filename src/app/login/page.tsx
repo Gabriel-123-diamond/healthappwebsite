@@ -72,11 +72,12 @@ export default function LoginPage() {
           }
 
         } catch (err: any) {
-
-    
-
-      setError(err.message.replace("Firebase: ", ""));
-
+      console.error(err);
+      if (err.code === 'auth/account-exists-with-different-credential' || err.code === 'auth/email-already-in-use') {
+        setError("You already have an account with this email. Please sign in with Google.");
+      } else {
+        setError(err.message.replace("Firebase: ", ""));
+      }
     } finally {
 
       setIsSubmitting(false);

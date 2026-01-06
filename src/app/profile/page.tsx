@@ -8,14 +8,14 @@ import { doc, updateDoc, collection, query, where, getDocs } from "firebase/fire
 import { 
   User, MapPin, Phone, Shield, Calendar, Edit2, Save, X, 
   History, Bookmark, Settings, ChevronRight, Activity, Search,
-  Loader2, Check
+  Loader2, Check, LogOut
 } from "lucide-react";
 import { getSearchHistory, getSavedResources, SearchHistoryItem, SavedResource } from "@/lib/user-service";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export default function ProfilePage() {
-  const { user, loading, logout } = useAuth();
+  const { user, loading, logout, linkGoogle } = useAuth();
   const router = useRouter();
   
   const [profile, setProfile] = useState<any>(null);
@@ -27,6 +27,22 @@ export default function ProfilePage() {
   const [editForm, setEditForm] = useState({ firstName: "", lastName: "", phone: "" });
   const [isSaving, setIsSaving] = useState(false);
   const [phoneStatus, setPhoneStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
+  
+  const [linkingStatus, setLinkingStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const isGoogleLinked = user?.providerData.some((p: any) => p.providerId === "google.com");
+
+  const handleGoogleLink = async () => {
+    setLinkingStatus("loading");
+    try {
+        await linkGoogle();
+        setLinkingStatus("success");
+        setTimeout(() => setLinkingStatus("idle"), 3000);
+    } catch (e) {
+        console.error("Link failed", e);
+        setLinkingStatus("error");
+        setTimeout(() => setLinkingStatus("idle"), 3000);
+    }
+  };
 
   useEffect(() => {
     if (loading) return;
@@ -306,15 +322,43 @@ export default function ProfilePage() {
                         </div>
                     </div>
 
-                    <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-                        <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                            <Settings size={18} className="text-gray-400" /> Account
-                        </h3>
+                    <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-6">
+                        <div>
+                            <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <Settings size={18} className="text-gray-400" /> Account Settings
+                            </h3>
+                            
+                            {/* Linked Accounts */}
+                            <div className="mb-6">
+                                <p className="text-xs font-bold text-gray-400 uppercase mb-3">Linked Accounts</p>
+                                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
+                                    <div className="flex items-center gap-3">
+                                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
+                                        <span className="font-semibold text-gray-700">Google</span>
+                                    </div>
+                                    {isGoogleLinked ? (
+                                        <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-lg flex items-center gap-1">
+                                            <Check size={12} /> Connected
+                                        </span>
+                                    ) : (
+                                        <button 
+                                            onClick={handleGoogleLink}
+                                            disabled={linkingStatus === "loading"}
+                                            className="text-xs font-bold text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors"
+                                        >
+                                            {linkingStatus === "loading" ? "Connecting..." : "Connect"}
+                                        </button>
+                                    )}
+                                </div>
+                                {linkingStatus === "error" && <p className="text-xs text-red-500 mt-2">Failed to connect Google. Try again.</p>}
+                            </div>
+                        </div>
+
                         <button 
                             onClick={logout}
                             className="w-full py-3 bg-red-50 text-red-600 font-bold rounded-xl hover:bg-red-100 transition-colors text-sm flex items-center justify-center gap-2"
                         >
-                            Log Out
+                            <LogOut size={16} /> Log Out
                         </button>
                     </div>
                 </motion.div>
