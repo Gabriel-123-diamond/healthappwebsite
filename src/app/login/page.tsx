@@ -14,8 +14,9 @@ import Link from "next/link";
 
 
 
-import { db } from "@/lib/firebase";
+import { db, auth } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { GoogleAuthProvider, linkWithCredential, signInWithEmailAndPassword, AuthCredential } from "firebase/auth";
 
 export default function LoginPage() {
 
@@ -38,6 +39,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pendingCredential, setPendingCredential] = useState<AuthCredential | null>(null);
 
 
 
@@ -57,7 +59,17 @@ export default function LoginPage() {
     } catch (err: any) {
       console.error(err);
       if (err.code === 'auth/account-exists-with-different-credential') {
-        setError("You have already signed up with this email using a password. Please log in with your email and password.");
+        const credential = GoogleAuthProvider.credentialFromError(err);
+        const email = err.customData?.email;
+        if (credential && email) {
+            setPendingCredential(credential);
+            setEmail(email);
+            setIsEmailMode(true);
+            setIsSignUp(false);
+            setError("You have an account with this email using a password. Please enter your password to link your Google account.");
+        } else {
+            setError("Account exists with different credentials. Please sign in with email.");
+        }
       } else {
         setError("Google Sign-In failed. Please try again.");
       }
@@ -75,8 +87,12 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
         try {
-
-          if (isSignUp) {
+          if (pendingCredential) {
+            // Linking Flow
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            await linkWithCredential(userCredential.user, pendingCredential);
+            // Auth state change handles redirect
+          } else if (isSignUp) {
 
             await signUpWithEmail(email, password);
             // Effect will handle redirect
