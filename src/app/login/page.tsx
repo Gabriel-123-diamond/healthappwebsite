@@ -161,204 +161,125 @@ export default function LoginPage() {
 
 
 
-        <div className="relative z-10 flex flex-col items-center">
-
+        <div className="relative z-10 flex flex-col items-center w-full">
             <div className="mb-8 relative">
-
                 <motion.div 
-
                     initial={{ rotate: -10 }}
-
                     animate={{ rotate: 0 }}
-
                     className="p-6 bg-gradient-to-br from-blue-600 to-blue-400 text-white rounded-[2rem] shadow-xl shadow-blue-200"
-
                 >
-
                     <ShieldAlert size={40} />
-
                 </motion.div>
-
                 <div className="absolute -top-2 -right-2 p-2 bg-yellow-400 text-white rounded-full shadow-lg border-4 border-white">
-
                     <Sparkles size={14} />
-
                 </div>
-
             </div>
 
-
-
-            <div className="space-y-3 mb-8">
-
+            <div className="space-y-3 mb-8 text-center">
                 <h1 className="text-3xl font-black text-gray-900 tracking-tight">
-
                     {isEmailMode ? (isSignUp ? "Create Account" : "Welcome Back") : "Personalize Your Health"}
-
                 </h1>
-
                 <p className="text-gray-500 font-medium leading-relaxed">
-
                     {isEmailMode 
-
                         ? "Enter your details below." 
-
                         : "Sign in to save helpful resources, track your history, and access verified medical experts."}
-
                 </p>
-
             </div>
 
+            <div className="w-full space-y-6">
+                {/* Always Show Google Button */}
+                <button
+                    onClick={handleGoogleSignIn}
+                    disabled={isSubmitting}
+                    className="w-full flex items-center justify-center gap-4 bg-white border-2 border-gray-100 text-gray-700 py-4 rounded-2xl font-bold hover:border-blue-200 hover:bg-blue-50/30 transition-all hover:shadow-lg active:scale-[0.98] disabled:bg-gray-50 disabled:text-gray-400"
+                >
+                    {isSubmitting ? (
+                        "Connecting..." 
+                    ) : (
+                        <>
+                            <img 
+                                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
+                                alt="Google" 
+                                className="w-6 h-6" 
+                            />
+                            Continue with Google
+                        </>
+                    )}
+                </button>
 
+                {isEmailMode ? (
+                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
+                        {/* OR Divider */}
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-100"></div>
+                            </div>
+                            <div className="relative flex justify-center text-xs uppercase">
+                                <span className="bg-white px-4 text-gray-400 font-bold tracking-widest">Or with email</span>
+                            </div>
+                        </div>
 
-            {isEmailMode ? (
-
-                <form onSubmit={handleSubmit} className="w-full space-y-4 animate-in fade-in slide-in-from-right-8">
-
-                                        <div className="relative">
-
-                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-
-                                            <input 
-
-                                                type="email" 
-
-                                                placeholder="Email Address"
-
-                                                className="w-full !bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 outline-none focus:border-blue-500 transition-all !text-gray-900 placeholder-gray-500 font-semibold"
-
-                                                value={email}
-
-                                                onChange={(e) => setEmail(e.target.value)}
-
-                                                required
-
-                                            />
-
-                                        </div>
-
-                                        <div className="relative">
-
-                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-
-                                            <input 
-
-                                                type={showPassword ? "text" : "password"}
-
-                                                placeholder="Password"
-
-                                                className="w-full !bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-12 py-3 outline-none focus:border-blue-500 transition-all !text-gray-900 placeholder-gray-500 font-semibold"
-
-                                                value={password}
-
-                                                onChange={(e) => setPassword(e.target.value)}
-
-                                                required
-
-                                                minLength={6}
-
-                                            />
-
-                                            <button
-
-                                                type="button"
-
-                                                onClick={() => setShowPassword(!showPassword)}
-
-                                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-
-                                            >
-
-                                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-
-                                            </button>
-
-                                        </div>
-
-                    
-
-                    {error && <p className="text-red-500 text-xs font-bold bg-red-50 p-2 rounded-lg">{error}</p>}
-
-
-
-                    <button
-
-                        type="submit"
-
-                        disabled={isSubmitting}
-
-                        className="w-full bg-gray-900 text-white py-4 rounded-2xl font-bold hover:bg-gray-800 transition-all shadow-lg active:scale-[0.98] disabled:bg-gray-400"
-
-                    >
-
-                        {isSubmitting ? "Processing..." : (isSignUp ? "Sign Up" : "Sign In")}
-
-                    </button>
-
-                    
-
-                    <button 
-
-                        type="button"
-
-                        onClick={() => setIsEmailMode(false)}
-
-                        className="text-sm text-gray-400 hover:text-gray-600 underline"
-
-                    >
-
-                        Cancel
-
-                    </button>
-
-                </form>
-
-            ) : (
-
-                <div className="w-full space-y-4">
-
-                    <button
-
-                        onClick={handleGoogleSignIn}
-
-                        disabled={isSubmitting}
-
-                        className="w-full flex items-center justify-center gap-4 bg-white border-2 border-gray-100 text-gray-700 py-4 rounded-2xl font-bold hover:border-blue-200 hover:bg-blue-50/30 transition-all hover:shadow-lg active:scale-[0.98] disabled:bg-gray-50 disabled:text-gray-400"
-
-                    >
-
-                        {isSubmitting ? (
-                            "Connecting..." 
-                        ) : (
-                            <>
-                                <img 
-                                    src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
-                                    alt="Google" 
-                                    className="w-6 h-6" 
+                        <form onSubmit={handleSubmit} className="w-full space-y-4">
+                            <div className="relative">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                                <input 
+                                    type="email" 
+                                    placeholder="Email Address"
+                                    className="w-full !bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 outline-none focus:border-blue-500 transition-all !text-gray-900 placeholder-gray-500 font-semibold"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
                                 />
-                                Continue with Google
-                            </>
-                        )}
+                            </div>
+                            <div className="relative">
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                                <input 
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Password"
+                                    className="w-full !bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-12 py-3 outline-none focus:border-blue-500 transition-all !text-gray-900 placeholder-gray-500 font-semibold"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    minLength={6}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                                >
+                                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                </button>
+                            </div>
+                            
+                            {error && <p className="text-red-500 text-xs font-bold bg-red-50 p-2 rounded-lg">{error}</p>}
 
-                    </button>
-
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="w-full bg-gray-900 text-white py-4 rounded-2xl font-bold hover:bg-gray-800 transition-all shadow-lg active:scale-[0.98] disabled:bg-gray-400"
+                            >
+                                {isSubmitting ? "Processing..." : (isSignUp ? "Create Account" : "Sign In")}
+                            </button>
+                            
+                            <button 
+                                type="button"
+                                onClick={() => setIsEmailMode(false)}
+                                className="w-full text-sm text-gray-400 hover:text-gray-600 underline font-medium"
+                            >
+                                Back to options
+                            </button>
+                        </form>
+                    </div>
+                ) : (
                     <button
-
                         onClick={() => setIsEmailMode(true)}
-
                         className="w-full flex items-center justify-center gap-4 bg-gray-50 text-gray-700 py-4 rounded-2xl font-bold hover:bg-gray-100 transition-all active:scale-[0.98]"
-
                     >
-
                         <Mail size={20} />
-
                         Sign in with Email
-
                     </button>
-
-                </div>
-
-            )}
+                )}
+            </div>
 
 
 
