@@ -49,6 +49,20 @@ export default function LoginPage() {
 
 
 
+  const handleGoogleSignIn = async () => {
+    setError(null);
+    try {
+      await signInWithGoogle();
+    } catch (err: any) {
+      console.error(err);
+      if (err.code === 'auth/account-exists-with-different-credential') {
+        setError("You have already signed up with this email using a password. Please log in with your email and password.");
+      } else {
+        setError("Google Sign-In failed. Please try again.");
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
 
     e.preventDefault();
@@ -73,8 +87,10 @@ export default function LoginPage() {
 
         } catch (err: any) {
       console.error(err);
-      if (err.code === 'auth/account-exists-with-different-credential' || err.code === 'auth/email-already-in-use') {
-        setError("You already have an account with this email. Please sign in with Google.");
+      if (err.code === 'auth/email-already-in-use') {
+        setError("This email is already in use. If you signed up with Google, please continue with Google.");
+      } else if (err.code === 'auth/account-exists-with-different-credential') {
+        setError("An account already exists with this email. Please sign in.");
       } else {
         setError(err.message.replace("Firebase: ", ""));
       }
@@ -298,7 +314,7 @@ export default function LoginPage() {
 
                     <button
 
-                        onClick={signInWithGoogle}
+                        onClick={handleGoogleSignIn}
 
                         className="w-full flex items-center justify-center gap-4 bg-white border-2 border-gray-100 text-gray-700 py-4 rounded-2xl font-bold hover:border-blue-200 hover:bg-blue-50/30 transition-all hover:shadow-lg active:scale-[0.98]"
 
