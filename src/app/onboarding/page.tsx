@@ -110,9 +110,13 @@ export default function OnboardingPage() {
   useEffect(() => {
     const savedData = localStorage.getItem('onboarding_data');
     if (savedData) {
-      const parsed = JSON.parse(savedData);
-      setFormData(parsed.formData);
-      setStep(parsed.step);
+      try {
+        const parsed = JSON.parse(savedData);
+        setFormData(parsed.formData);
+        setStep(parsed.step);
+      } catch (e) {
+        console.error("Error parsing saved onboarding data", e);
+      }
     }
   }, []);
 
@@ -126,13 +130,23 @@ export default function OnboardingPage() {
       alert("Geolocation is not supported by your browser");
       return;
     }
-    // Show user feedback that we are requesting
+    
     const confirmLocation = confirm("We would like to access your location to find nearby experts. Allow?");
     if (!confirmLocation) return;
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-// ...
+        setLocationData({ lat: position.coords.latitude, lng: position.coords.longitude });
+        // Mock reverse geocoding
+        setFormData(prev => ({ ...prev, city: 'San Francisco', country: 'United States' }));
+        alert("Location saved!");
+      },
+      (error) => {
+        console.error(error);
+        alert("Permission denied or location unavailable.");
+      }
+    );
+  };
 
   const handleNext = async () => {
     if (step === 1) {
@@ -144,6 +158,8 @@ export default function OnboardingPage() {
       setIsLoading(true);
       if (auth.currentUser) {
         await updateProfile(auth.currentUser, { displayName: `${formData.firstName} ${formData.lastName}` });
+        // Clear saved onboarding data
+        localStorage.removeItem('onboarding_data');
         await new Promise(r => setTimeout(r, 1000));
         router.push('/');
       }

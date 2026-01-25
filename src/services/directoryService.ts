@@ -104,6 +104,23 @@ export const getExpertsNearby = async (center: [number, number], radiusInM: numb
   return matchingDocs;
 };
 
+export const getExperts = async (type: string = 'all'): Promise<Expert[]> => {
+  try {
+    const expertsRef = collection(db, EXPERTS_COLLECTION);
+    let q = query(expertsRef);
+    
+    if (type !== 'all') {
+      q = query(expertsRef, where('type', '==', type));
+    }
+    
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Expert));
+  } catch (error) {
+    console.error("Error fetching experts:", error);
+    return [];
+  }
+};
+
 export const getExpertById = async (id: string): Promise<Expert | undefined> => {
   try {
     const docRef = doc(db, EXPERTS_COLLECTION, id);
