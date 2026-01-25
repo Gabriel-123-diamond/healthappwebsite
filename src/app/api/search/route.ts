@@ -49,7 +49,8 @@ export async function POST(req: NextRequest) {
     `;
 
     const result = await model.generateContent(prompt);
-    const aiText = result.response.text();
+    const response = await result.response;
+    const aiText = response.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
     // 4. Fetch Evidence (Real links)
     const evidence = await fetchEvidence(query);
