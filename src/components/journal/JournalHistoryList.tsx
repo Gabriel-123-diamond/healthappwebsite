@@ -51,7 +51,7 @@ export default function JournalHistoryList({ entries }: JournalHistoryListProps)
             </div>
 
             <button 
-              onClick={() => handleDelete(entry.id)}
+              onClick={() => entry.id && handleDelete(entry.id)}
               className="p-2 text-slate-300 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50 opacity-0 group-hover:opacity-100"
               title="Delete entry"
             >

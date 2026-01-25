@@ -87,9 +87,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching }) 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="prose prose-slate max-w-none dark:prose-invert"
+              className="prose prose-slate max-w-none dark:prose-invert text-slate-700 dark:text-slate-300 leading-relaxed"
             >
-              <ReactMarkdown className="text-slate-700 dark:text-slate-300 leading-relaxed">
+              <ReactMarkdown>
                 {response.answer}
               </ReactMarkdown>
             </motion.div>

@@ -10,7 +10,18 @@ interface JournalTrendsChartProps {
 }
 
 export default function JournalTrendsChart({ entries }: JournalTrendsChartProps) {
-// ... existing logic ...
+  if (entries.length === 0) {
+    return (
+      <div className="bg-white dark:bg-slate-800 p-12 rounded-2xl text-center border border-dashed border-slate-300 dark:border-slate-700">
+        <p className="text-slate-500">Not enough data to show trends. Add more entries!</p>
+      </div>
+    );
+  }
+
+  // Sort by date (oldest to newest for the chart) and take last 7
+  const recentEntries = [...entries]
+    .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime())
+    .slice(-7);
 
   const averageSeverity = (entries.reduce((acc, curr) => acc + curr.severity, 0) / entries.length).toFixed(1);
 

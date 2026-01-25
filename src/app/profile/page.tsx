@@ -160,7 +160,7 @@ export default function ProfilePage() {
                         <input 
                           type="tel" 
                           value={editFormData.phone}
-                          onChange={(e) => setFormData({...editFormData, phone: e.target.value})}
+                          onChange={(e) => setEditFormData({...editFormData, phone: e.target.value})}
                           className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-50 border border-transparent focus:bg-white focus:border-blue-500 outline-none transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400"
                           placeholder="+234 ..."
                         />
