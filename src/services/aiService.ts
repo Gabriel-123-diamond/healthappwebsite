@@ -6,6 +6,7 @@ export interface SearchResult {
   summary: string;
   source: string;
   type: 'medical' | 'herbal';
+  format: 'article' | 'video';
   link?: string;
   evidenceGrade?: 'A' | 'B' | 'C' | 'D'; // A: High, B: Moderate, C: Limited/Traditional, D: Insufficient
 }
@@ -74,15 +75,19 @@ export const searchHealthTopic = async (query: string, mode: 'medical' | 'herbal
 
     return {
       answer: data.answer,
-      results: data.evidence.map((item: any, index: number) => ({
-        id: `e-${index}`,
-        title: item.title,
-        summary: item.snippet,
-        source: new URL(item.link).hostname,
-        type: mode === 'both' ? 'medical' : mode,
-        link: item.link,
-        evidenceGrade: 'B' // Default grade for API results
-      })),
+      results: data.evidence.map((item: any, index: number) => {
+        const isVideo = item.link.includes('youtube.com') || item.link.includes('vimeo.com');
+        return {
+          id: `e-${index}`,
+          title: item.title,
+          summary: item.snippet,
+          source: new URL(item.link).hostname,
+          type: mode === 'both' ? 'medical' : mode,
+          format: isVideo ? 'video' : 'article',
+          link: item.link,
+          evidenceGrade: 'B' // Default grade for API results
+        };
+      }),
       disclaimer: data.disclaimer,
       confidenceScore: 88,
       explanation: "Calculated based on primary source analysis.",
@@ -100,15 +105,15 @@ const MOCK_KNOWLEDGE_BASE: Record<string, any> = {
     medical: {
       answer: "Medically, headaches can be caused by tension, dehydration, or migraines. Common treatments include over-the-counter analgesics like acetaminophen or ibuprofen. Hydration and rest are also recommended.",
       results: [
-        { id: 'm1', title: 'Tension Headache Overview', summary: 'Causes and treatments for common tension headaches.', source: 'Mayo Clinic', type: 'medical', evidenceGrade: 'A' },
-        { id: 'm2', title: 'Migraine Triggers', summary: 'Understanding what triggers migraines and how to manage them.', source: 'WebMD', type: 'medical', evidenceGrade: 'B' }
+        { id: 'm1', title: 'Tension Headache Overview', summary: 'Causes and treatments for common tension headaches.', source: 'Mayo Clinic', type: 'medical', format: 'article', evidenceGrade: 'A' },
+        { id: 'm2', title: 'Migraine Triggers', summary: 'Understanding what triggers migraines and how to manage them.', source: 'WebMD', type: 'medical', format: 'article', evidenceGrade: 'B' }
       ]
     },
     herbal: {
       answer: "In herbal traditions, headaches are often treated with Peppermint oil (applied topically), Feverfew, or Willow Bark. Ginger tea may also help if the headache is associated with nausea.",
       results: [
-        { id: 'h1', title: 'Peppermint Oil for Headaches', summary: 'Studies on the efficacy of peppermint oil for tension headaches.', source: 'NIH / PubMed', type: 'herbal', evidenceGrade: 'B' },
-        { id: 'h2', title: 'Feverfew: Traditional Uses', summary: 'Historical use of feverfew for migraine relief.', source: 'Botanical Safety Handbook', type: 'herbal', evidenceGrade: 'C' }
+        { id: 'h1', title: 'Peppermint Oil for Headaches', summary: 'Studies on the efficacy of peppermint oil for tension headaches.', source: 'NIH / PubMed', type: 'herbal', format: 'article', evidenceGrade: 'B' },
+        { id: 'h2', title: 'Feverfew: Traditional Uses', summary: 'Historical use of feverfew for migraine relief.', source: 'Botanical Safety Handbook', type: 'herbal', format: 'article', evidenceGrade: 'C' }
       ]
     },
     context: {
@@ -120,13 +125,13 @@ const MOCK_KNOWLEDGE_BASE: Record<string, any> = {
     medical: {
       answer: "Catarrh is an excessive build-up of mucus in an airway or cavity of the body. It's often caused by the common cold, hay fever, or nasal polyps. Treatments include saline nasal rinses and decongestants.",
       results: [
-        { id: 'm3', title: 'What is Catarrh?', summary: 'Symptoms, causes and treatments for chronic catarrh.', source: 'NHS', type: 'medical', evidenceGrade: 'A' }
+        { id: 'm3', title: 'What is Catarrh?', summary: 'Symptoms, causes and treatments for chronic catarrh.', source: 'NHS', type: 'medical', format: 'article', evidenceGrade: 'A' }
       ]
     },
     herbal: {
       answer: "Traditional herbal remedies for catarrh include steam inhalation with Eucalyptus oil, drinking Mullein tea, or using Elderberry syrup to reduce inflammation in the nasal passages.",
       results: [
-        { id: 'h3', title: 'Eucalyptus for Respiratory Health', summary: 'How eucalyptus oil helps clear nasal passages.', source: 'Healthline', type: 'herbal', evidenceGrade: 'B' }
+        { id: 'h3', title: 'Eucalyptus for Respiratory Health', summary: 'How eucalyptus oil helps clear nasal passages.', source: 'Healthline', type: 'herbal', format: 'article', evidenceGrade: 'B' }
       ]
     }
   },
@@ -134,13 +139,13 @@ const MOCK_KNOWLEDGE_BASE: Record<string, any> = {
     medical: {
       answer: "A cough is your body's way of responding when something irritates your throat or airways. Acute coughs are usually viral, while chronic coughs may indicate asthma or GERD.",
       results: [
-        { id: 'm4', title: 'Cough: Causes and Diagnosis', summary: 'When to see a doctor for a persistent cough.', source: 'Cleveland Clinic', type: 'medical', evidenceGrade: 'A' }
+        { id: 'm4', title: 'Cough: Causes and Diagnosis', summary: 'When to see a doctor for a persistent cough.', source: 'Cleveland Clinic', type: 'medical', format: 'article', evidenceGrade: 'A' }
       ]
     },
     herbal: {
       answer: "Herbal cough remedies often feature Honey (as a demulcent), Thyme tea, or Marshmallow root. These help coat the throat and reduce the urge to cough.",
       results: [
-        { id: 'h4', title: 'Honey for Cough Suppression', summary: 'Comparing honey to over-the-counter cough suppressants.', source: 'NIH', type: 'herbal', evidenceGrade: 'A' }
+        { id: 'h4', title: 'Honey for Cough Suppression', summary: 'Comparing honey to over-the-counter cough suppressants.', source: 'NIH', type: 'herbal', format: 'article', evidenceGrade: 'A' }
       ]
     }
   },

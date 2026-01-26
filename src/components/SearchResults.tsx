@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, ArrowRight, ShieldCheck, Globe, Users, Info, Activity } from 'lucide-react';
+import { Sparkles, ArrowRight, ShieldCheck, Globe, Users, Info, Activity, PlayCircle, FileText } from 'lucide-react';
 import { AIResponse } from '@/services/aiService';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
@@ -153,19 +153,28 @@ const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching }) 
                   key={result.id} 
                   variants={itemVariants}
                   whileHover={{ scale: 1.02, x: 5 }}
-                  className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500 transition-colors flex items-start justify-between group cursor-pointer shadow-sm hover:shadow-md"
+                  onClick={() => result.link && window.open(result.link, '_blank')}
+                  className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500 transition-colors flex items-start gap-4 group cursor-pointer shadow-sm hover:shadow-md"
                 >
-                  <div>
+                  <div className={`p-3 rounded-xl flex-shrink-0 ${result.format === 'video' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`}>
+                    {result.format === 'video' ? <PlayCircle className="w-6 h-6" /> : <FileText className="w-6 h-6" />}
+                  </div>
+                  <div className="flex-1">
                     <h4 className="font-bold text-slate-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{result.title}</h4>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">{result.summary}</p>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                        result.type === 'medical' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider ${
+                        result.format === 'video' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
+                      }`}>
+                        {result.format === 'video' ? 'Video' : 'Article'}
+                      </span>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider ${
+                        result.type === 'medical' ? 'bg-slate-100 text-slate-700' : 'bg-emerald-100 text-emerald-700'
                       }`}>
                         {result.type === 'medical' ? 'Medical' : 'Herbal'}
                       </span>
                       {result.evidenceGrade && (
-                        <span className={`text-xs px-2 py-1 rounded-full font-bold border flex items-center gap-1 ${getGradeColor(result.evidenceGrade)}`}>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider border flex items-center gap-1 ${getGradeColor(result.evidenceGrade)}`}>
                           <ShieldCheck className="w-3 h-3" />
                           Grade {result.evidenceGrade}
                         </span>
@@ -173,7 +182,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching }) 
                       <span className="text-xs text-slate-400">• {result.source}</span>
                     </div>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-blue-500 transition-colors" />
+                  <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-blue-500 transition-colors self-center" />
                 </motion.div>
               ))}
             </motion.div>

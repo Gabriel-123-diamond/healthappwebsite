@@ -14,21 +14,33 @@ export const fetchEvidence = async (query: string): Promise<EvidenceItem[]> => {
   }
 
   try {
-    const response = await fetch(
+    // 1. Fetch General Articles
+    const generalResponse = await fetch(
       `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query)}&num=3`
     );
 
-    if (!response.ok) {
-      throw new Error(`Search API error: ${response.statusText}`);
-    }
+    // 2. Fetch YouTube Videos specifically
+    const videoResponse = await fetch(
+      `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query + ' site:youtube.com')}&num=2`
+    );
 
-    const data = await response.json();
+    const generalData = await generalResponse.json();
+    const videoData = await videoResponse.json();
     
-    return (data.items || []).map((item: any) => ({
+    const generalItems = (generalData.items || []).map((item: any) => ({
       title: item.title,
       link: item.link,
       snippet: item.snippet
     }));
+
+    const videoItems = (videoData.items || []).map((item: any) => ({
+      title: item.title,
+      link: item.link,
+      snippet: item.snippet
+    }));
+
+    // Merge and return
+    return [...generalItems, ...videoItems];
   } catch (error) {
     console.error("Error fetching evidence:", error);
     return [];
