@@ -2,51 +2,64 @@ import React from 'react';
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-        <h1 className="text-3xl font-bold text-slate-900 mb-8">Terms of Service</h1>
+    <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 dark:bg-slate-900">
+      <div className="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-200 dark:bg-slate-800 dark:border-slate-700">
+        <h1 className="text-3xl font-bold text-slate-900 mb-8 dark:text-white">Terms of Use</h1>
         
-        <div className="prose prose-slate max-w-none space-y-6 text-slate-600">
-          <p className="text-sm text-slate-400">Last updated: January 25, 2026</p>
+        <div className="prose prose-slate max-w-none space-y-6 text-slate-600 dark:text-slate-300">
+          <p className="text-sm text-slate-400">Effective Date: January 26, 2026</p>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">1. Agreement to Terms</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-3 dark:text-white">1. Purpose of the App</h2>
             <p>
-              By accessing our website or using our mobile application, you agree to be bound by these Terms of Service 
-              and to use the platform in accordance with these terms, our Privacy Policy, and any additional terms and conditions that may apply to specific sections of the platform.
+              IKIKE is a health information and navigation platform that provides educational content and directs users to external health resources, videos, medical experts, and healthcare facilities. IKIKE does not provide medical advice, diagnosis, or treatment.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">2. Medical Disclaimer</h2>
-            <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 text-amber-900 font-medium">
+            <h2 className="text-xl font-bold text-slate-900 mb-3 dark:text-white">2. No Medical Advice</h2>
+            <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 text-amber-900 font-medium dark:bg-amber-900/20 dark:border-amber-900/50 dark:text-amber-200">
               <p>
-                The content provided on HealthAI is for educational and informational purposes only. 
-                It is not intended to be a substitute for professional medical advice, diagnosis, or treatment. 
-                Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.
+                All information provided through IKIKE is for educational and informational purposes only and must not be considered a substitute for professional medical advice, diagnosis, treatment, or emergency care.
               </p>
             </div>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">3. User Accounts</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-3 dark:text-white">3. User Responsibility</h2>
             <p>
-              When you create an account with us, you must provide us information that is accurate, complete, and current at all times. 
-              Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service.
+              Users are responsible for their health decisions and agree to consult qualified healthcare professionals for medical concerns.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">4. Intellectual Property</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-3 dark:text-white">4. External Content</h2>
             <p>
-              The Service and its original content (excluding Content provided by you or other users), features and functionality are and will remain the exclusive property of HealthAI and its licensors.
+              IKIKE links to third-party websites and platforms. IKIKE does not control or guarantee the accuracy of external content.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">5. Termination</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-3 dark:text-white">5. Herbal & Traditional Information</h2>
             <p>
-              We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.
+              Information on herbs and traditional practices is shared for educational and cultural awareness only. IKIKE does not provide dosage, preparation methods, or treatment recommendations.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-900 mb-3 dark:text-white">6. Limitation of Liability</h2>
+            <p>
+              IKIKE and its operators are not liable for health decisions, outcomes, or actions taken based on information accessed through the app.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-900 mb-3 dark:text-white">7. Modifications & Termination</h2>
+            <p>
+              IKIKE reserves the right to modify these Terms or suspend access if misuse occurs.
+            </p>
+            <p className="mt-4">
+              <strong>Contact:</strong> support@ikikehealth.ai
             </p>
           </section>
         </div>

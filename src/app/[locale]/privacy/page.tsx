@@ -2,54 +2,66 @@ import React from 'react';
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-        <h1 className="text-3xl font-bold text-slate-900 mb-8">Privacy Policy</h1>
+    <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 dark:bg-slate-900">
+      <div className="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-200 dark:bg-slate-800 dark:border-slate-700">
+        <h1 className="text-3xl font-bold text-slate-900 mb-8 dark:text-white">Privacy Policy</h1>
         
-        <div className="prose prose-slate max-w-none space-y-6 text-slate-600">
-          <p className="text-sm text-slate-400">Last updated: January 25, 2026</p>
+        <div className="prose prose-slate max-w-none space-y-6 text-slate-600 dark:text-slate-300">
+          <p className="text-sm text-slate-400">Effective Date: January 26, 2026</p>
+
+          <p>
+            IKIKE respects your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, and protect information when you use the IKIKE mobile application.
+          </p>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">1. Introduction</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-3 dark:text-white">1. Information We Collect</h2>
             <p>
-              Welcome to HealthAI. We respect your privacy and are committed to protecting your personal data. 
-              This privacy policy will inform you as to how we look after your personal data when you visit our 
-              website or use our mobile application and tell you about your privacy rights and how the law protects you.
+              IKIKE collects limited information to provide and improve the app experience. This may include search queries related to health topics, feedback messages, device information, usage data, approximate location for hospital listings, and anonymous analytics data. IKIKE does not collect or store medical records, diagnoses, prescriptions, or treatment histories.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">2. Data We Collect</h2>
-            <p>We may collect, use, store and transfer different kinds of personal data about you which we have grouped together follows:</p>
-            <ul className="list-disc pl-5 mt-2 space-y-1">
-              <li><strong>Identity Data:</strong> includes first name, last name, username or similar identifier.</li>
-              <li><strong>Contact Data:</strong> includes email address and telephone number.</li>
-              <li><strong>Health Data:</strong> includes symptom logs and journal entries (stored locally or encrypted).</li>
-              <li><strong>Usage Data:</strong> includes information about how you use our website and services.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">3. How We Use Your Data</h2>
-            <p>We will only use your personal data when the law allows us to. Most commonly, we will use your personal data in the following circumstances:</p>
-            <ul className="list-disc pl-5 mt-2 space-y-1">
-              <li>To provide the personalized health insights you requested.</li>
-              <li>To manage your account and subscription.</li>
-              <li>To improve our AI models (using anonymized, aggregated data only).</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">4. Data Security</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-3 dark:text-white">2. How We Use Information</h2>
             <p>
-              We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used or accessed in an unauthorized way, altered or disclosed.
+              Information collected is used to provide relevant health information links, improve app performance, display nearby medical experts and hospitals, ensure security, and analyze anonymous usage trends.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-3">5. Contact Us</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-3 dark:text-white">3. Third-Party Services</h2>
             <p>
-              If you have any questions about this privacy policy or our privacy practices, please contact us at privacy@healthai.com.
+              IKIKE may use third-party services such as analytics providers, advertising networks, and external platforms including video and search services. These third parties operate under their own privacy policies.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-900 mb-3 dark:text-white">4. Data Sharing</h2>
+            <p>
+              IKIKE does not sell personal data. Information may only be shared to comply with legal obligations, protect user safety, or support app functionality.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-900 mb-3 dark:text-white">5. Data Security</h2>
+            <p>
+              We apply reasonable technical and organizational measures to protect user data, however no digital platform can guarantee complete security.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-900 mb-3 dark:text-white">6. Children’s Privacy</h2>
+            <p>
+              IKIKE is not intended for children under the age of 13 and does not knowingly collect personal data from children.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-900 mb-3 dark:text-white">7. Policy Updates</h2>
+            <p>
+              This Privacy Policy may be updated periodically. Updates will be published within the app.
+            </p>
+            <p className="mt-4">
+              <strong>Contact:</strong> privacy@ikikehealth.ai
             </p>
           </section>
         </div>
