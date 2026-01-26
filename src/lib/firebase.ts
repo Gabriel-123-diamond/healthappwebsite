@@ -20,17 +20,23 @@ const auth = getAuth(app);
 const vertexAI = getAI(app);
 
 // Initialize App Check
-let appCheck;
+let appCheck: any;
 if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
-  if (process.env.NODE_ENV === "development") {
+  // Support manual debug token via env var or automatic debug in localhost
+  if (process.env.NEXT_PUBLIC_APPCHECK_DEBUG_TOKEN || process.env.NODE_ENV === "development") {
     // @ts-ignore
-    self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    self.FIREBASE_APPCHECK_DEBUG_TOKEN = process.env.NEXT_PUBLIC_APPCHECK_DEBUG_TOKEN || true;
   }
   
-  appCheck = initializeAppCheck(app, {
-    provider: new ReCaptchaEnterpriseProvider(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY),
-    isTokenAutoRefreshEnabled: true,
-  });
+  try {
+    appCheck = initializeAppCheck(app, {
+      provider: new ReCaptchaEnterpriseProvider(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY),
+      isTokenAutoRefreshEnabled: true,
+    });
+    console.log("Firebase App Check initialized successfully");
+  } catch (error) {
+    console.error("Firebase App Check failed to initialize:", error);
+  }
 }
 
 export { app, db, auth, vertexAI, appCheck };
