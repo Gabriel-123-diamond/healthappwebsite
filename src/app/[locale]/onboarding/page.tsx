@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence } from 'framer-motion';
 import { ArrowRight, Loader2, UserCircle, Stethoscope, Leaf, Building2 } from 'lucide-react';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { updateProfile, onAuthStateChanged } from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import OnboardingSidebar from '@/components/onboarding/OnboardingSidebar';
 import StepRenderer from '@/components/onboarding/StepRenderer';
 
@@ -73,8 +74,18 @@ export default function OnboardingPage() {
       return;
     }
     setUsernameStatus("checking");
-    const tid = setTimeout(() => {
-      setUsernameStatus(formData.username.toLowerCase() === 'admin' ? "taken" : "available");
+    const tid = setTimeout(async () => {
+      try {
+        const res = await fetch('/api/user/check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ field: 'username', value: formData.username })
+        });
+        const data = await res.json();
+        setUsernameStatus(data.taken ? "taken" : "available");
+      } catch (e) {
+        setUsernameStatus("idle");
+      }
     }, 600);
     return () => clearTimeout(tid);
   }, [formData.username]);
@@ -86,11 +97,22 @@ export default function OnboardingPage() {
       return;
     }
     setPhoneStatus("checking");
-    const tid = setTimeout(() => {
-      setPhoneStatus(formData.phone === '1234567890' ? "taken" : "available");
+    const tid = setTimeout(async () => {
+      try {
+        const fullPhone = `${formData.countryCode}${formData.phone}`;
+        const res = await fetch('/api/user/check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ field: 'phone', value: fullPhone })
+        });
+        const data = await res.json();
+        setPhoneStatus(data.taken ? "taken" : "available");
+      } catch (e) {
+        setPhoneStatus("idle");
+      }
     }, 600);
     return () => clearTimeout(tid);
-  }, [formData.phone]);
+  }, [formData.phone, formData.countryCode]);
 
   // Name Check
   useEffect(() => {
@@ -99,9 +121,19 @@ export default function OnboardingPage() {
       return;
     }
     setNameStatus("checking");
-    const tid = setTimeout(() => {
-      const fullName = `${formData.firstName} ${formData.lastName}`.toLowerCase();
-      setNameStatus(fullName === 'john doe' ? "taken" : "available");
+    const tid = setTimeout(async () => {
+      try {
+        const fullName = `${formData.firstName} ${formData.lastName}`.toLowerCase();
+        const res = await fetch('/api/user/check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ field: 'fullName', value: fullName })
+        });
+        const data = await res.json();
+        setNameStatus(data.taken ? "taken" : "available");
+      } catch (e) {
+        setNameStatus("idle");
+      }
     }, 600);
     return () => clearTimeout(tid);
   }, [formData.firstName, formData.lastName]);
@@ -168,22 +200,50 @@ export default function OnboardingPage() {
 
   const handleNext = async () => {
     if (step === 1) {
-      if (usernameStatus === 'taken' || phoneStatus === 'taken' || nameStatus === 'taken') return;
+      if (usernameStatus !== 'available' || phoneStatus !== 'available' || nameStatus !== 'available') return;
+      if (!formData.firstName || !formData.lastName || !formData.username || !formData.phone || !formData.ageRange) return;
     }
+
+    if (step === 2 && !formData.role) return;
+    if (step === 3 && (!formData.city || !formData.country)) return;
 
     if (step < 4) {
       const nextStep = step + 1;
       setStep(nextStep);
     } else {
       setIsLoading(true);
-      if (auth.currentUser) {
-        await updateProfile(auth.currentUser, { displayName: `${formData.firstName} ${formData.lastName}` });
-        // Clear saved onboarding data
-        localStorage.removeItem('onboarding_data');
-        await new Promise(r => setTimeout(r, 1000));
-        router.push('/');
+      try {
+        if (auth.currentUser) {
+          const userRef = doc(db, 'users', auth.currentUser.uid);
+          const fullName = `${formData.firstName} ${formData.lastName}`.toLowerCase();
+          
+          await Promise.all([
+            updateProfile(auth.currentUser, { displayName: `${formData.firstName} ${formData.lastName}` }),
+            setDoc(userRef, {
+              firstName: formData.firstName,
+              lastName: formData.lastName,
+              fullName: fullName,
+              username: formData.username.toLowerCase(),
+              phone: `${formData.countryCode}${formData.phone}`,
+              ageRange: formData.ageRange,
+              role: formData.role,
+              city: formData.city,
+              country: formData.country,
+              interests: formData.interests,
+              onboardingComplete: true,
+              updatedAt: serverTimestamp(),
+            }, { merge: true })
+          ]);
+
+          // Clear saved onboarding data
+          localStorage.removeItem('onboarding_data');
+          router.push('/');
+        }
+      } catch (err) {
+        console.error("Failed to complete onboarding:", err);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     }
   };
 
