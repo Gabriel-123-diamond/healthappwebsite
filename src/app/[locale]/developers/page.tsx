@@ -95,17 +95,17 @@ export default function DeveloperPortalPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-bold text-slate-700 mb-2">Name</label>
-                      <input required type="text" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="John Doe" />
+                      <input required type="text" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="John Doe" />
                     </div>
                     <div>
                       <label className="block text-sm font-bold text-slate-700 mb-2">Work Email</label>
-                      <input required type="email" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="john@company.com" />
+                      <input required type="email" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="john@company.com" />
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-bold text-slate-700 mb-2">Organization</label>
-                      <input required type="text" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="University, NGO, or Tech Co" />
+                      <input required type="text" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="University, NGO, or Tech Co" />
                     </div>
                     <div>
                       <label className="block text-sm font-bold text-slate-700 mb-2">Phone Number</label>
@@ -117,7 +117,7 @@ export default function DeveloperPortalPage() {
                               const c = countries.find(c => c.name === e.target.value);
                               if (c) setSelectedCountry(c);
                             }}
-                            className="w-full appearance-none px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-white"
+                            className="w-full appearance-none px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                           >
                             {countries.map((country) => (
                               <option key={country.name} value={country.name}>
@@ -134,7 +134,7 @@ export default function DeveloperPortalPage() {
                           type="tel"
                           value={phoneNumber}
                           onChange={(e) => setPhoneNumber(e.target.value)}
-                          className="w-2/3 px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                          className="w-2/3 px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                           placeholder="555-0123"
                         />
                       </div>
@@ -142,7 +142,7 @@ export default function DeveloperPortalPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-slate-700 mb-2">Use Case</label>
-                    <textarea required rows={4} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="Describe how you plan to use the HealthAI API..." />
+                    <textarea required rows={4} className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="Describe how you plan to use the HealthAI API..." />
                   </div>
                   
                   <button 
