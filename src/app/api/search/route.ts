@@ -57,11 +57,30 @@ export async function POST(req: NextRequest) {
       `[${index + 1}] ${item.title}: ${item.snippet} (${item.link})`
     ).join("\n");
 
+    const medicalSection = `
+         ## 🏥 Medical Perspective
+         (Explain the orthodox medical view, treatments, or scientific consensus. Use bullet points for clarity.)`;
+    
+    const herbalSection = `
+         ## 🌿 Herbal & Traditional Perspective
+         (Explain relevant herbal remedies, cultural practices, or traditional views. Be specific about plants/remedies if applicable.)`;
+
+    let formatInstructions = "";
+    if (mode === "medical") {
+      formatInstructions = medicalSection;
+    } else if (mode === "herbal") {
+      formatInstructions = herbalSection;
+    } else {
+      formatInstructions = medicalSection + "\n" + herbalSection;
+    }
+
     const prompt = `
       You are a specialized health assistant named Ikiké, bridging modern medicine and traditional herbal knowledge.
       
       User Query: "${query}"
       Search Mode: "${mode}"
+
+      IMPORTANT: The user has selected "${mode}" mode. You MUST ONLY provide information for the ${mode === 'both' ? 'Medical and Herbal' : mode} perspective. Do NOT include other perspectives.
 
       Context / Trusted Sources:
       ${evidenceContext}
@@ -69,12 +88,7 @@ export async function POST(req: NextRequest) {
       Instructions:
       1. Analyze the user's query carefully.
       2. Provide a structured, well-organized response using the following format:
-         
-         ## 🏥 Medical Perspective
-         (Explain the orthodox medical view, treatments, or scientific consensus. Use bullet points for clarity.)
-
-         ## 🌿 Herbal & Traditional Perspective
-         (Explain relevant herbal remedies, cultural practices, or traditional views. Be specific about plants/remedies if applicable.)
+         ${formatInstructions}
 
          ## ⚠️ Safety & Interactions
          (Crucial: Mention potential side effects, drug interactions, or contraindications. If it's a medical emergency, state it clearly.)
