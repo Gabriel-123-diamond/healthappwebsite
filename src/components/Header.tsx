@@ -1,21 +1,21 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { Link, useRouter, usePathname } from '@/i18n/routing';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, User, signOut } from 'firebase/auth';
 import { LogOut, User as UserIcon, Loader2, Menu, X, Globe, Sun, Moon } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTheme } from '@/context/ThemeContext';
-import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { locale, setLocale, t } = useLanguage();
+  const { locale, t } = useLanguage();
   const { theme, setTheme, resolvedTheme } = useTheme();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -25,6 +25,10 @@ export default function Header() {
 
     return () => unsubscribe();
   }, []);
+
+  const handleLocaleChange = (newLocale: string) => {
+    router.push(pathname, { locale: newLocale });
+  };
 
   const handleSignOut = async () => {
     try {
@@ -68,19 +72,19 @@ export default function Header() {
           <div className="flex items-center gap-2 mr-2">
              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
               <button 
-                onClick={() => setLocale('en')} 
+                onClick={() => handleLocaleChange('en')} 
                 className={`px-2 py-1 rounded-md text-xs font-bold transition-all ${locale === 'en' ? 'bg-white dark:bg-slate-700 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
               >
                 EN
               </button>
               <button 
-                onClick={() => setLocale('es')} 
+                onClick={() => handleLocaleChange('es')} 
                 className={`px-2 py-1 rounded-md text-xs font-bold transition-all ${locale === 'es' ? 'bg-white dark:bg-slate-700 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
               >
                 ES
               </button>
               <button 
-                onClick={() => setLocale('fr')} 
+                onClick={() => handleLocaleChange('fr')} 
                 className={`px-2 py-1 rounded-md text-xs font-bold transition-all ${locale === 'fr' ? 'bg-white dark:bg-slate-700 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
               >
                 FR
@@ -158,19 +162,19 @@ export default function Header() {
           <div className="flex items-center gap-2 py-2">
              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 w-full justify-center">
               <button 
-                onClick={() => setLocale('en')} 
+                onClick={() => handleLocaleChange('en')} 
                 className={`flex-1 px-2 py-1 rounded-md text-xs font-bold transition-all ${locale === 'en' ? 'bg-white dark:bg-slate-700 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}`}
               >
                 EN
               </button>
               <button 
-                onClick={() => setLocale('es')} 
+                onClick={() => handleLocaleChange('es')} 
                 className={`flex-1 px-2 py-1 rounded-md text-xs font-bold transition-all ${locale === 'es' ? 'bg-white dark:bg-slate-700 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}`}
               >
                 ES
               </button>
               <button 
-                onClick={() => setLocale('fr')} 
+                onClick={() => handleLocaleChange('fr')} 
                 className={`flex-1 px-2 py-1 rounded-md text-xs font-bold transition-all ${locale === 'fr' ? 'bg-white dark:bg-slate-700 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}`}
               >
                 FR

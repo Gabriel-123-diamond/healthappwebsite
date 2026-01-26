@@ -18,18 +18,27 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocale] = useState<Locale>('en');
+export function LanguageProvider({ children, initialLocale }: { children: ReactNode, initialLocale?: Locale }) {
+  const [locale, setLocale] = useState<Locale>(initialLocale || 'en');
   const [mounted, setMounted] = useState(false);
 
-  // Load from local storage if available
+  // Sync with prop if it changes
   useEffect(() => {
-    const saved = localStorage.getItem('language') as Locale;
-    if (saved && (saved === 'en' || saved === 'es' || saved === 'fr')) {
-      setLocale(saved);
+    if (initialLocale) {
+      setLocale(initialLocale);
+    }
+  }, [initialLocale]);
+
+  // Load from local storage if available and no initialLocale provided
+  useEffect(() => {
+    if (!initialLocale) {
+      const saved = localStorage.getItem('language') as Locale;
+      if (saved && (saved === 'en' || saved === 'es' || saved === 'fr')) {
+        setLocale(saved);
+      }
     }
     setMounted(true);
-  }, []);
+  }, [initialLocale]);
 
   const handleSetLocale = (newLocale: Locale) => {
     setLocale(newLocale);
