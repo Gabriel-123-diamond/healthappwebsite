@@ -45,7 +45,7 @@ export const searchHealthTopic = async (query: string, mode: 'medical' | 'herbal
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ query, mode })
+      body: JSON.stringify({ query, mode, locale: window.location.pathname.split('/')[1] || 'en' })
     });
 
     if (response.status === 400) {
