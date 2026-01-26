@@ -1,4 +1,5 @@
 import { auth } from "@/lib/firebase";
+import { getExperts } from "@/services/directoryService";
 
 export interface SearchResult {
   id: string;
@@ -38,18 +39,22 @@ export const searchHealthTopic = async (query: string, mode: 'medical' | 'herbal
 
   const token = await user.getIdToken();
 
-  const response = await fetch('/api/search', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify({ 
-      query, 
-      mode, 
-      locale: window.location.pathname.split('/')[1] || 'en' 
-    })
-  });
+  // Run search and expert fetch in parallel
+  const [response, experts] = await Promise.all([
+    fetch('/api/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ 
+        query, 
+        mode, 
+        locale: window.location.pathname.split('/')[1] || 'en' 
+      })
+    }),
+    getExperts() // Fetch all experts to filter locally (simple solution for now)
+  ]);
 
   if (response.status === 400) {
     const data = await response.json();
@@ -72,15 +77,26 @@ export const searchHealthTopic = async (query: string, mode: 'medical' | 'herbal
 
   const data = await response.json();
   
-  // Real-time directory matching logic can be expanded here
+  // Real directory matching logic
   let directoryMatch;
-  if (query.toLowerCase().includes('sarah') || query.toLowerCase().includes('cardio')) {
-    directoryMatch = { id: 'exp1', name: 'Dr. Sarah Johnson', specialty: 'Cardiology' };
+  const lowerQuery = query.toLowerCase();
+  
+  const matchedExpert = experts.find(e => 
+    e.name.toLowerCase().includes(lowerQuery) || 
+    e.specialty.toLowerCase().includes(lowerQuery)
+  );
+
+  if (matchedExpert) {
+    directoryMatch = {
+      id: matchedExpert.id,
+      name: matchedExpert.name,
+      specialty: matchedExpert.specialty
+    };
   }
 
   return {
     answer: data.answer,
-    results: data.evidence.map((item: any, index: number) => {
+    results: (data.evidence || []).map((item: any, index: number) => {
       const isVideo = item.link.includes('youtube.com') || item.link.includes('vimeo.com');
       return {
         id: `e-${index}`,
