@@ -13,44 +13,41 @@ export const fetchEvidence = async (query: string): Promise<EvidenceItem[]> => {
     return [];
   }
 
+  const fetchSearch = async (searchQuery: string, num: number) => {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout per request
+
+      const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(searchQuery)}&num=${num}`;
+      const response = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        console.error(`Google Search API Error: ${response.status} ${response.statusText}`);
+        return [];
+      }
+
+      const data = await response.json();
+      return (data.items || []).map((item: any) => ({
+        title: item.title,
+        link: item.link,
+        snippet: item.snippet
+      }));
+    } catch (error) {
+      console.error(`Fetch failed for query "${searchQuery}":`, error);
+      return [];
+    }
+  };
+
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
-
-    // Fetch in parallel
-    const [generalResponse, videoResponse] = await Promise.all([
-      fetch(
-        `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query)}&num=3`,
-        { signal: controller.signal }
-      ),
-      fetch(
-        `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query + ' site:youtube.com')}&num=2`,
-        { signal: controller.signal }
-      )
+    const [generalItems, videoItems] = await Promise.all([
+      fetchSearch(query, 3),
+      fetchSearch(query + ' site:youtube.com', 2)
     ]);
-
-    clearTimeout(timeoutId);
-
-    const [generalData, videoData] = await Promise.all([
-      generalResponse.json(),
-      videoResponse.json()
-    ]);
-    
-    const generalItems = (generalData.items || []).map((item: any) => ({
-      title: item.title,
-      link: item.link,
-      snippet: item.snippet
-    }));
-
-    const videoItems = (videoData.items || []).map((item: any) => ({
-      title: item.title,
-      link: item.link,
-      snippet: item.snippet
-    }));
 
     return [...generalItems, ...videoItems];
   } catch (error) {
-    console.error("Error fetching evidence:", error);
+    console.error("Critical error in fetchEvidence:", error);
     return [];
   }
 };

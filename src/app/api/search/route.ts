@@ -38,18 +38,53 @@ export async function POST(req: NextRequest) {
       }, { status: 400 });
     }
 
-    // 3. Call Gemini AI
+    // 3. Fetch Evidence (Real links) - Done BEFORE AI for RAG
+    console.log("Fetching evidence...");
+    let evidence: any[] = [];
+    try {
+      evidence = await fetchEvidence(query);
+      console.log(`Found ${evidence.length} evidence items`);
+    } catch (e) {
+      console.error("Failed to fetch evidence, proceeding with AI only:", e);
+    }
+
+    // 4. Call Gemini AI with Context
     console.log("Calling Gemini AI...");
     const model = getGeminiModel();
-    const prompt = `
-      You are a health assistant bridging modern medicine and traditional herbal knowledge.
-      Query: "${query}"
-      Mode: "${mode}"
+    
+    // Format evidence for the prompt
+    const evidenceContext = evidence.map((item, index) => 
+      `[${index + 1}] ${item.title}: ${item.snippet} (${item.link})`
+    ).join("\n");
 
-      Provide a comprehensive answer. 
-      Use markdown for formatting. 
-      If mode is 'both', provide separate sections for "**Medical Perspective:**" and "**Herbal Perspective:**".
-      Include a confidence score (0-1) for your answer.
+    const prompt = `
+      You are a specialized health assistant named Ikiké, bridging modern medicine and traditional herbal knowledge.
+      
+      User Query: "${query}"
+      Search Mode: "${mode}"
+
+      Context / Trusted Sources:
+      ${evidenceContext}
+
+      Instructions:
+      1. Analyze the user's query carefully.
+      2. Provide a structured, well-organized response using the following format:
+         
+         ## 🏥 Medical Perspective
+         (Explain the orthodox medical view, treatments, or scientific consensus. Use bullet points for clarity.)
+
+         ## 🌿 Herbal & Traditional Perspective
+         (Explain relevant herbal remedies, cultural practices, or traditional views. Be specific about plants/remedies if applicable.)
+
+         ## ⚠️ Safety & Interactions
+         (Crucial: Mention potential side effects, drug interactions, or contraindications. If it's a medical emergency, state it clearly.)
+
+         ## 🔗 References
+         (If you used the provided Context, cite them here or within the text like [1], [2].)
+
+      3. Tone: Professional, empathetic, and educational.
+      4. Formatting: Use Markdown (bolding, lists) to make it easy to read.
+      5. Disclaimer: Do not start with a disclaimer, one is already displayed on the UI.
     `;
 
     try {
@@ -57,11 +92,6 @@ export async function POST(req: NextRequest) {
       const response = await result.response;
       const aiText = response.candidates?.[0]?.content?.parts?.[0]?.text || "";
       console.log("AI Response received successfully");
-
-      // 4. Fetch Evidence (Real links)
-      console.log("Fetching evidence...");
-      const evidence = await fetchEvidence(query);
-      console.log(`Found ${evidence.length} evidence items`);
 
       // 5. Save to Review Queue (for experts)
       const reviewRef = await adminDb.collection("reviews").add({
