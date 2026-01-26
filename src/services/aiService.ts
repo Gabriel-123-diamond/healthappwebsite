@@ -127,13 +127,14 @@ const MOCK_KNOWLEDGE_BASE: Record<string, any> = {
     medical: {
       answer: "Catarrh is an excessive build-up of mucus in an airway or cavity of the body. It's often caused by the common cold, hay fever, or nasal polyps. Treatments include saline nasal rinses and decongestants.",
       results: [
-        { id: 'm3', title: 'What is Catarrh?', summary: 'Symptoms, causes and treatments for chronic catarrh.', source: 'NHS', type: 'medical', format: 'article', evidenceGrade: 'A' }
+        { id: 'm3', title: 'What is Catarrh?', summary: 'Symptoms, causes and treatments for chronic catarrh.', source: 'NHS', type: 'medical', format: 'article', link: 'https://www.nhs.uk/conditions/catarrh/', evidenceGrade: 'A' },
+        { id: 'v1', title: 'Managing Mucus & Catarrh', summary: 'Doctor explains effective ways to manage catarrh symptoms.', source: 'YouTube', type: 'medical', format: 'video', link: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', evidenceGrade: 'B' }
       ]
     },
     herbal: {
       answer: "Traditional herbal remedies for catarrh include steam inhalation with Eucalyptus oil, drinking Mullein tea, or using Elderberry syrup to reduce inflammation in the nasal passages.",
       results: [
-        { id: 'h3', title: 'Eucalyptus for Respiratory Health', summary: 'How eucalyptus oil helps clear nasal passages.', source: 'Healthline', type: 'herbal', format: 'article', evidenceGrade: 'B' }
+        { id: 'h3', title: 'Eucalyptus for Respiratory Health', summary: 'How eucalyptus oil helps clear nasal passages.', source: 'Healthline', type: 'herbal', format: 'article', link: 'https://www.healthline.com/health/eucalyptus-oil-for-catarrh', evidenceGrade: 'B' }
       ]
     }
   },
