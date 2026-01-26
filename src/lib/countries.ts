@@ -6,7 +6,7 @@ export interface Country {
   flag?: string;
 }
 
-export const countries: Country[
+export const countries: Country[] = [
   {"name": "afghanistan", "code": "+93", "min": 9, "max": 9},
   {"name": "aland_islands", "code": "+358", "min": 5, "max": 12, "flag": "\ud83c\udde6\ud83c\uddfd"},
   {"name": "albania", "code": "+355", "min": 3, "max": 9},
