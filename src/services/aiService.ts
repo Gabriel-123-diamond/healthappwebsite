@@ -107,15 +107,15 @@ const MOCK_KNOWLEDGE_BASE: Record<string, any> = {
     medical: {
       answer: "Medically, headaches can be caused by tension, dehydration, or migraines. Common treatments include over-the-counter analgesics like acetaminophen or ibuprofen. Hydration and rest are also recommended.",
       results: [
-        { id: 'm1', title: 'Tension Headache Overview', summary: 'Causes and treatments for common tension headaches.', source: 'Mayo Clinic', type: 'medical', format: 'article', evidenceGrade: 'A' },
-        { id: 'm2', title: 'Migraine Triggers', summary: 'Understanding what triggers migraines and how to manage them.', source: 'WebMD', type: 'medical', format: 'article', evidenceGrade: 'B' }
+        { id: 'm1', title: 'Tension Headache Overview', summary: 'Causes and treatments for common tension headaches.', source: 'Mayo Clinic', type: 'medical', format: 'article', link: 'https://www.mayoclinic.org/diseases-conditions/tension-headache/symptoms-causes/syc-20353977', evidenceGrade: 'A' },
+        { id: 'm2', title: 'Migraine Triggers', summary: 'Understanding what triggers migraines and how to manage them.', source: 'WebMD', type: 'medical', format: 'article', link: 'https://www.webmd.com/migraines-headaches/migraine-triggers', evidenceGrade: 'B' }
       ]
     },
     herbal: {
       answer: "In herbal traditions, headaches are often treated with Peppermint oil (applied topically), Feverfew, or Willow Bark. Ginger tea may also help if the headache is associated with nausea.",
       results: [
-        { id: 'h1', title: 'Peppermint Oil for Headaches', summary: 'Studies on the efficacy of peppermint oil for tension headaches.', source: 'NIH / PubMed', type: 'herbal', format: 'article', evidenceGrade: 'B' },
-        { id: 'h2', title: 'Feverfew: Traditional Uses', summary: 'Historical use of feverfew for migraine relief.', source: 'Botanical Safety Handbook', type: 'herbal', format: 'article', evidenceGrade: 'C' }
+        { id: 'h1', title: 'Peppermint Oil for Headaches', summary: 'Studies on the efficacy of peppermint oil for tension headaches.', source: 'NIH / PubMed', type: 'herbal', format: 'article', link: 'https://pubmed.ncbi.nlm.nih.gov/27106030/', evidenceGrade: 'B' },
+        { id: 'h2', title: 'Feverfew: Traditional Uses', summary: 'Historical use of feverfew for migraine relief.', source: 'NCCIH', type: 'herbal', format: 'article', link: 'https://www.nccih.nih.gov/health/feverfew', evidenceGrade: 'C' }
       ]
     },
     context: {
@@ -142,13 +142,13 @@ const MOCK_KNOWLEDGE_BASE: Record<string, any> = {
     medical: {
       answer: "A cough is your body's way of responding when something irritates your throat or airways. Acute coughs are usually viral, while chronic coughs may indicate asthma or GERD.",
       results: [
-        { id: 'm4', title: 'Cough: Causes and Diagnosis', summary: 'When to see a doctor for a persistent cough.', source: 'Cleveland Clinic', type: 'medical', format: 'article', evidenceGrade: 'A' }
+        { id: 'm4', title: 'Cough: Causes and Diagnosis', summary: 'When to see a doctor for a persistent cough.', source: 'Cleveland Clinic', type: 'medical', format: 'article', link: 'https://my.clevelandclinic.org/health/symptoms/17755-cough', evidenceGrade: 'A' }
       ]
     },
     herbal: {
       answer: "Herbal cough remedies often feature Honey (as a demulcent), Thyme tea, or Marshmallow root. These help coat the throat and reduce the urge to cough.",
       results: [
-        { id: 'h4', title: 'Honey for Cough Suppression', summary: 'Comparing honey to over-the-counter cough suppressants.', source: 'NIH', type: 'herbal', format: 'article', evidenceGrade: 'A' }
+        { id: 'h4', title: 'Honey for Cough Suppression', summary: 'Comparing honey to over-the-counter cough suppressants.', source: 'Mayo Clinic', type: 'herbal', format: 'article', link: 'https://www.mayoclinic.org/diseases-conditions/common-cold/expert-answers/honey/faq-20058031', evidenceGrade: 'A' }
       ]
     }
   },

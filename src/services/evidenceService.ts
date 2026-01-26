@@ -14,18 +14,27 @@ export const fetchEvidence = async (query: string): Promise<EvidenceItem[]> => {
   }
 
   try {
-    // 1. Fetch General Articles
-    const generalResponse = await fetch(
-      `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query)}&num=3`
-    );
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
-    // 2. Fetch YouTube Videos specifically
-    const videoResponse = await fetch(
-      `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query + ' site:youtube.com')}&num=2`
-    );
+    // Fetch in parallel
+    const [generalResponse, videoResponse] = await Promise.all([
+      fetch(
+        `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query)}&num=3`,
+        { signal: controller.signal }
+      ),
+      fetch(
+        `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query + ' site:youtube.com')}&num=2`,
+        { signal: controller.signal }
+      )
+    ]);
 
-    const generalData = await generalResponse.json();
-    const videoData = await videoResponse.json();
+    clearTimeout(timeoutId);
+
+    const [generalData, videoData] = await Promise.all([
+      generalResponse.json(),
+      videoResponse.json()
+    ]);
     
     const generalItems = (generalData.items || []).map((item: any) => ({
       title: item.title,
@@ -39,7 +48,6 @@ export const fetchEvidence = async (query: string): Promise<EvidenceItem[]> => {
       snippet: item.snippet
     }));
 
-    // Merge and return
     return [...generalItems, ...videoItems];
   } catch (error) {
     console.error("Error fetching evidence:", error);
