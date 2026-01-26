@@ -181,7 +181,7 @@ const getMockResponse = async (query: string, mode: string): Promise<AIResponse>
   } else {
     answer = `I am currently in **Offline Mode** and don't have specific data for "${query}" in my local cache. \n\nHowever, for general symptoms like this, it is usually recommended to stay hydrated, rest, and monitor your symptoms. If they persist or worsen, please consult a healthcare professional.`;
     results = [
-      { id: 'gen1', title: 'General Wellness Guide', summary: 'Basic steps to take when feeling unwell.', source: 'HealthAI', type: 'medical', evidenceGrade: 'B' }
+      { id: 'gen1', title: 'General Wellness Guide', summary: 'Basic steps to take when feeling unwell.', source: 'HealthAI', type: 'medical', format: 'article', evidenceGrade: 'B' }
     ];
   }
 
