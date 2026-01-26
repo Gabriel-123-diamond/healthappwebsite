@@ -55,7 +55,10 @@ export const searchHealthTopic = async (query: string, mode: 'medical' | 'herbal
         locale: window.location.pathname.split('/')[1] || 'en' 
       })
     }),
-    getExperts() // Fetch all experts to filter locally (simple solution for now)
+    getExperts().catch(e => {
+      console.error("Failed to fetch experts:", e);
+      return [];
+    })
   ]);
 
   if (response.status === 400) {
@@ -81,11 +84,25 @@ export const searchHealthTopic = async (query: string, mode: 'medical' | 'herbal
   
   // Real directory matching logic
   const lowerQuery = query.toLowerCase();
+  const queryTerms = lowerQuery.split(/\s+/).filter(t => t.length > 3); // Filter out short words like "the", "for"
+
+  // Filter by Mode
+  let filteredExperts = experts;
+  if (mode === 'medical') {
+    filteredExperts = experts.filter(e => ['doctor', 'specialist', 'hospital'].includes(e.type));
+  } else if (mode === 'herbal') {
+    filteredExperts = experts.filter(e => e.type === 'herbalist');
+  }
   
-  const allMatches = experts.filter(e => 
-    e.name.toLowerCase().includes(lowerQuery) || 
-    e.specialty.toLowerCase().includes(lowerQuery)
-  );
+  const allMatches = filteredExperts.filter(e => {
+    const nameMatch = e.name.toLowerCase().includes(lowerQuery);
+    const specialtyMatch = e.specialty.toLowerCase().includes(lowerQuery);
+    
+    // Fuzzy match: if any significant term in the query matches the specialty
+    const fuzzyMatch = queryTerms.some(term => e.specialty.toLowerCase().includes(term));
+
+    return nameMatch || specialtyMatch || fuzzyMatch;
+  });
 
   const directoryMatches = allMatches.slice(0, 2).map(e => ({
     id: e.id,
