@@ -96,7 +96,7 @@ export default function OnboardingPage() {
     {"name": "Spain", "code": "+34", "min": 9, "max": 9},
     {"name": "Sweden", "code": "+46", "min": 7, "max": 13},
     {"name": "United Kingdom", "code": "+44", "min": 7, "max": 10},
-    {"name": "USA", "code": "+1", "min": 10, "max": 10},
+    {"name": "United States", "code": "+1", "min": 10, "max": 10},
     {"name": "Vietnam", "code": "+84", "min": 7, "max": 11}
   ];
 
