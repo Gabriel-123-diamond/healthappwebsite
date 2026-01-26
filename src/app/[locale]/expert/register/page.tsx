@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { Loader2, CheckCircle, Stethoscope, Leaf, Building2 } from 'lucide-react';
+import { Loader2, CheckCircle, Stethoscope, Leaf, Building2, MapPin } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ExpertRegistrationPage() {
@@ -17,11 +17,44 @@ export default function ExpertRegistrationPage() {
     description: '',
   });
   const [loading, setLoading] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const requestLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+    
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        
+        try {
+          const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
+          const data = await response.json();
+          const city = data.city || data.locality || data.principalSubdivision || '';
+          const country = data.countryName || '';
+          setFormData(prev => ({ ...prev, location: `${city}${city && country ? ', ' : ''}${country}` }));
+        } catch (error) {
+          console.error("Reverse geocoding failed", error);
+          setFormData(prev => ({ ...prev, location: `${latitude.toFixed(2)}, ${longitude.toFixed(2)}` }));
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      (error) => {
+        console.error(error);
+        setIsLocating(false);
+        alert("Permission denied or location unavailable.");
+      }
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -151,15 +184,26 @@ export default function ExpertRegistrationPage() {
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Location (City, Country)</label>
-            <input
-              type="text"
-              name="location"
-              required
-              value={formData.location}
-              onChange={handleChange}
-              className="w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-3 border"
-              placeholder="e.g. New York, USA"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                name="location"
+                required
+                value={formData.location}
+                onChange={handleChange}
+                className="w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-3 pr-12 border"
+                placeholder="e.g. New York, USA"
+              />
+              <button
+                type="button"
+                onClick={requestLocation}
+                disabled={isLocating}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-blue-600 transition-colors disabled:opacity-50"
+                title="Auto-detect location"
+              >
+                {isLocating ? <Loader2 className="w-5 h-5 animate-spin" /> : <MapPin className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
 
           <div>

@@ -131,19 +131,37 @@ export default function OnboardingPage() {
       return;
     }
     
-    const confirmLocation = confirm("We would like to access your location to find nearby experts. Allow?");
-    if (!confirmLocation) return;
+    // We can auto-trigger or ask for confirmation. 
+    // Since it's a dedicated step, let's just trigger it.
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocationData({ lat: position.coords.latitude, lng: position.coords.longitude });
-        // Mock reverse geocoding
-        setFormData(prev => ({ ...prev, city: 'San Francisco', country: 'United States' }));
-        alert("Location saved!");
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        setLocationData({ lat: latitude, lng: longitude });
+        
+        try {
+          // Using BigDataCloud's free client-side reverse geocoding API
+          const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
+          const data = await response.json();
+          
+          setFormData(prev => ({ 
+            ...prev, 
+            city: data.city || data.locality || data.principalSubdivision || '', 
+            country: data.countryName || '' 
+          }));
+        } catch (error) {
+          console.error("Reverse geocoding failed", error);
+          // Fallback to coordinates if geocoding fails
+          setFormData(prev => ({ 
+            ...prev, 
+            city: `Lat: ${latitude.toFixed(2)}`, 
+            country: `Long: ${longitude.toFixed(2)}` 
+          }));
+        }
       },
       (error) => {
         console.error(error);
-        alert("Permission denied or location unavailable.");
+        alert("Permission denied or location unavailable. Please enter manually.");
       }
     );
   };
@@ -153,8 +171,13 @@ export default function OnboardingPage() {
       if (usernameStatus === 'taken' || phoneStatus === 'taken' || nameStatus === 'taken') return;
     }
 
-    if (step < 4) setStep(step + 1);
-    else {
+    if (step < 4) {
+      const nextStep = step + 1;
+      setStep(nextStep);
+      if (nextStep === 3) {
+        requestLocation();
+      }
+    } else {
       setIsLoading(true);
       if (auth.currentUser) {
         await updateProfile(auth.currentUser, { displayName: `${formData.firstName} ${formData.lastName}` });
