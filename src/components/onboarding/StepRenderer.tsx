@@ -197,21 +197,26 @@ export default function StepRenderer({
     case 3:
       return (
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center bg-blue-50/50 p-6 rounded-3xl border border-blue-100/50">
             <div>
               <h3 className="text-3xl font-black text-slate-900 mb-2">Your Location</h3>
-              <p className="text-slate-500 font-medium text-sm">Help us connect you with nearby verified experts.</p>
+              <p className="text-slate-500 font-medium text-sm">Click the pin to auto-fill your location.</p>
             </div>
-            <button 
-              onClick={requestLocation} 
-              className={`p-4 rounded-2xl transition-all border group ${
-                locationData 
-                  ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
-                  : 'bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-100'
-              }`}
-            >
-              <MapPin className={`w-6 h-6 ${locationData ? 'fill-emerald-600' : 'group-hover:scale-110'}`} />
-            </button>
+            <div className="flex flex-col items-end gap-2">
+              <button 
+                onClick={requestLocation} 
+                className={`p-4 rounded-2xl transition-all border group flex items-center gap-3 ${
+                  locationData 
+                    ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
+                    : 'bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-100'
+                }`}
+              >
+                <span className="text-xs font-bold uppercase tracking-wider">
+                  {locationData ? 'Location Found' : 'Auto-Detect'}
+                </span>
+                <MapPin className={`w-6 h-6 ${locationData ? 'fill-emerald-600' : 'group-hover:scale-110'}`} />
+              </button>
+            </div>
           </div>
           <div className="space-y-4">
             <div className="space-y-2">

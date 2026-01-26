@@ -183,7 +183,17 @@ export default function ExpertRegistrationPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Location (City, Country)</label>
+            <div className="flex justify-between items-end mb-1">
+              <label className="block text-sm font-medium text-slate-700">Location (City, Country)</label>
+              <button 
+                type="button" 
+                onClick={requestLocation}
+                className="text-[10px] font-bold text-blue-600 uppercase tracking-widest hover:text-blue-700 flex items-center gap-1"
+              >
+                <MapPin className="w-3 h-3" />
+                Auto-detect
+              </button>
+            </div>
             <div className="relative">
               <input
                 type="text"
@@ -194,15 +204,9 @@ export default function ExpertRegistrationPage() {
                 className="w-full rounded-xl border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-3 pr-12 border"
                 placeholder="e.g. New York, USA"
               />
-              <button
-                type="button"
-                onClick={requestLocation}
-                disabled={isLocating}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-blue-600 transition-colors disabled:opacity-50"
-                title="Auto-detect location"
-              >
-                {isLocating ? <Loader2 className="w-5 h-5 animate-spin" /> : <MapPin className="w-5 h-5" />}
-              </button>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400">
+                {isLocating ? <Loader2 className="w-5 h-5 animate-spin text-blue-500" /> : <MapPin className="w-5 h-5" />}
+              </div>
             </div>
           </div>
 

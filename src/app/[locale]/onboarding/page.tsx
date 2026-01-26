@@ -174,9 +174,6 @@ export default function OnboardingPage() {
     if (step < 4) {
       const nextStep = step + 1;
       setStep(nextStep);
-      if (nextStep === 3) {
-        requestLocation();
-      }
     } else {
       setIsLoading(true);
       if (auth.currentUser) {
