@@ -149,17 +149,19 @@ const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching }) 
             <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">Trusted Sources</h3>
             <motion.div className="grid gap-4" variants={containerVariants}>
               {response.results.map((result) => (
-                <motion.div 
+                <motion.a 
                   key={result.id} 
+                  href={result.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   variants={itemVariants}
                   whileHover={{ scale: 1.02, x: 5 }}
-                  onClick={() => result.link && window.open(result.link, '_blank')}
-                  className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500 transition-colors flex items-start gap-4 group cursor-pointer shadow-sm hover:shadow-md"
+                  className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500 transition-colors flex items-start gap-4 group cursor-pointer shadow-sm hover:shadow-md no-underline"
                 >
                   <div className={`p-3 rounded-xl flex-shrink-0 ${result.format === 'video' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`}>
                     {result.format === 'video' ? <PlayCircle className="w-6 h-6" /> : <FileText className="w-6 h-6" />}
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 text-left">
                     <h4 className="font-bold text-slate-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{result.title}</h4>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">{result.summary}</p>
                     <div className="flex items-center gap-2 flex-wrap">
@@ -183,7 +185,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching }) 
                     </div>
                   </div>
                   <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-blue-500 transition-colors self-center" />
-                </motion.div>
+                </motion.a>
               ))}
             </motion.div>
           </div>

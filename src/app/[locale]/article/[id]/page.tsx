@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { getArticleById, Article } from '@/services/articleService';
 import { ArrowLeft, Calendar, User, ShieldCheck, Tag, Loader2 } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 
 export default function ArticleDetailPage() {
   const { id } = useParams();

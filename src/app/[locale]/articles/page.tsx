@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { getArticles, Article } from '@/services/articleService';
 import { ArrowRight, BookOpen, Loader2, ShieldCheck } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 
