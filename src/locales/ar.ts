@@ -1,4 +1,6 @@
-export const ar = {
+import { en } from './en';
+
+export const ar: typeof en = {
   common: {
     searchPlaceholder: "الأعراض، الأعشاب، أو الأمراض...",
     search: "بحث",
@@ -37,5 +39,15 @@ export const ar = {
     ctaSubtitle: "تواصل مع الخبراء الطبيين والمستشفيات ومتخصصي الأعشاب المعتمدين.",
     ctaButton: "ابحث عن خبير",
     ctaRegister: "سجل كخبير",
-  }
+  },
+  feed: en.feed,
+  auth: en.auth,
+  directory: en.directory,
+  profile: en.profile,
+  community: en.community,
+  support: en.support,
+  history: en.history,
+  saved: en.saved,
+  articles: en.articles,
+  institution: en.institution
 };

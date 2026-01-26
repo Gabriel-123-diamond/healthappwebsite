@@ -1,4 +1,6 @@
-export const zh = {
+import { en } from './en';
+
+export const zh: typeof en = {
   common: {
     searchPlaceholder: '症状、草药或疾病...',
     search: '搜索',
@@ -30,7 +32,7 @@ export const zh = {
     feature3Title: '专家目录',
     feature3Desc: '寻找并联系您附近的医生、诊所和草药从业者。',
     feature4Title: '症状记录',
-    feature4Desc: '私下追踪您的症状、情绪和健康模式，以识别长期趋势。',
+    feature4Desc: '私下追踪您的症状、情绪和健康模式，以识别长期趋势。",',
     feature5Title: '仅供参考',
     feature5Desc: '我们专注于通过知识赋予您力量，为您的安全保持严格的非诊断政策。',
     ctaTitle: '寻找专业建议？浏览我们的目录。',
@@ -61,5 +63,13 @@ export const zh = {
     failedCreate: '创建账户失败',
     failedSignIn: '登录失败',
     appCheckError: 'App Check 验证失败。',
-  }
+  },
+  directory: en.directory,
+  profile: en.profile,
+  community: en.community,
+  support: en.support,
+  history: en.history,
+  saved: en.saved,
+  articles: en.articles,
+  institution: en.institution
 };

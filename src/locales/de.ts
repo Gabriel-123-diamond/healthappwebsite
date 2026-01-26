@@ -1,4 +1,6 @@
-export const de = {
+import { en } from './en';
+
+export const de: typeof en = {
   common: {
     searchPlaceholder: 'Symptome, Kräuter oder Krankheiten...',
     search: 'Suchen',
@@ -61,5 +63,13 @@ export const de = {
     failedCreate: 'Kontoerstellung fehlgeschlagen',
     failedSignIn: 'Anmeldung fehlgeschlagen',
     appCheckError: 'App Check fehlgeschlagen.',
-  }
+  },
+  directory: en.directory,
+  profile: en.profile,
+  community: en.community,
+  support: en.support,
+  history: en.history,
+  saved: en.saved,
+  articles: en.articles,
+  institution: en.institution
 };
