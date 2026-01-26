@@ -127,7 +127,12 @@ export default function StepRenderer({
                 <input 
                   type="tel" 
                   value={formData.phone} 
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})} 
+                  onChange={(e) => setFormData({...formData, phone: e.target.value.replace(/\D/g, '')})}
+                  onKeyDown={(e) => {
+                    if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+                      e.preventDefault();
+                    }
+                  }}
                   className={`w-full px-5 py-4 rounded-2xl bg-white border outline-none transition-all font-bold text-slate-900 shadow-sm placeholder:font-normal placeholder:text-slate-400 ${
                     phoneStatus === 'taken' ? 'border-red-500 focus:ring-red-200' : 'border-slate-100 focus:border-blue-500 focus:ring-blue-500/5'
                   }`} 
