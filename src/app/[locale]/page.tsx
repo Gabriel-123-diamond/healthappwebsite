@@ -5,10 +5,10 @@ import FeedSection from "@/components/FeedSection";
 import { Shield, Users, Video, BookOpen, Calendar } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useLanguage } from "@/context/LanguageContext";
+import { useTranslations } from "next-intl";
 
 export default function Home() {
-  const { t } = useLanguage();
+  const t = useTranslations();
 
   return (
     <div>
@@ -26,41 +26,41 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">{t.home.featuresTitle}</h2>
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">{t('home.featuresTitle')}</h2>
             <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              {t.home.featuresSubtitle}
+              {t('home.featuresSubtitle')}
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
             <FeatureCard 
               icon={<Shield className="w-6 h-6 text-blue-600" />}
-              title={t.home.feature1Title}
-              description={t.home.feature1Desc}
+              title={t('home.feature1Title')}
+              description={t('home.feature1Desc')}
               delay={0}
             />
             <FeatureCard 
               icon={<Video className="w-6 h-6 text-red-600" />}
-              title={t.home.feature2Title}
-              description={t.home.feature2Desc}
+              title={t('home.feature2Title')}
+              description={t('home.feature2Desc')}
               delay={0.1}
             />
             <FeatureCard 
               icon={<Users className="w-6 h-6 text-emerald-600" />}
-              title={t.home.feature3Title}
-              description={t.home.feature3Desc}
+              title={t('home.feature3Title')}
+              description={t('home.feature3Desc')}
               delay={0.2}
             />
             <FeatureCard 
               icon={<Calendar className="w-6 h-6 text-amber-600" />}
-              title={t.home.feature4Title}
-              description={t.home.feature4Desc}
+              title={t('home.feature4Title')}
+              description={t('home.feature4Desc')}
               delay={0.3}
             />
             <FeatureCard 
               icon={<BookOpen className="w-6 h-6 text-purple-600" />}
-              title={t.home.feature5Title}
-              description={t.home.feature5Desc}
+              title={t('home.feature5Title')}
+              description={t('home.feature5Desc')}
               delay={0.4}
             />
           </div>
@@ -78,17 +78,17 @@ export default function Home() {
             className="flex-1"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">
-              {t.home.ctaTitle}
+              {t('home.ctaTitle')}
             </h2>
             <p className="text-slate-400 mb-8 text-lg">
-              {t.home.ctaSubtitle}
+              {t('home.ctaSubtitle')}
             </p>
             <div className="flex gap-4">
               <Link href="/directory" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold transition-colors">
-                {t.home.ctaButton}
+                {t('home.ctaButton')}
               </Link>
               <Link href="/expert/register" className="bg-white/10 hover:bg-white/20 text-white px-8 py-3 rounded-xl font-bold transition-colors border border-white/20">
-                {t.home.ctaRegister}
+                {t('home.ctaRegister')}
               </Link>
             </div>
           </motion.div>

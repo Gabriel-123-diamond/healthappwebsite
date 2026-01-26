@@ -5,14 +5,15 @@ import { Link, useRouter, usePathname } from '@/i18n/routing';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, User, signOut } from 'firebase/auth';
 import { LogOut, User as UserIcon, Loader2, Menu, X, Globe, Sun, Moon } from 'lucide-react';
-import { useLanguage } from '@/context/LanguageContext';
+import { useLocale, useTranslations } from 'next-intl';
 import { useTheme } from '@/context/ThemeContext';
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { locale, t } = useLanguage();
+  const locale = useLocale();
+  const t = useTranslations();
   const { theme, setTheme, resolvedTheme } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
@@ -27,6 +28,7 @@ export default function Header() {
   }, []);
 
   const handleLocaleChange = (newLocale: string) => {
+    localStorage.setItem('language', newLocale);
     router.push(pathname, { locale: newLocale });
   };
 
@@ -58,13 +60,13 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
-          <Link href="/" className="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">{t.common.search}</Link>
-          <Link href="/directory" className="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">{t.common.directory}</Link>
-          <Link href="/community" className="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">{t.common.community}</Link>
+          <Link href="/" className="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">{t('common.search')}</Link>
+          <Link href="/directory" className="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">{t('common.directory')}</Link>
+          <Link href="/community" className="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">{t('common.community')}</Link>
           {user && (
-            <Link href="/saved" className="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">{t.common.saved}</Link>
+            <Link href="/saved" className="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">{t('common.saved')}</Link>
           )}
-          <Link href="/about" className="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">{t.common.about}</Link>
+          <Link href="/about" className="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">{t('common.about')}</Link>
         </nav>
 
         {/* Desktop Auth Actions */}
@@ -91,12 +93,12 @@ export default function Header() {
                 <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center text-blue-700 dark:text-blue-400 font-bold">
                   {user.email?.[0].toUpperCase() || <UserIcon className="w-4 h-4" />}
                 </div>
-                <span>{t.common.profile}</span>
+                <span>{t('common.profile')}</span>
               </Link>
               <button 
                 onClick={handleSignOut}
                 className="text-slate-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400 transition-colors"
-                title={t.common.signOut}
+                title={t('common.signOut')}
               >
                 <LogOut className="w-5 h-5" />
               </button>
@@ -104,10 +106,10 @@ export default function Header() {
           ) : (
             <>
               <Link href="/auth/signin" className="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">
-                {t.common.signIn}
+                {t('common.signIn')}
               </Link>
               <Link href="/auth/signup" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-                {t.common.getStarted}
+                {t('common.getStarted')}
               </Link>
             </>
           )}
@@ -134,13 +136,13 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-4 shadow-lg absolute w-full">
           <nav className="flex flex-col gap-4">
-            <Link href="/" className="text-base font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" onClick={() => setMobileMenuOpen(false)}>{t.common.search}</Link>
-            <Link href="/directory" className="text-base font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" onClick={() => setMobileMenuOpen(false)}>{t.common.directory}</Link>
-            <Link href="/community" className="text-base font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" onClick={() => setMobileMenuOpen(false)}>{t.common.community}</Link>
+            <Link href="/" className="text-base font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" onClick={() => setMobileMenuOpen(false)}>{t('common.search')}</Link>
+            <Link href="/directory" className="text-base font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" onClick={() => setMobileMenuOpen(false)}>{t('common.directory')}</Link>
+            <Link href="/community" className="text-base font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" onClick={() => setMobileMenuOpen(false)}>{t('common.community')}</Link>
             {user && (
-              <Link href="/saved" className="text-base font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" onClick={() => setMobileMenuOpen(false)}>{t.common.saved}</Link>
+              <Link href="/saved" className="text-base font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" onClick={() => setMobileMenuOpen(false)}>{t('common.saved')}</Link>
             )}
-            <Link href="/about" className="text-base font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" onClick={() => setMobileMenuOpen(false)}>{t.common.about}</Link>
+            <Link href="/about" className="text-base font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" onClick={() => setMobileMenuOpen(false)}>{t('common.about')}</Link>
           </nav>
           
           <div className="flex flex-col gap-2 py-2">
@@ -181,23 +183,23 @@ export default function Header() {
                   <span className="text-sm font-medium text-slate-900 dark:text-white">{user.email}</span>
                 </div>
                 <Link href="/profile" className="block w-full text-center py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg" onClick={() => setMobileMenuOpen(false)}>
-                  {t.common.profile}
+                  {t('common.profile')}
                 </Link>
                 <button 
                   onClick={handleSignOut}
                   className="w-full flex items-center justify-center gap-2 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
                 >
                   <LogOut className="w-4 h-4" />
-                  {t.common.signOut}
+                  {t('common.signOut')}
                 </button>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-4">
                 <Link href="/auth/signin" className="flex items-center justify-center py-2 text-sm font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" onClick={() => setMobileMenuOpen(false)}>
-                  {t.common.signIn}
+                  {t('common.signIn')}
                 </Link>
                 <Link href="/auth/signup" className="flex items-center justify-center py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700" onClick={() => setMobileMenuOpen(false)}>
-                  {t.common.getStarted}
+                  {t('common.getStarted')}
                 </Link>
               </div>
             )}

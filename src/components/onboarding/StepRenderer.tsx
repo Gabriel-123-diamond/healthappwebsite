@@ -127,21 +127,36 @@ export default function StepRenderer({
                 <input 
                   type="tel" 
                   value={formData.phone} 
-                  onChange={(e) => setFormData({...formData, phone: e.target.value.replace(/\D/g, '')})}
+                  onChange={(e) => {
+                    const selectedCountry = countries.find(c => c.code === formData.countryCode);
+                    const limit = selectedCountry?.length || 15;
+                    const val = e.target.value.replace(/\D/g, '').slice(0, limit);
+                    setFormData({...formData, phone: val});
+                  }}
                   onKeyDown={(e) => {
-                    if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+                    const selectedCountry = countries.find(c => c.code === formData.countryCode);
+                    const limit = selectedCountry?.length || 15;
+                    if (formData.phone.length >= limit && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                    if (!/[0-9]/.test(e.key) && !['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete'].includes(e.key)) {
                       e.preventDefault();
                     }
                   }}
                   className={`w-full px-5 py-4 rounded-2xl bg-white border outline-none transition-all font-bold text-slate-900 shadow-sm placeholder:font-normal placeholder:text-slate-400 ${
-                    phoneStatus === 'taken' ? 'border-red-500 focus:ring-red-200' : 'border-slate-100 focus:border-blue-500 focus:ring-blue-500/5'
+                    phoneStatus === 'taken' ? 'border-red-500 focus:ring-red-200' : 
+                    (formData.phone && formData.phone.length < (countries.find(c => c.code === formData.countryCode)?.length || 0)) ? 'border-amber-400 focus:ring-amber-100' :
+                    'border-slate-100 focus:border-blue-500 focus:ring-blue-500/5'
                   }`} 
                   placeholder="801 234 5678" 
                 />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                  {formData.phone && formData.phone.length < (countries.find(c => c.code === formData.countryCode)?.length || 0) && (
+                    <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-md">NOT VALID YET</span>
+                  )}
                   {phoneStatus === 'checking' && <Loader2 className="w-4 h-4 animate-spin text-blue-500" />}
                   {phoneStatus === 'taken' && <div className="p-1 bg-red-100 rounded-full"><X className="w-3 h-3 text-red-600" /></div>}
-                  {phoneStatus === 'available' && <div className="p-1 bg-emerald-100 rounded-full"><Check className="w-3 h-3 text-emerald-600" /></div>}
+                  {phoneStatus === 'available' && formData.phone.length === (countries.find(c => c.code === formData.countryCode)?.length || 0) && <div className="p-1 bg-emerald-100 rounded-full"><Check className="w-3 h-3 text-emerald-600" /></div>}
                 </div>
               </div>
             </div>

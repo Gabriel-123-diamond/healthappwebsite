@@ -9,9 +9,11 @@ import { updateProfile, onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import OnboardingSidebar from '@/components/onboarding/OnboardingSidebar';
 import StepRenderer from '@/components/onboarding/StepRenderer';
+import { useTranslations } from 'next-intl';
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const t = useTranslations();
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [initializing, setInitializing] = useState(true);
@@ -49,9 +51,13 @@ export default function OnboardingPage() {
   ];
 
   const countries = [
-    { name: 'Nigeria', code: '+234' }, { name: 'Ghana', code: '+233' },
-    { name: 'Senegal', code: '+221' }, { name: 'USA', code: '+1' },
-    { name: 'UK', code: '+44' }, { name: 'Australia', code: '+61' }
+    { name: 'Nigeria', code: '+234', length: 10 }, 
+    { name: 'Ghana', code: '+233', length: 9 },
+    { name: 'Senegal', code: '+221', length: 9 },
+    { name: 'Ivory Coast', code: '+225', length: 10 },
+    { name: 'USA', code: '+1', length: 10 },
+    { name: 'UK', code: '+44', length: 10 }, 
+    { name: 'Australia', code: '+61', length: 9 }
   ];
 
   // Auth Protection
@@ -281,14 +287,14 @@ export default function OnboardingPage() {
               onClick={() => step > 1 ? setStep(step - 1) : router.push('/auth/signup')} 
               className="text-slate-400 font-bold hover:text-slate-900 transition-colors px-6 py-2 rounded-xl hover:bg-slate-50"
             >
-              {step === 1 ? 'Back to Sign Up' : 'Previous'}
+              {step === 1 ? t('auth.backToSignUp') : t('common.previous')}
             </button>
             <button 
               onClick={handleNext} 
               disabled={isLoading || (step === 1 && (usernameStatus === 'taken' || phoneStatus === 'taken' || nameStatus === 'taken'))} 
               className="bg-slate-900 text-white px-12 py-5 rounded-[24px] font-black hover:bg-blue-600 transition-all flex items-center gap-3 shadow-2xl shadow-blue-900/20 active:scale-95 disabled:bg-slate-200"
             >
-              {isLoading ? 'Processing...' : step === 4 ? 'Launch Profile' : 'Continue'}
+              {isLoading ? t('common.processing') : step === 4 ? t('auth.launchProfile') : t('common.continue')}
               {!isLoading && <ArrowRight className="w-5 h-5" />}
             </button>
           </div>

@@ -9,11 +9,11 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { checkSafety, SafetyCheckResult } from '@/services/safetyService';
 import { searchHealthTopic, AIResponse } from '@/services/aiService';
 import SearchResults from './SearchResults';
-import { useLanguage } from '@/context/LanguageContext';
+import { useTranslations } from 'next-intl';
 
 const SearchSection: React.FC = () => {
   const router = useRouter();
-  const { t } = useLanguage();
+  const t = useTranslations();
   const [query, setQuery] = useState('');
   const [searchMode, setSearchMode] = useState<'medical' | 'herbal' | 'both'>('both');
   const [isSearching, setIsSearching] = useState(false);
@@ -78,13 +78,13 @@ const SearchSection: React.FC = () => {
             className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold mb-6 cursor-default"
           >
             <Sparkles className="w-4 h-4" />
-            {t.home.heroTag}
+            {t('home.heroTag')}
           </motion.div>
           <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight">
-            {t.home.heroTitle} <span className="text-blue-600">{t.home.heroTitleSpan}</span>
+            {t('home.heroTitle')} <span className="text-blue-600">{t('home.heroTitleSpan')}</span>
           </h1>
           <p className="text-lg text-slate-600 mb-10 max-w-2xl mx-auto">
-            {t.home.heroSubtitle}
+            {t('home.heroSubtitle')}
           </p>
         </motion.div>
 
@@ -97,7 +97,7 @@ const SearchSection: React.FC = () => {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder={t.common.searchPlaceholder}
+              placeholder={t('common.searchPlaceholder')}
               className="w-full pl-14 pr-32 py-5 rounded-2xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-lg text-slate-900 shadow-xl"
             />
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
@@ -110,7 +110,7 @@ const SearchSection: React.FC = () => {
                 (isSearching || !!safetyResult?.hasRedFlag) ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
-              {isSearching ? <Loader2 className="w-5 h-5 animate-spin" /> : t.common.search}
+              {isSearching ? <Loader2 className="w-5 h-5 animate-spin" /> : t('common.search')}
             </motion.button>
           </motion.div>
 
@@ -140,7 +140,7 @@ const SearchSection: React.FC = () => {
           <SearchModeButton 
             active={searchMode === 'medical'} 
             onClick={() => setSearchMode('medical')} 
-            label={t.common.medical} 
+            label={t('common.medical')} 
             icon={<Stethoscope className="w-4 h-4" />}
             colorClass="bg-blue-600"
             hoverClass="hover:border-blue-300"
@@ -148,7 +148,7 @@ const SearchSection: React.FC = () => {
           <SearchModeButton 
             active={searchMode === 'herbal'} 
             onClick={() => setSearchMode('herbal')} 
-            label={t.common.herbal} 
+            label={t('common.herbal')} 
             icon={<Leaf className="w-4 h-4" />}
             colorClass="bg-emerald-600"
             hoverClass="hover:border-emerald-300"
@@ -156,7 +156,7 @@ const SearchSection: React.FC = () => {
           <SearchModeButton 
             active={searchMode === 'both'} 
             onClick={() => setSearchMode('both')} 
-            label={t.common.both} 
+            label={t('common.both')} 
             icon={<Sparkles className="w-4 h-4" />}
             colorClass="bg-slate-800"
             hoverClass="hover:border-slate-400"

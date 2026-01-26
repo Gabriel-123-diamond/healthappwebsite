@@ -14,7 +14,10 @@
     "saved": "Saved",
     "learn": "Learn",
     "about": "About",
-    "viewAll": "View All"
+    "viewAll": "View All",
+    "previous": "Previous",
+    "continue": "Continue",
+    "processing": "Processing..."
   },
   "home": {
     "heroTag": "AI-Powered Health Discovery",
@@ -60,7 +63,9 @@
     "passwordsNoMatch": "Passwords don't match",
     "failedCreate": "Failed to create account",
     "failedSignIn": "Failed to sign in",
-    "appCheckError": "App Check verification failed. Developers: Check Firebase Console."
+    "appCheckError": "App Check verification failed. Developers: Check Firebase Console.",
+    "backToSignUp": "Back to Sign Up",
+    "launchProfile": "Launch Profile"
   },
   "directory": {
     "title": "Find Trusted Health Experts",
