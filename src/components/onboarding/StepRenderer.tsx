@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AtSign, Loader2, Check, X, Phone, ChevronDown, MapPin, UserCircle, Stethoscope, Leaf, Building2 } from 'lucide-react';
+import { AtSign, Loader2, Check, X, Phone, ChevronDown, MapPin, UserCircle, Stethoscope, Leaf, Building2, Search } from 'lucide-react';
 
 interface StepRendererProps {
   step: number;
@@ -297,6 +297,7 @@ export default function StepRenderer({
 // Modern Custom Select Component
 function CustomSelect({ value, onChange, options, placeholder }: { value: string, onChange: (val: string) => void, options: { value: string, label: string }[], placeholder: string }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -311,12 +312,17 @@ function CustomSelect({ value, onChange, options, placeholder }: { value: string
 
   const selectedLabel = options.find(o => o.value === value)?.label || placeholder;
 
+  const filteredOptions = options.filter(o => 
+    o.label.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    o.value.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="relative" ref={containerRef}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full px-5 py-4 rounded-2xl bg-white border border-slate-100 flex items-center justify-between outline-none transition-all font-bold text-slate-900 shadow-sm hover:border-blue-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 ${isOpen ? 'border-blue-500 ring-4 ring-blue-500/5' : ''}`}
+        className={`w-full px-5 py-4 rounded-2xl bg-white border border-slate-100 flex items-center justify-between outline-none transition-all font-bold text-slate-900 shadow-sm hover:border-blue-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100/5 ${isOpen ? 'border-blue-500 ring-4 ring-blue-500/5' : ''}`}
       >
         <span className={value ? 'text-slate-900' : 'text-slate-400 font-normal'}>
           {selectedLabel}
@@ -331,24 +337,40 @@ function CustomSelect({ value, onChange, options, placeholder }: { value: string
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.1 }}
-            className="absolute top-full mt-2 left-0 w-full bg-white rounded-2xl border border-slate-100 shadow-xl z-50 max-h-60 overflow-y-auto custom-scrollbar p-2"
+            className="absolute top-full mt-2 left-0 w-64 bg-white rounded-2xl border border-slate-100 shadow-xl z-50 max-h-80 overflow-hidden flex flex-col p-2"
           >
-            {options.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => {
-                  onChange(option.value);
-                  setIsOpen(false);
-                }}
-                className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-colors ${
-                  value === option.value 
-                    ? 'bg-blue-50 text-blue-600' 
-                    : 'text-slate-700 hover:bg-slate-50'
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
+            <div className="relative mb-2 px-2">
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input 
+                type="text"
+                autoFocus
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none font-medium"
+              />
+            </div>
+            <div className="overflow-y-auto flex-1 custom-scrollbar">
+              {filteredOptions.length > 0 ? filteredOptions.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => {
+                    onChange(option.value);
+                    setIsOpen(false);
+                    setSearchTerm("");
+                  }}
+                  className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-colors ${
+                    value === option.value 
+                      ? 'bg-blue-50 text-blue-600' 
+                      : 'text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              )) : (
+                <p className="p-4 text-center text-xs text-slate-400 font-medium">No results found</p>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
