@@ -23,7 +23,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HealthAI - Global Health Information Platform",
+  title: "Ikiké Health AI - Global Health Information Platform",
   description: "Discover credible health information across orthodox medicine and herbal knowledge.",
 };
 
@@ -63,11 +63,10 @@ export default async function LocaleLayout({
                 <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
                   <div className="col-span-1 md:col-span-2">
                     <div className="flex items-center gap-2 mb-4">
-                      <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                        <span className="text-white font-bold text-lg">H</span>
-                      </div>
-                      <span className="font-bold text-xl text-slate-900 tracking-tight dark:text-white">HealthAI</span>
-                    </div>
+                                          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                                            <span className="text-white font-bold text-lg">I</span>
+                                          </div>
+                                          <span className="font-bold text-xl text-slate-900 tracking-tight dark:text-white">Ikiké Health AI</span>                    </div>
                     <p className="text-slate-500 text-sm max-w-sm mb-6 dark:text-slate-400">
                       A global-standard health information platform providing verified medical information and traditional herbal knowledge.
                     </p>
@@ -94,10 +93,9 @@ export default async function LocaleLayout({
                     </ul>
                   </div>
                 </div>
-                <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-200 text-center dark:border-slate-800">
-                  <p className="text-sm text-slate-400">&copy; {new Date().getFullYear()} HealthAI. All rights reserved.</p>
-                </div>
-              </footer>
+                              <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-200 text-center dark:border-slate-800">
+                                <p className="text-sm text-slate-400">&copy; {new Date().getFullYear()} Ikiké Health AI. All rights reserved.</p>
+                              </div>              </footer>
             </LanguageProvider>
           </ThemeProvider>
         </NextIntlClientProvider>

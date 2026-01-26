@@ -9,19 +9,14 @@ export default function AboutPage() {
     <div className="min-h-screen bg-white dark:bg-slate-900 transition-colors">
       {/* Hero */}
       <section className="py-24 px-4 bg-slate-50 dark:bg-slate-950 text-center">
-        <div className="max-w-4xl mx-auto">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl font-extrabold text-slate-900 dark:text-white mb-6"
-          >
-            Democratizing <span className="text-blue-600">Verified</span> Health Knowledge
-          </motion.h1>
-          <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            HealthAI was founded with a single mission: to bridge the gap between modern clinical medicine and traditional herbal wisdom through explainable AI.
-          </p>
-        </div>
-      </section>
+                  <div className="max-w-3xl">
+                    <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 leading-tight">
+                      Bridging the gap between <span className="text-blue-600">Nature</span> and <span className="text-blue-600">Science</span>.
+                    </h1>
+                    <p className="text-lg text-slate-600 leading-relaxed">
+                      Ikiké Health AI was founded with a single mission: to bridge the gap between modern clinical medicine and traditional herbal wisdom through explainable AI.
+                    </p>
+                  </div>      </section>
 
       {/* Vision & Mission */}
       <section className="py-20 px-4">

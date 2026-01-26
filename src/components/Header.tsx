@@ -52,9 +52,9 @@ export default function Header() {
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">H</span>
+              <span className="text-white font-bold text-lg">I</span>
             </div>
-            <span className="font-bold text-xl text-slate-900 dark:text-white tracking-tight">HealthAI</span>
+            <span className="font-bold text-xl text-slate-900 dark:text-white tracking-tight">Ikiké Health AI</span>
           </Link>
         </div>
 
