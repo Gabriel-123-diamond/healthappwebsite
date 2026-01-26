@@ -10,6 +10,7 @@ import Link from 'next/link';
 interface SearchResultsProps {
   response: AIResponse | null;
   isSearching: boolean;
+  filterFormat?: 'all' | 'article' | 'video';
 }
 
 const containerVariants = {
@@ -37,7 +38,13 @@ const getGradeColor = (grade?: string) => {
   }
 };
 
-const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching, filterFormat = 'all' }) => {
+  // Filter results based on selected format
+  const filteredResults = response?.results.filter(result => {
+    if (filterFormat === 'all') return true;
+    return result.format === filterFormat;
+  }) || [];
+
   return (
     <AnimatePresence>
       {response && !isSearching && (
@@ -146,9 +153,12 @@ const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching }) 
           )}
 
           <div className="p-8 bg-slate-50 dark:bg-slate-900/50">
-            <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">Trusted Sources</h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Trusted Sources ({filteredResults.length})</h3>
+            </div>
             <motion.div className="grid gap-4" variants={containerVariants}>
-              {response.results.map((result) => (
+              {filteredResults.length > 0 ? (
+                filteredResults.map((result) => (
                 <motion.a 
                   key={result.id} 
                   href={result.link}
@@ -186,7 +196,12 @@ const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching }) 
                   </div>
                   <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-blue-500 transition-colors self-center" />
                 </motion.a>
-              ))}
+              ))
+              ) : (
+                <div className="text-center py-8 text-slate-400 text-sm">
+                  No {filterFormat === 'all' ? '' : filterFormat} sources found matching your query.
+                </div>
+              )}
             </motion.div>
           </div>
           <div className="bg-amber-50 dark:bg-amber-900/20 p-4 text-center border-t border-amber-100 dark:border-amber-900/30">

@@ -16,6 +16,7 @@ const SearchSection: React.FC = () => {
   const t = useTranslations();
   const [query, setQuery] = useState('');
   const [searchMode, setSearchMode] = useState<'medical' | 'herbal' | 'both'>('both');
+  const [filterFormat, setFilterFormat] = useState<'all' | 'article' | 'video'>('all');
   const [isSearching, setIsSearching] = useState(false);
   const [safetyResult, setSafetyResult] = useState<SafetyCheckResult | null>(null);
   const [aiResponse, setAiResponse] = useState<AIResponse | null>(null);
@@ -163,6 +164,28 @@ const SearchSection: React.FC = () => {
           />
         </div>
 
+        {/* Content Filters */}
+        <div className="flex justify-center gap-2 mb-8">
+          <button
+            onClick={() => setFilterFormat('all')}
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${filterFormat === 'all' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+          >
+            All Results
+          </button>
+          <button
+            onClick={() => setFilterFormat('article')}
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${filterFormat === 'article' ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'}`}
+          >
+            Articles
+          </button>
+          <button
+            onClick={() => setFilterFormat('video')}
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${filterFormat === 'video' ? 'bg-red-600 text-white' : 'bg-red-50 text-red-600 hover:bg-red-100'}`}
+          >
+            Videos
+          </button>
+        </div>
+
         {/* Error Display */}
         <AnimatePresence>
           {error && (
@@ -179,7 +202,7 @@ const SearchSection: React.FC = () => {
         </AnimatePresence>
 
         {/* Results Display */}
-        <SearchResults response={aiResponse} isSearching={isSearching} />
+        <SearchResults response={aiResponse} isSearching={isSearching} filterFormat={filterFormat} />
       </div>
     </section>
   );
