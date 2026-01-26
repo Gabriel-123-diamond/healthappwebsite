@@ -3,10 +3,13 @@
 import React, { useState } from 'react';
 import { Code2, Key, Book, Shield, Zap, Send, Loader2, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { countries, Country } from '@/lib/countries';
 
 export default function DeveloperPortalPage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState<Country>(countries.find(c => c.name === 'united_states') || countries[0]);
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,9 +102,43 @@ export default function DeveloperPortalPage() {
                       <input required type="email" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="john@company.com" />
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">Organization</label>
-                    <input required type="text" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="University, NGO, or Tech Co" />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-bold text-slate-700 mb-2">Organization</label>
+                      <input required type="text" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="University, NGO, or Tech Co" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-slate-700 mb-2">Phone Number</label>
+                      <div className="flex gap-2">
+                        <div className="relative w-1/3">
+                          <select
+                            value={selectedCountry.name}
+                            onChange={(e) => {
+                              const c = countries.find(c => c.name === e.target.value);
+                              if (c) setSelectedCountry(c);
+                            }}
+                            className="w-full appearance-none px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-white"
+                          >
+                            {countries.map((country) => (
+                              <option key={country.name} value={country.name}>
+                                {country.flag} {country.code}
+                              </option>
+                            ))}
+                          </select>
+                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-700">
+                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                          </div>
+                        </div>
+                        <input
+                          required
+                          type="tel"
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          className="w-2/3 px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                          placeholder="555-0123"
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-slate-700 mb-2">Use Case</label>

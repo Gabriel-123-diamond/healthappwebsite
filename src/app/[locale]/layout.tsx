@@ -79,7 +79,7 @@ export default async function LocaleLayout({
                       <li><Link href="/directory" className="text-sm text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400">Directory</Link></li>
                       <li><Link href="/referrals" className="text-sm text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400">Referrals</Link></li>
                       <li><Link href="/developers" className="text-sm text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400">Developers</Link></li>
-                      <li><Link href="/tools" className="text-sm text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400">Tools</Link></li>
+
                       <li><Link href="/history" className="text-sm text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400">Search History</Link></li>
                       <li><Link href="/support" className="text-sm text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400">Help & Support</Link></li>
                     </ul>
@@ -89,7 +89,7 @@ export default async function LocaleLayout({
                     <ul className="space-y-2">
                       <li><Link href="/privacy" className="text-sm text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400">Privacy Policy</Link></li>
                       <li><Link href="/terms" className="text-sm text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400">Terms of Use</Link></li>
-                      <li><Link href="#" className="text-sm text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400">Disclaimer</Link></li>
+                      <li><Link href="/disclaimer" className="text-sm text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400">Disclaimer</Link></li>
                     </ul>
                   </div>
                 </div>
