@@ -19,6 +19,7 @@ const SearchSection: React.FC = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [safetyResult, setSafetyResult] = useState<SafetyCheckResult | null>(null);
   const [aiResponse, setAiResponse] = useState<AIResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -51,12 +52,14 @@ const SearchSection: React.FC = () => {
 
     setIsSearching(true);
     setAiResponse(null);
+    setError(null);
 
     try {
       const response = await searchHealthTopic(query, searchMode);
       setAiResponse(response);
-    } catch (error) {
-      console.error("Search failed:", error);
+    } catch (err: any) {
+      console.error("Search failed:", err);
+      setError(err.message || "An unexpected error occurred during search.");
     } finally {
       setIsSearching(false);
     }
@@ -159,6 +162,21 @@ const SearchSection: React.FC = () => {
             hoverClass="hover:border-slate-400"
           />
         </div>
+
+        {/* Error Display */}
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              className="mb-8 max-w-3xl mx-auto p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-700"
+            >
+              <AlertCircle className="w-5 h-5 flex-shrink-0" />
+              <p className="text-sm font-bold">{error}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Results Display */}
         <SearchResults response={aiResponse} isSearching={isSearching} />
