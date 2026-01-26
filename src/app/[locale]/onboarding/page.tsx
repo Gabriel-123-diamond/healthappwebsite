@@ -51,13 +51,13 @@ export default function OnboardingPage() {
   ];
 
   const countries = [
-    { name: 'Nigeria', code: '+234', length: 10 }, 
-    { name: 'Ghana', code: '+233', length: 9 },
-    { name: 'Senegal', code: '+221', length: 9 },
-    { name: 'Ivory Coast', code: '+225', length: 10 },
-    { name: 'USA', code: '+1', length: 10 },
-    { name: 'UK', code: '+44', length: 10 }, 
-    { name: 'Australia', code: '+61', length: 9 }
+    { name: 'Nigeria', code: '+234', min: 7, max: 10 }, 
+    { name: 'Ghana', code: '+233', min: 5, max: 9 },
+    { name: 'Senegal', code: '+221', min: 9, max: 9 },
+    { name: 'Ivory Coast', code: '+225', min: 10, max: 10 },
+    { name: 'USA', code: '+1', min: 10, max: 10 },
+    { name: 'UK', code: '+44', min: 7, max: 10 }, 
+    { name: 'Australia', code: '+61', min: 5, max: 15 }
   ];
 
   // Auth Protection
