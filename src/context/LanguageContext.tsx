@@ -4,11 +4,14 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import { en } from '@/locales/en';
 import { es } from '@/locales/es';
 import { fr } from '@/locales/fr';
+import { de } from '@/locales/de';
+import { zh } from '@/locales/zh';
+import { ar } from '@/locales/ar';
 
-type Locale = 'en' | 'es' | 'fr';
+type Locale = 'en' | 'es' | 'fr' | 'de' | 'zh' | 'ar';
 type Translations = typeof en;
 
-const translations = { en, es, fr };
+const translations = { en, es, fr, de, zh, ar };
 
 interface LanguageContextType {
   locale: Locale;
@@ -22,10 +25,11 @@ export function LanguageProvider({ children, initialLocale }: { children: ReactN
   const [locale, setLocale] = useState<Locale>(initialLocale || 'en');
   const [mounted, setMounted] = useState(false);
 
-  // Sync with prop if it changes
+  // Sync with prop if it changes and save to localStorage
   useEffect(() => {
     if (initialLocale) {
       setLocale(initialLocale);
+      localStorage.setItem('language', initialLocale);
     }
   }, [initialLocale]);
 
@@ -33,7 +37,7 @@ export function LanguageProvider({ children, initialLocale }: { children: ReactN
   useEffect(() => {
     if (!initialLocale) {
       const saved = localStorage.getItem('language') as Locale;
-      if (saved && (saved === 'en' || saved === 'es' || saved === 'fr')) {
+      if (saved && translations[saved]) {
         setLocale(saved);
       }
     }
@@ -45,12 +49,8 @@ export function LanguageProvider({ children, initialLocale }: { children: ReactN
     localStorage.setItem('language', newLocale);
   };
 
-  // Prevent hydration mismatch by rendering children only after mount or ensuring default locale consistency
-  // However, simple text replacement usually works fine with standard client components.
-  // Using 'key' prop on providers can force re-render if needed, but Context updates should trigger re-renders automatically.
-
   return (
-    <LanguageContext.Provider value={{ locale, setLocale: handleSetLocale, t: translations[locale] }}>
+    <LanguageContext.Provider value={{ locale, setLocale: handleSetLocale, t: translations[locale] || translations.en }}>
       {children}
     </LanguageContext.Provider>
   );
