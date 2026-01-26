@@ -125,31 +125,48 @@ const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching, fi
             </motion.div>
           )}
 
-          {response.directoryMatch && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4 }}
-              className="mx-8 my-6 p-6 bg-blue-600 rounded-2xl text-white shadow-lg shadow-blue-200 dark:shadow-none flex items-center justify-between gap-6"
-            >
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                  <Users className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-lg">Matching Expert Found</h4>
-                  <p className="text-blue-100 text-sm">
-                    {response.directoryMatch.name} specializes in {response.directoryMatch.specialty}.
-                  </p>
-                </div>
-              </div>
-              <Link 
-                href={`/expert/${response.directoryMatch.id}`}
-                className="bg-white text-blue-600 px-6 py-2 rounded-xl font-bold hover:bg-blue-50 transition-colors whitespace-nowrap"
-              >
-                View Profile
-              </Link>
-            </motion.div>
+          {response.directoryMatches && response.directoryMatches.length > 0 && (
+            <div className="mx-8 my-6 flex flex-col gap-4">
+              <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+                Verified Experts ({response.totalDirectoryMatches || response.directoryMatches.length})
+              </h3>
+              {response.directoryMatches.map((expert, idx) => (
+                <motion.div 
+                  key={expert.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4 + (idx * 0.1) }}
+                  className="p-6 bg-blue-600 rounded-2xl text-white shadow-lg shadow-blue-200 dark:shadow-none flex items-center justify-between gap-6"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                      <Users className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-lg">{expert.name}</h4>
+                      <p className="text-blue-100 text-sm">
+                        {expert.specialty} • {expert.location}
+                      </p>
+                    </div>
+                  </div>
+                  <Link 
+                    href={`/expert/${expert.id}`}
+                    className="bg-white text-blue-600 px-6 py-2 rounded-xl font-bold hover:bg-blue-50 transition-colors whitespace-nowrap"
+                  >
+                    View
+                  </Link>
+                </motion.div>
+              ))}
+              
+              {(response.totalDirectoryMatches || 0) > 2 && (
+                <Link 
+                  href={`/directory?query=${encodeURIComponent(response.directoryMatches[0].specialty)}`}
+                  className="text-center py-3 text-blue-600 font-bold hover:bg-blue-50 rounded-xl transition-colors border border-blue-100"
+                >
+                  See all {response.totalDirectoryMatches} experts
+                </Link>
+              )}
+            </div>
           )}
 
           <div className="p-8 bg-slate-50 dark:bg-slate-900/50">

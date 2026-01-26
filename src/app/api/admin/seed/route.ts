@@ -48,18 +48,23 @@ export async function POST(req: NextRequest) {
     const expertTypes = ["doctor", "specialist", "herbalist", "hospital"];
     
     const baseLocations = [
-      { name: "Lagos", lat: 6.5244, lng: 3.3792 },
-      { name: "Abuja", lat: 9.0765, lng: 7.3986 },
-      { name: "Port Harcourt", lat: 9.0563, lng: 7.4985 },
-      { name: "New York", lat: 40.7128, lng: -74.0060 },
-      { name: "London", lat: 51.5074, lng: -0.1278 }
+      { name: "Lagos", state: "Lagos", country: "Nigeria", lat: 6.5244, lng: 3.3792 },
+      { name: "Abuja", state: "FCT", country: "Nigeria", lat: 9.0765, lng: 7.3986 },
+      { name: "Port Harcourt", state: "Rivers", country: "Nigeria", lat: 9.0563, lng: 7.4985 },
+      { name: "New York", state: "New York", country: "USA", lat: 40.7128, lng: -74.0060 },
+      { name: "London", state: "Greater London", country: "UK", lat: 51.5074, lng: -0.1278 },
+      { name: "Texas", state: "Texas", country: "USA", lat: 31.9686, lng: -99.9018 },
+      { name: "California", state: "California", country: "USA", lat: 36.7783, lng: -119.4179 },
+      { name: "Toronto", state: "Ontario", country: "Canada", lat: 43.65107, lng: -79.347015 },
+      { name: "Accra", state: "Greater Accra", country: "Ghana", lat: 5.6037, lng: -0.1870 },
+      { name: "Nairobi", state: "Nairobi", country: "Kenya", lat: -1.2921, lng: 36.8219 }
     ];
 
     const batch = adminDb.batch();
     let count = 0;
 
-    // Generate 50 experts
-    for (let i = 0; i < 50; i++) {
+    // Generate 100 experts
+    for (let i = 0; i < 100; i++) {
       const disease = diseases[i % diseases.length];
       const type = expertTypes[Math.floor(Math.random() * expertTypes.length)];
       const baseLoc = baseLocations[Math.floor(Math.random() * baseLocations.length)];
@@ -73,7 +78,9 @@ export async function POST(req: NextRequest) {
         name: type === 'hospital' ? `${baseLoc.name} ${disease} Center` : `Dr. Expert ${i + 1}`,
         type: type,
         specialty: disease,
-        location: `${baseLoc.name} Area`,
+        location: `${baseLoc.name}, ${baseLoc.country}`,
+        country: baseLoc.country,
+        state: baseLoc.state,
         rating: (4.0 + Math.random()).toFixed(1),
         verified: Math.random() > 0.2, // 80% verified
         lat: loc.lat,

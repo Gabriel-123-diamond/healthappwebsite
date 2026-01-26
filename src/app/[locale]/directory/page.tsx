@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { getExperts, Expert } from '@/services/directoryService';
-import { MapPin, Star, BadgeCheck, Stethoscope, Leaf, Building2, Loader2 } from 'lucide-react';
+import { MapPin, Star, BadgeCheck, Stethoscope, Leaf, Building2, Loader2, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
+import { useSearchParams } from 'next/navigation';
+import { countries } from '@/lib/countries';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -22,18 +24,33 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 }
 };
 
+const ITEMS_PER_PAGE = 12;
+
 export default function DirectoryPage() {
-  const [experts, setExperts] = useState<Expert[]>([]);
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get('query') || '';
+  
+  const [allExperts, setAllExperts] = useState<Expert[]>([]);
+  const [filteredExperts, setFilteredExperts] = useState<Expert[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
+  
+  // Filter States
+  const [filterType, setFilterType] = useState('all');
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedState, setSelectedState] = useState('');
+  
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+
   const { t } = useLanguage();
 
   useEffect(() => {
     const fetchExperts = async () => {
       setLoading(true);
       try {
-        const data = await getExperts(filter);
-        setExperts(data);
+        const data = await getExperts('all');
+        setAllExperts(data);
       } catch (error) {
         console.error("Failed to fetch experts:", error);
       } finally {
@@ -42,7 +59,44 @@ export default function DirectoryPage() {
     };
 
     fetchExperts();
-  }, [filter]);
+  }, []);
+
+  // Filtering Logic
+  useEffect(() => {
+    let result = allExperts;
+
+    // Filter by Type
+    if (filterType !== 'all') {
+      result = result.filter(expert => expert.type === filterType);
+    }
+
+    // Filter by Search Query
+    if (searchQuery) {
+      const lowerQuery = searchQuery.toLowerCase();
+      result = result.filter(expert => 
+        expert.name.toLowerCase().includes(lowerQuery) || 
+        expert.specialty.toLowerCase().includes(lowerQuery)
+      );
+    }
+
+    // Filter by Location
+    if (selectedCountry) {
+      result = result.filter(expert => expert.location.includes(selectedCountry));
+      if (selectedState) {
+        result = result.filter(expert => expert.location.includes(selectedState));
+      }
+    }
+
+    setFilteredExperts(result);
+    setCurrentPage(1); // Reset to first page on filter change
+  }, [allExperts, filterType, searchQuery, selectedCountry, selectedState]);
+
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredExperts.length / ITEMS_PER_PAGE);
+  const paginatedExperts = filteredExperts.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors py-12 px-4">
@@ -65,31 +119,58 @@ export default function DirectoryPage() {
           </motion.p>
         </div>
 
-        {/* Filters */}
-        <div className="flex justify-center gap-4 mb-12 flex-wrap">
-          <FilterButton 
-            active={filter === 'all'} 
-            onClick={() => setFilter('all')} 
-            label={t.directory.allExperts} 
-          />
-          <FilterButton 
-            active={filter === 'doctor'} 
-            onClick={() => setFilter('doctor')} 
-            label={t.directory.doctors} 
-            icon={<Stethoscope className="w-4 h-4" />} 
-          />
-          <FilterButton 
-            active={filter === 'herbalist'} 
-            onClick={() => setFilter('herbalist')} 
-            label={t.directory.herbalists} 
-            icon={<Leaf className="w-4 h-4" />} 
-          />
-          <FilterButton 
-            active={filter === 'hospital'} 
-            onClick={() => setFilter('hospital')} 
-            label={t.directory.hospitals} 
-            icon={<Building2 className="w-4 h-4" />} 
-          />
+        {/* Search & Filters */}
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 mb-12 space-y-6">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Search by name or specialty..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <select
+              value={selectedCountry}
+              onChange={(e) => { setSelectedCountry(e.target.value); setSelectedState(''); }}
+              className="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+            >
+              <option value="">All Countries</option>
+              {countries.map(c => <option key={c.name} value={c.name}>{c.flag} {c.name}</option>)}
+            </select>
+            
+            <select
+              value={selectedState}
+              onChange={(e) => setSelectedState(e.target.value)}
+              disabled={!selectedCountry}
+              className="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all disabled:opacity-50"
+            >
+              <option value="">All States/Regions</option>
+              {/* Note: Ideally fetch states based on country. For now, free text input might be better or specific mock states */}
+              <option value="Lagos">Lagos</option>
+              <option value="Abuja">Abuja</option>
+              <option value="Rivers">Rivers</option>
+              <option value="New York">New York</option>
+              <option value="London">London</option>
+            </select>
+
+            <div className="flex gap-2">
+               {/* Type Filter Buttons embedded here for cleaner layout on mobile */}
+               <select 
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+               >
+                 <option value="all">All Types</option>
+                 <option value="doctor">Doctors</option>
+                 <option value="herbalist">Herbalists</option>
+                 <option value="hospital">Hospitals</option>
+               </select>
+            </div>
+          </div>
         </div>
 
         {/* List */}
@@ -98,39 +179,69 @@ export default function DirectoryPage() {
             <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
           </div>
         ) : (
-          <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            <AnimatePresence mode='wait'>
-              {experts.map((expert) => (
-                <ExpertCard key={expert.id} expert={expert} t={t} />
-              ))}
-            </AnimatePresence>
-          </motion.div>
+          <>
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"
+            >
+              <AnimatePresence mode='wait'>
+                {paginatedExperts.map((expert) => (
+                  <ExpertCard key={expert.id} expert={expert} t={t} />
+                ))}
+              </AnimatePresence>
+            </motion.div>
+
+            {filteredExperts.length === 0 && (
+              <div className="text-center py-20 text-slate-500">
+                No experts found matching your criteria.
+              </div>
+            )}
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded-lg border border-slate-200 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                
+                <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  Page {currentPage} of {totalPages}
+                </span>
+
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="p-2 rounded-lg border border-slate-200 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+                
+                <div className="flex items-center gap-2 ml-4">
+                  <span className="text-sm text-slate-500">Go to:</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max={totalPages}
+                    value={currentPage}
+                    onChange={(e) => {
+                      const page = parseInt(e.target.value);
+                      if (page >= 1 && page <= totalPages) setCurrentPage(page);
+                    }}
+                    className="w-16 px-2 py-1 rounded-lg border border-slate-200 text-center text-sm"
+                  />
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
-  );
-}
-
-function FilterButton({ active, onClick, label, icon }: { active: boolean, onClick: () => void, label: string, icon?: React.ReactNode }) {
-  return (
-    <motion.button
-      onClick={onClick}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      className={`flex items-center gap-2 px-6 py-2.5 rounded-full font-medium transition-colors ${
-        active 
-          ? 'bg-slate-900 text-white shadow-lg dark:bg-blue-600' 
-          : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-700'
-      }`}
-    >
-      {icon}
-      {label}
-    </motion.button>
   );
 }
 

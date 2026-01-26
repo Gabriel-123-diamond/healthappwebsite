@@ -24,11 +24,13 @@ export interface AIResponse {
     region: string;
     insight: string;
   };
-  directoryMatch?: {
+  directoryMatches?: {
     id: string;
     name: string;
     specialty: string;
-  };
+    location: string;
+  }[];
+  totalDirectoryMatches?: number;
 }
 
 export const searchHealthTopic = async (query: string, mode: 'medical' | 'herbal' | 'both'): Promise<AIResponse> => {
@@ -78,21 +80,19 @@ export const searchHealthTopic = async (query: string, mode: 'medical' | 'herbal
   const data = await response.json();
   
   // Real directory matching logic
-  let directoryMatch;
   const lowerQuery = query.toLowerCase();
   
-  const matchedExpert = experts.find(e => 
+  const allMatches = experts.filter(e => 
     e.name.toLowerCase().includes(lowerQuery) || 
     e.specialty.toLowerCase().includes(lowerQuery)
   );
 
-  if (matchedExpert) {
-    directoryMatch = {
-      id: matchedExpert.id,
-      name: matchedExpert.name,
-      specialty: matchedExpert.specialty
-    };
-  }
+  const directoryMatches = allMatches.slice(0, 2).map(e => ({
+    id: e.id,
+    name: e.name,
+    specialty: e.specialty,
+    location: e.location
+  }));
 
   return {
     answer: data.answer,
@@ -112,6 +112,7 @@ export const searchHealthTopic = async (query: string, mode: 'medical' | 'herbal
     disclaimer: data.disclaimer || "This information is for educational purposes only and does not constitute medical advice.",
     confidenceScore: 92,
     explanation: "Calculated based on real-time primary source analysis.",
-    directoryMatch
+    directoryMatches,
+    totalDirectoryMatches: allMatches.length
   };
 };
