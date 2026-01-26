@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldAlert, Search, Leaf, Siren, UserMd } from 'lucide-react';
+import { ShieldAlert, Search, Leaf, Siren, Stethoscope } from 'lucide-react';
 
 export default function DisclaimerPage() {
   return (
@@ -67,7 +67,7 @@ export default function DisclaimerPage() {
         {/* Expert & Hospital Listings Disclaimer */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
           <div className="bg-indigo-600 p-4 flex items-center gap-3 text-white">
-            <UserMd className="w-6 h-6" />
+            <Stethoscope className="w-6 h-6" />
             <h2 className="text-xl font-bold">Expert & Hospital Listings Disclaimer</h2>
           </div>
           <div className="p-6 text-slate-700 dark:text-slate-300">
