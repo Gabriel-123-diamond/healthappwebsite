@@ -8,9 +8,16 @@ if (!serviceAccountJson) {
 
 let serviceAccount;
 try {
-  serviceAccount = JSON.parse(serviceAccountJson);
+  // Remove potential surrounding quotes from environment variable string
+  const cleanedJson = serviceAccountJson.trim().replace(/^['"]|['"]$/g, '');
+  serviceAccount = JSON.parse(cleanedJson);
+  
+  // Ensure the private key handles newlines correctly
+  if (serviceAccount.private_key) {
+    serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+  }
 } catch (e) {
-  throw new Error("Failed to parse FIREBASE_SERVICE_ACCOUNT_JSON");
+  throw new Error(`Failed to parse FIREBASE_SERVICE_ACCOUNT_JSON: ${e instanceof Error ? e.message : 'Unknown error'}`);
 }
 
 if (!admin.apps.length) {

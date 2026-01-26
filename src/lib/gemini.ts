@@ -14,9 +14,16 @@ if (!serviceAccountJson) {
 
 let credentials;
 try {
-  credentials = JSON.parse(serviceAccountJson);
+  // Remove potential surrounding quotes from environment variable string
+  const cleanedJson = serviceAccountJson.trim().replace(/^['"]|['"]$/g, '');
+  credentials = JSON.parse(cleanedJson);
+  
+  // Ensure the private key handles newlines correctly if present
+  if (credentials.private_key) {
+    credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
+  }
 } catch (e) {
-  throw new Error("Failed to parse FIREBASE_SERVICE_ACCOUNT_JSON");
+  throw new Error(`Failed to parse FIREBASE_SERVICE_ACCOUNT_JSON for Gemini: ${e instanceof Error ? e.message : 'Unknown error'}`);
 }
 
 // Initialize Vertex AI with Service Account Credentials
