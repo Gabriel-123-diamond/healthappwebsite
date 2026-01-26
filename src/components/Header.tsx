@@ -70,26 +70,10 @@ export default function Header() {
         {/* Desktop Auth Actions */}
         <div className="hidden md:flex items-center gap-4">
           <div className="flex items-center gap-2 mr-2">
-             <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
-              <button 
-                onClick={() => handleLocaleChange('en')} 
-                className={`px-2 py-1 rounded-md text-xs font-bold transition-all ${locale === 'en' ? 'bg-white dark:bg-slate-700 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
-              >
-                EN
-              </button>
-              <button 
-                onClick={() => handleLocaleChange('es')} 
-                className={`px-2 py-1 rounded-md text-xs font-bold transition-all ${locale === 'es' ? 'bg-white dark:bg-slate-700 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
-              >
-                ES
-              </button>
-              <button 
-                onClick={() => handleLocaleChange('fr')} 
-                className={`px-2 py-1 rounded-md text-xs font-bold transition-all ${locale === 'fr' ? 'bg-white dark:bg-slate-700 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
-              >
-                FR
-              </button>
-            </div>
+            <LanguageSelector 
+              currentLocale={locale} 
+              onLocaleChange={handleLocaleChange} 
+            />
             
             <button 
               onClick={toggleTheme}
@@ -159,26 +143,29 @@ export default function Header() {
             <Link href="/about" className="text-base font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" onClick={() => setMobileMenuOpen(false)}>{t.common.about}</Link>
           </nav>
           
-          <div className="flex items-center gap-2 py-2">
-             <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 w-full justify-center">
-              <button 
-                onClick={() => handleLocaleChange('en')} 
-                className={`flex-1 px-2 py-1 rounded-md text-xs font-bold transition-all ${locale === 'en' ? 'bg-white dark:bg-slate-700 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}`}
-              >
-                EN
-              </button>
-              <button 
-                onClick={() => handleLocaleChange('es')} 
-                className={`flex-1 px-2 py-1 rounded-md text-xs font-bold transition-all ${locale === 'es' ? 'bg-white dark:bg-slate-700 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}`}
-              >
-                ES
-              </button>
-              <button 
-                onClick={() => handleLocaleChange('fr')} 
-                className={`flex-1 px-2 py-1 rounded-md text-xs font-bold transition-all ${locale === 'fr' ? 'bg-white dark:bg-slate-700 shadow text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}`}
-              >
-                FR
-              </button>
+          <div className="flex flex-col gap-2 py-2">
+            <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Select Language</p>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { code: 'en', label: 'English' },
+                { code: 'es', label: 'Español' },
+                { code: 'fr', label: 'Français' },
+                { code: 'de', label: 'Deutsch' },
+                { code: 'zh', label: '中文' },
+                { code: 'ar', label: 'العربية' }
+              ].map((lang) => (
+                <button 
+                  key={lang.code}
+                  onClick={() => handleLocaleChange(lang.code)} 
+                  className={`px-3 py-2 rounded-xl text-xs font-bold transition-all border ${
+                    locale === lang.code 
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200' 
+                      : 'bg-slate-50 text-slate-600 border-slate-100 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400'
+                  }`}
+                >
+                  {lang.code.toUpperCase()}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -218,5 +205,85 @@ export default function Header() {
         </div>
       )}
     </header>
+  );
+}
+
+function LanguageSelector({ currentLocale, onLocaleChange }: { currentLocale: string, onLocaleChange: (loc: string) => void }) {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  const languages = [
+    { code: 'en', label: 'English', flag: '🇺🇸' },
+    { code: 'es', label: 'Español', flag: '🇪🇸' },
+    { code: 'fr', label: 'Français', flag: '🇫🇷' },
+    { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
+    { code: 'zh', label: '中文', flag: '🇨🇳' },
+    { code: 'ar', label: 'العربية', flag: '🇸🇦' },
+  ];
+
+  const currentLang = languages.find(l => l.code === currentLocale) || languages[0];
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+      >
+        <span>{currentLang.flag}</span>
+        <span className="uppercase">{currentLang.code}</span>
+        <Globe className={`w-3 h-3 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full mt-2 right-0 w-48 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-2xl p-2 z-[60]">
+          <div className="grid grid-cols-1 gap-1">
+            {languages.map((lang) => (
+              <button
+                key={lang.code}
+                onClick={() => {
+                  onLocaleChange(lang.code);
+                  setIsOpen(false);
+                }}
+                className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
+                  currentLocale === lang.code 
+                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400' 
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <span>{lang.flag}</span>
+                  <span className="font-medium">{lang.label}</span>
+                </div>
+                {currentLocale === lang.code && <Check className="w-4 h-4" />}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Check({ className }: { className?: string }) {
+  return (
+    <svg 
+      className={className} 
+      fill="none" 
+      viewBox="0 0 24 24" 
+      stroke="currentColor" 
+      strokeWidth={3}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
   );
 }
