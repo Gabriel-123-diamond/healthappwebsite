@@ -265,6 +265,7 @@ export default function OnboardingPage() {
                 roles={roles}
                 locationData={locationData}
                 requestLocation={requestLocation}
+                t={t}
                 toggleInterest={(topic) => setFormData(prev => ({
                   ...prev,
                   interests: prev.interests.includes(topic) ? prev.interests.filter(i => i !== topic) : [...prev.interests, topic]

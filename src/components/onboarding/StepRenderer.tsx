@@ -16,6 +16,7 @@ interface StepRendererProps {
   locationData: any;
   requestLocation: () => void;
   toggleInterest: (interest: string) => void;
+  t: (key: string) => string;
 }
 
 export default function StepRenderer({
@@ -29,7 +30,8 @@ export default function StepRenderer({
   roles,
   locationData,
   requestLocation,
-  toggleInterest
+  toggleInterest,
+  t
 }: StepRendererProps) {
   
   // Helper to update country code
@@ -121,7 +123,7 @@ export default function StepRenderer({
                   onChange={handleCountryChange}
                   options={countries.map(c => ({ 
                     value: c.code, 
-                    label: `${c.code} (${c.min}-${c.max})` 
+                    label: `${t(`countries.${c.name}`)} (${c.code})` 
                   }))}
                   placeholder="+1"
                 />
