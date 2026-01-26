@@ -35,7 +35,7 @@ const vertexAI = new VertexAI({
   }
 });
 
-export const getGeminiModel = (modelName: string = "gemini-1.5-flash") => {
+export const getGeminiModel = (modelName: string = "gemini-2.5-flash") => {
   // Vertex AI often uses specific version tags like -001, but the base name is more stable
   return vertexAI.getGenerativeModel({ model: modelName });
 };
