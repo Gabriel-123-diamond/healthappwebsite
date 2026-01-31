@@ -39,7 +39,7 @@ const getGradeColor = (grade?: string) => {
   }
 };
 
-const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching, filterFormat = 'all' }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching, filterFormat = 'all', query }) => {
   // Filter results based on selected format
   const filteredResults = response?.results.filter(result => {
     if (filterFormat === 'all') return true;
