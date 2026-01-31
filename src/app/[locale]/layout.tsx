@@ -100,6 +100,12 @@ export default async function LocaleLayout({
             </LanguageProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
+        {process.env.NODE_ENV === 'development' && (
+          <>
+            <script src="http://localhost:8097"></script>
+            <script src="http://10.3.149.230:8097"></script>
+          </>
+        )}
       </body>
     </html>
   );
