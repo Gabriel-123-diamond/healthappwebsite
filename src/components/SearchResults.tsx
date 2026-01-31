@@ -11,6 +11,7 @@ interface SearchResultsProps {
   response: AIResponse | null;
   isSearching: boolean;
   filterFormat?: 'all' | 'article' | 'video';
+  query?: string; // Added optional query prop
 }
 
 const containerVariants = {
@@ -220,6 +221,18 @@ const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching, fi
                 </div>
               )}
             </motion.div>
+
+            {query && filteredResults.length > 0 && (
+              <div className="mt-8 flex justify-center">
+                <Link
+                  href={`/search?q=${encodeURIComponent(query)}`}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 transition-all shadow-sm group"
+                >
+                  View More Results
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            )}
           </div>
           <div className="bg-amber-50 dark:bg-amber-900/20 p-4 text-center border-t border-amber-100 dark:border-amber-900/30">
             <p className="text-xs text-amber-800 dark:text-amber-400 font-medium">

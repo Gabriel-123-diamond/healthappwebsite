@@ -202,7 +202,7 @@ const SearchSection: React.FC = () => {
         </AnimatePresence>
 
         {/* Results Display */}
-        <SearchResults response={aiResponse} isSearching={isSearching} filterFormat={filterFormat} />
+        <SearchResults response={aiResponse} isSearching={isSearching} filterFormat={filterFormat} query={query} />
       </div>
     </section>
   );

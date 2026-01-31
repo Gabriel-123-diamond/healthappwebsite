@@ -60,8 +60,8 @@ export const fetchEvidence = async (query: string): Promise<EvidenceItem[]> => {
 
   try {
     const [generalItems, videoItems] = await Promise.all([
-      fetchSearch(query, 3),
-      fetchSearch(query + ' site:youtube.com', 2)
+      fetchSearch(query, 6),
+      fetchSearch(query + ' site:youtube.com', 3)
     ]);
 
     const results = [...generalItems, ...videoItems];

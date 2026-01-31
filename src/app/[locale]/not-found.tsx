@@ -37,7 +37,7 @@ export default function NotFound() {
               className="flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3.5 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-200"
             >
               <Home className="w-5 h-5" />
-              Return Home
+              Back to Home
             </Link>
             
             <button 
