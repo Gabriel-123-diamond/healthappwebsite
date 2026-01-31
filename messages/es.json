@@ -1,0 +1,135 @@
+{
+  "common": {
+    "searchPlaceholder": "Síntomas, hierbas o enfermedades...",
+    "search": "Buscar",
+    "medical": "Ciencia Médica",
+    "herbal": "Sabiduría Herbal",
+    "both": "Combinado",
+    "getStarted": "Comenzar",
+    "signIn": "Iniciar Sesión",
+    "signOut": "Cerrar Sesión",
+    "profile": "Perfil",
+    "community": "Comunidad",
+    "directory": "Directorio",
+    "saved": "Guardado",
+    "learn": "Aprender",
+    "about": "Acerca de",
+    "viewAll": "Ver Todo"
+  },
+  "home": {
+    "heroTag": "Descubrimiento de Salud con IA",
+    "heroTitle": "¿Cómo podemos ayudarte",
+    "heroTitleSpan": "hoy?",
+    "heroSubtitle": "Busque temas de salud a través de la ciencia médica moderna y la sabiduría herbal tradicional.",
+    "featuresTitle": "Un Enfoque Holístico de la Salud",
+    "featuresSubtitle": "Cerramos la brecha entre la ciencia médica moderna y el conocimiento herbal comprobado, brindándole una imagen completa de sus opciones de salud.",
+    "feature1Title": "Información Verificada",
+    "feature1Desc": "Nuestra IA está entrenada para priorizar fuentes médicas creíbles y revisadas por pares y estudios herbales documentados.",
+    "feature2Title": "Contenido de Expertos",
+    "feature2Desc": "Acceda a videos y artículos curados de profesionales de la salud y herbolarios verificados.",
+    "feature3Title": "Directorio de Expertos",
+    "feature3Desc": "Encuentre y conéctese con médicos, clínicas y practicantes de hierbas verificados cerca de usted.",
+    "feature4Title": "Diario de Síntomas",
+    "feature4Desc": "Registre sus síntomas, estado de ánimo y patrones de salud de forma privada para identificar tendencias a lo largo del tiempo.",
+    "feature5Title": "Solo Educativo",
+    "feature5Desc": "Nos enfocamos en empoderarlo con conocimiento, manteniendo una política estricta de no diagnóstico para su seguridad.",
+    "ctaTitle": "¿Busca consejo profesional? Explore nuestro directorio.",
+    "ctaSubtitle": "Conéctese con expertos médicos verificados, hospitales y especialistas en hierbas. Filtre por especialidad, ubicación y credenciales.",
+    "ctaButton": "Buscar un Experto",
+    "ctaRegister": "Registrarse como Experto"
+  },
+  "feed": {
+    "recommended": "Recomendado para ti",
+    "subtitle": "Perspectivas basadas en evidencia adaptadas a tus intereses.",
+    "verified": "Evidencia Verificada",
+    "community": "Contenido Comunitario"
+  },
+  "auth": {
+    "welcome": "Bienvenido de nuevo",
+    "createAccount": "Crear una cuenta",
+    "signToAccess": "Inicia sesión para acceder a tus temas de salud guardados y conexiones con expertos.",
+    "joinToAccess": "Únete a Ikiké Health AI para acceder a información de salud verificada y expertos.",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "orContinue": "O continuar con",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "dontHaveAccount": "¿No tienes una cuenta?",
+    "passwordsNoMatch": "Las contraseñas no coinciden",
+    "failedCreate": "Error al crear cuenta",
+    "failedSignIn": "Error al iniciar sesión",
+    "appCheckError": "Error de verificación App Check. Desarrolladores: Ver consola Firebase."
+  },
+  "directory": {
+    "title": "Encuentre Expertos en Salud de Confianza",
+    "subtitle": "Conéctese con médicos verificados, herbolarios certificados e instituciones médicas acreditadas.",
+    "allExperts": "Todos los Expertos",
+    "doctors": "Médicos",
+    "herbalists": "Herbolarios",
+    "hospitals": "Hospitales",
+    "verified": "VERIFICADO"
+  },
+  "profile": {
+    "dashboard": "Panel de Control",
+    "myLearning": "Mi Aprendizaje",
+    "viewAll": "Ver Todo",
+    "accountSettings": "Configuración de Cuenta",
+    "exportData": "Exportar Datos",
+    "privacy": "Privacidad y Seguridad",
+    "help": "Ayuda y Soporte",
+    "deleteAccount": "Eliminar Cuenta",
+    "signOut": "Cerrar Sesión"
+  },
+  "community": {
+    "title": "Comunidad de Salud",
+    "subtitle": "Haga preguntas, comparta experiencias y obtenga respuestas verificadas.",
+    "askQuestion": "Hacer una Pregunta",
+    "searchPlaceholder": "Buscar temas, síntomas o discusiones...",
+    "answers": "Respuestas",
+    "expertAnswered": "Respondido por Experto"
+  },
+  "support": {
+    "title": "¿Cómo podemos ayudarte?",
+    "searchPlaceholder": "Buscar respuestas...",
+    "faq": "Preguntas Frecuentes",
+    "liveChat": "Chat en Vivo",
+    "emailUs": "Envíanos un Email",
+    "callUs": "Llámanos"
+  },
+  "history": {
+    "title": "Historial de Búsqueda",
+    "subtitle": "Vea sus búsquedas pasadas y resúmenes de IA.",
+    "noHistory": "No se encontró historial",
+    "noHistoryDesc": "Las búsquedas que realice aparecerán aquí.",
+    "startDate": "Fecha Inicio",
+    "endDate": "Fecha Fin"
+  },
+  "saved": {
+    "title": "Temas Guardados",
+    "subtitle": "Acceda a sus conocimientos e investigaciones de salud marcados.",
+    "noSaved": "Aún no hay elementos guardados",
+    "noSavedDesc": "Comience a buscar temas de salud y guárdelos aquí para un acceso rápido.",
+    "remove": "Eliminar de guardados",
+    "savedOn": "Guardado el"
+  },
+  "articles": {
+    "title": "Investigación y Artículos",
+    "subtitle": "Explore conocimientos basados en evidencia en disciplinas de salud modernas y tradicionales.",
+    "readMore": "Leer Artículo Completo",
+    "grade": "Grado",
+    "back": "Volver a Investigación"
+  },
+  "institution": {
+    "experts": "Expertos Afiliados",
+    "publications": "Últimas Publicaciones",
+    "followers": "Seguidores",
+    "stats": "Estadísticas de la Institución",
+    "contact": "Información de Contacto",
+    "contactAction": "Contactar Institución",
+    "about": "Acerca de",
+    "library": "Biblioteca de Conocimientos",
+    "research": "Investigación"
+  }
+}
