@@ -3,8 +3,7 @@
 import React, { useState } from 'react';
 import { Star, MessageSquare, CheckCircle, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { auth, db } from '@/lib/firebase';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { feedbackService } from '@/services/feedbackService';
 
 interface SearchFeedbackProps {
   query: string;
@@ -51,25 +50,12 @@ export const SearchFeedback: React.FC<SearchFeedbackProps> = ({ query }) => {
     
     setIsSubmitting(true);
     try {
-      const user = auth.currentUser;
-      const feedbackData = {
-        userId: user?.uid,
-        userName: user?.email || 'Anonymous',
+      await feedbackService.submitSearchFeedback({
         query,
         rating,
         tags: selectedTags,
-        comment,
-        timestamp: serverTimestamp(),
-        platform: 'web'
-      };
-
-      // Save to general collection
-      await addDoc(collection(db, 'search_feedback'), feedbackData);
-
-      // Save to user subcollection if logged in
-      if (user?.uid) {
-        await addDoc(collection(db, `users/${user.uid}/polls`), feedbackData);
-      }
+        comment
+      });
 
       setSubmitted(true);
     } catch (error) {

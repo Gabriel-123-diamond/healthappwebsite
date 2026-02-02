@@ -2,17 +2,22 @@
 
 import React, { useState } from 'react';
 import { Copy, RefreshCw, Share2 } from 'lucide-react';
+import { referralService } from '@/services/referralService';
 
 export default function ReferralsPage() {
   const [code, setCode] = useState<string>('HEALTH25');
   const [generating, setGenerating] = useState(false);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     setGenerating(true);
-    setTimeout(() => {
-      setCode(`REF-${Math.random().toString(36).substring(7).toUpperCase()}`);
+    try {
+      const newCode = await referralService.generateReferralCode();
+      setCode(newCode);
+    } catch (error) {
+      console.error('Failed to generate code:', error);
+    } finally {
       setGenerating(false);
-    }, 1000);
+    }
   };
 
   const copyToClipboard = () => {
