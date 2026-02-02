@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Plus, Loader2 } from 'lucide-react';
 import { addJournalEntry } from '@/services/journalService';
 import { auth } from '@/lib/firebase';
+import { Dropdown } from '@/components/ui/Dropdown';
 
 interface JournalEntryFormProps {
   onEntryAdded: () => void;
@@ -79,17 +80,18 @@ export default function JournalEntryForm({ onEntryAdded }: JournalEntryFormProps
           <label className="block text-sm font-medium text-slate-700 mb-2">
             Mood
           </label>
-          <select 
+          <Dropdown
             value={mood}
-            onChange={(e) => setMood(e.target.value)}
-            className="w-full px-4 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500"
-          >
-            <option>Great</option>
-            <option>Good</option>
-            <option>Neutral</option>
-            <option>Poor</option>
-            <option>Awful</option>
-          </select>
+            onChange={setMood}
+            options={[
+              { value: 'Great', label: 'Great' },
+              { value: 'Good', label: 'Good' },
+              { value: 'Neutral', label: 'Neutral' },
+              { value: 'Poor', label: 'Poor' },
+              { value: 'Awful', label: 'Awful' },
+            ]}
+            placeholder="Select Mood"
+          />
         </div>
 
         <div>

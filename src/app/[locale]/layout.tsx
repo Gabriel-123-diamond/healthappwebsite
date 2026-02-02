@@ -3,24 +3,14 @@ import {getMessages} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import GlobalDisclaimer from "@/components/GlobalDisclaimer";
 import { Link } from "@/i18n/routing";
+import Script from "next/script";
 import Header from "@/components/Header";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import PushNotificationManager from "@/components/PushNotificationManager";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Ikiké Health AI - Global Health Information Platform",
@@ -48,7 +38,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
+        className={`antialiased min-h-screen flex flex-col`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider>
@@ -100,12 +90,6 @@ export default async function LocaleLayout({
             </LanguageProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
-        {process.env.NODE_ENV === 'development' && (
-          <>
-            <script src="http://localhost:8097"></script>
-            <script src="http://10.3.149.230:8097"></script>
-          </>
-        )}
       </body>
     </html>
   );

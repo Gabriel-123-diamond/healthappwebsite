@@ -5,8 +5,7 @@ export interface EvidenceItem {
 }
 
 export const fetchEvidence = async (query: string): Promise<EvidenceItem[]> => {
-  const apiKey = process.env.GOOGLE_SEARCH_API_KEY;
-  const cx = process.env.GOOGLE_SEARCH_CX;
+  const apiKey = process.env.SERPER_API_KEY;
 
   // Fallback items to ensure the UI is never empty
   const getFallbackItems = (q: string): EvidenceItem[] => [
@@ -27,27 +26,42 @@ export const fetchEvidence = async (query: string): Promise<EvidenceItem[]> => {
     }
   ];
 
-  if (!apiKey || !cx) {
-    console.warn("Google Search API keys missing, using fallback links");
+  if (!apiKey) {
+    console.warn("Serper API key missing, using fallback links");
     return getFallbackItems(query);
   }
 
   const fetchSearch = async (searchQuery: string, num: number) => {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000); // Increased timeout
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-      const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(searchQuery)}&num=${num}`;
-      const response = await fetch(url, { signal: controller.signal });
+      const response = await fetch('https://google.serper.dev/search', {
+        method: 'POST',
+        headers: {
+          'X-API-KEY': apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          q: searchQuery,
+          num: num
+        }),
+        signal: controller.signal
+      });
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        console.error(`Google Search API Error: ${response.status} ${response.statusText}`);
+        const errorBody = await response.text();
+        console.error(`Serper API Error (${response.status}): ${errorBody}`);
         return [];
       }
 
       const data = await response.json();
-      return (data.items || []).map((item: any) => ({
+      
+      // Serper returns "organic" for web results.
+      // If we added "site:youtube.com", they might still be in "organic" or "videos".
+      // We'll map "organic" generally.
+      return (data.organic || []).map((item: any) => ({
         title: item.title,
         link: item.link,
         snippet: item.snippet

@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { getInstitutionById, Institution } from '@/services/institutionService';
+import { getInstitutionById } from '@/services/institutionService';
+import { Institution } from '@/types/institution';
 import { Users, FileText, UserPlus, Loader2 } from 'lucide-react';
 import InstitutionHeader from '@/components/institution/InstitutionHeader';
 import AboutSection from '@/components/institution/AboutSection';

@@ -2,10 +2,13 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Search, Filter, MapPin, Calendar, ArrowRight, PlayCircle, FileText, User, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Filter, MapPin, Calendar, ArrowRight, PlayCircle, FileText, User, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { searchHealthTopic, AIResponse } from '@/services/aiService';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { countries } from '@/lib/countries';
+import { Dropdown, DropdownOption } from '@/components/ui/Dropdown';
+import { motion, AnimatePresence } from 'framer-motion';
+import { SearchFeedback } from '@/components/search/SearchFeedback';
 
 function SearchContent() {
   const searchParams = useSearchParams();
@@ -16,6 +19,7 @@ function SearchContent() {
   const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<AIResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   // Filters
   const [activeTab, setActiveTab] = useState<'all' | 'experts' | 'articles' | 'videos'>('all');
@@ -30,18 +34,39 @@ function SearchContent() {
 
   useEffect(() => {
     if (initialQuery) {
-      handleSearch(initialQuery);
+      const checkCache = () => {
+        if (typeof window !== 'undefined') {
+          const cacheKey = `search_cache_${initialQuery}_${initialMode}`;
+          const cached = sessionStorage.getItem(cacheKey);
+          if (cached) {
+            try {
+              setResults(JSON.parse(cached));
+              return true;
+            } catch (e) {
+              console.error("Failed to parse cache", e);
+            }
+          }
+        }
+        return false;
+      };
+
+      if (!checkCache()) {
+        handleSearch(initialQuery);
+      }
     }
   }, [initialQuery]);
 
   const handleSearch = async (searchQuery: string) => {
     setLoading(true);
+    setError(null);
     setCurrentPage(1); // Reset to page 1 on new search
     try {
       const data = await searchHealthTopic(searchQuery, initialMode);
       setResults(data);
-    } catch (error) {
-      console.error(error);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "An error occurred while searching. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -142,18 +167,20 @@ function SearchContent() {
             <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-2" />
 
             {/* Country Filter */}
-            <div className="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-1.5">
-              <MapPin className="w-4 h-4 text-slate-400" />
-              <select
+            <div className="w-48">
+              <Dropdown
                 value={selectedCountry}
-                onChange={(e) => setSelectedCountry(e.target.value)}
-                className="bg-transparent border-none text-sm text-slate-700 dark:text-slate-300 focus:ring-0 w-32 cursor-pointer"
-              >
-                <option value="">All Countries</option>
-                {countries.map((c) => (
-                  <option key={c.code} value={c.name}>{c.flag} {c.name.charAt(0).toUpperCase() + c.name.slice(1)}</option>
-                ))}
-              </select>
+                onChange={setSelectedCountry}
+                options={[
+                  { value: '', label: 'All Countries' },
+                  ...countries.map(c => ({
+                    value: c.name,
+                    label: c.name.charAt(0).toUpperCase() + c.name.slice(1),
+                    icon: <span>{c.flag}</span>
+                  }))
+                ]}
+                placeholder="All Countries"
+              />
             </div>
 
             {/* State Filter */}
@@ -186,10 +213,37 @@ function SearchContent() {
 
       {/* Results Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4" />
-            <p className="text-slate-500">Searching specifically for "{query}"...</p>
+        <AnimatePresence mode="wait">
+          {loading ? (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="flex flex-col items-center justify-center py-20"
+            >
+              <motion.div
+                animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+                className="p-4 bg-blue-100 dark:bg-blue-900/30 rounded-2xl mb-6"
+              >
+                <Sparkles className="w-8 h-8 text-blue-600" />
+              </motion.div>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Ikiké is thinking...</h2>
+              <p className="text-slate-500 dark:text-slate-400">Searching through medical journals and herbal wisdom for "{query}"</p>
+            </motion.div>
+          ) : error ? (
+          <div className="text-center py-20">
+            <div className="bg-red-50 text-red-700 p-6 rounded-2xl inline-block max-w-md border border-red-100 shadow-sm">
+              <p className="font-bold mb-2">Search Failed</p>
+              <p className="text-sm">{error}</p>
+              <button 
+                onClick={() => handleSearch(query)}
+                className="mt-4 bg-red-600 text-white px-6 py-2 rounded-xl font-bold hover:bg-red-700 transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
           </div>
         ) : !results ? (
           <div className="text-center py-20">
@@ -226,7 +280,7 @@ function SearchContent() {
                           </div>
                         </div>
                         <Link 
-                          href={`/expert/${expert.id}`}
+                          href={`/directory/${expert.id}`}
                           className="mt-4 block w-full py-2 bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-center rounded-lg text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors"
                         >
                           View Profile
@@ -298,6 +352,13 @@ function SearchContent() {
               </div>
             </div>
 
+            {/* Feedback Section */}
+            {query && results && (
+              <div className="max-w-3xl mx-auto mb-12 bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+                <SearchFeedback query={query} />
+              </div>
+            )}
+
             {/* Pagination Controls (Only show if not in 'all' view, or handle 'all' view pagination separately if needed) */}
             {activeTab !== 'all' && totalPages > 1 && (
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-slate-200 dark:border-slate-700">
@@ -364,6 +425,7 @@ function SearchContent() {
             )}
           </>
         )}
+        </AnimatePresence>
       </div>
     </div>
   );

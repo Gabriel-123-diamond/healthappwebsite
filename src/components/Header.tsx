@@ -76,6 +76,7 @@ export default function Header() {
           <Link href="/" className="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">{t('common.search')}</Link>
           <Link href="/directory" className="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">{t('common.directory')}</Link>
           <Link href="/community" className="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">{t('common.community')}</Link>
+          <Link href="/chat" className="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">{t('common.chat')}</Link>
           
           {/* Platform Dropdown */}
           <div className="relative" ref={platformMenuRef}>
@@ -177,6 +178,7 @@ export default function Header() {
             <Link href="/" className="text-base font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" onClick={() => setMobileMenuOpen(false)}>{t('common.search')}</Link>
             <Link href="/directory" className="text-base font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" onClick={() => setMobileMenuOpen(false)}>{t('common.directory')}</Link>
             <Link href="/community" className="text-base font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" onClick={() => setMobileMenuOpen(false)}>{t('common.community')}</Link>
+            <Link href="/chat" className="text-base font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" onClick={() => setMobileMenuOpen(false)}>{t('common.chat')}</Link>
             {user && (
               <Link href="/saved" className="text-base font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400" onClick={() => setMobileMenuOpen(false)}>{t('common.saved')}</Link>
             )}

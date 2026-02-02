@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { getSearchHistory, SearchHistoryItem } from '@/services/historyService';
+import { getSearchHistory } from '@/services/historyService';
+import { SearchHistoryItem } from '@/types/history';
 import { History, Calendar, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Code2, Key, Book, Shield, Zap, Send, Loader2, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { countries, Country } from '@/lib/countries';
+import { Dropdown } from '@/components/ui/Dropdown';
 
 export default function DeveloperPortalPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -110,24 +111,20 @@ export default function DeveloperPortalPage() {
                     <div>
                       <label className="block text-sm font-bold text-slate-700 mb-2">Phone Number</label>
                       <div className="flex gap-2">
-                        <div className="relative w-1/3">
-                          <select
+                        <div className="w-1/3">
+                          <Dropdown
                             value={selectedCountry.name}
-                            onChange={(e) => {
-                              const c = countries.find(c => c.name === e.target.value);
+                            onChange={(val) => {
+                              const c = countries.find(c => c.name === val);
                               if (c) setSelectedCountry(c);
                             }}
-                            className="w-full appearance-none px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                          >
-                            {countries.map((country) => (
-                              <option key={country.name} value={country.name}>
-                                {country.flag} {country.code}
-                              </option>
-                            ))}
-                          </select>
-                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-700">
-                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                          </div>
+                            options={countries.map(c => ({
+                              value: c.name,
+                              label: `${c.code}`,
+                              icon: <span>{c.flag}</span>
+                            }))}
+                            placeholder="Code"
+                          />
                         </div>
                         <input
                           required

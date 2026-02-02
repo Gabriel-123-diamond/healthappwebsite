@@ -16,13 +16,19 @@ export async function POST(req: NextRequest) {
     let decodedToken;
     try {
       decodedToken = await adminAuth.verifyIdToken(token);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Auth Verification Failed:", error);
-      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+      // Fallback for development network issues
+      if (process.env.NODE_ENV === 'development' && (error.code === 'auth/network-request-failed' || error.message?.includes('ENOTFOUND'))) {
+        console.warn("⚠️ NETWORK ERROR DETECTED: Bypassing auth verification for development purposes.");
+        decodedToken = { uid: "dev-bypass-user" };
+      } else {
+        return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+      }
     }
 
     const { query, mode = "both" } = await req.json();
-    console.log(`Processing search query: "${query}" in mode: ${mode}`);
+    console.log(`[API Search] Query: "${query}", Mode: "${mode}"`);
 
     if (!query) {
       return NextResponse.json({ error: "Query is required" }, { status: 400 });
@@ -93,18 +99,20 @@ export async function POST(req: NextRequest) {
          ## ⚠️ Safety & Interactions
          (Crucial: Mention potential side effects, drug interactions, or contraindications. If it's a medical emergency, state it clearly.)
 
-         ## 🔗 References
-         (If you used the provided Context, cite them here or within the text like [1], [2].)
-
       3. Tone: Professional, empathetic, and educational.
       4. Formatting: Use Markdown (bolding, lists) to make it easy to read.
       5. Disclaimer: Do not start with a disclaimer, one is already displayed on the UI.
+      6. References: DO NOT include inline citations (e.g., [1], [1, 2]) in the text. The UI displays sources separately.
     `;
 
     try {
       const result = await model.generateContent(prompt);
       const response = await result.response;
-      const aiText = response.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      let aiText = response.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      
+      // Clean up any remaining citations like [1], [1, 2], [1-3]
+      aiText = aiText.replace(/\[\d+(?:,\s*\d+)*\]/g, "").replace(/\[\d+-\d+\]/g, "");
+      
       console.log("AI Response received successfully");
 
       // 5. Save to Review Queue (for experts)

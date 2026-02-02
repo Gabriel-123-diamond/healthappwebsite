@@ -1,13 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { getExperts, Expert } from '@/services/directoryService';
+import { getExperts } from '@/services/directoryService';
+import { Expert } from '@/types/expert';
 import { MapPin, Star, BadgeCheck, Stethoscope, Leaf, Building2, Loader2, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSearchParams } from 'next/navigation';
 import { countries } from '@/lib/countries';
+import { Dropdown, DropdownOption } from '@/components/ui/Dropdown';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -133,42 +135,50 @@ export default function DirectoryPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <select
+            <Dropdown
               value={selectedCountry}
-              onChange={(e) => { setSelectedCountry(e.target.value); setSelectedState(''); }}
-              className="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-            >
-              <option value="">All Countries</option>
-              {countries.map(c => <option key={c.name} value={c.name}>{c.flag} {c.name}</option>)}
-            </select>
+              onChange={(val) => { setSelectedCountry(val); setSelectedState(''); }}
+              options={[
+                { value: '', label: 'All Countries' },
+                ...countries.map(c => ({
+                  value: c.name,
+                  label: c.name,
+                  icon: <span>{c.flag}</span>
+                }))
+              ]}
+              placeholder="All Countries"
+              className="z-30"
+            />
             
-            <select
+            <Dropdown
               value={selectedState}
-              onChange={(e) => setSelectedState(e.target.value)}
-              disabled={!selectedCountry}
-              className="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all disabled:opacity-50"
-            >
-              <option value="">All States/Regions</option>
-              {/* Note: Ideally fetch states based on country. For now, free text input might be better or specific mock states */}
-              <option value="Lagos">Lagos</option>
-              <option value="Abuja">Abuja</option>
-              <option value="Rivers">Rivers</option>
-              <option value="New York">New York</option>
-              <option value="London">London</option>
-            </select>
+              onChange={setSelectedState}
+              options={[
+                { value: '', label: 'All States/Regions' },
+                { value: 'Lagos', label: 'Lagos' },
+                { value: 'Abuja', label: 'Abuja' },
+                { value: 'Rivers', label: 'Rivers' },
+                { value: 'New York', label: 'New York' },
+                { value: 'London', label: 'London' },
+              ]}
+              placeholder="All States/Regions"
+              className="z-20"
+            />
 
             <div className="flex gap-2">
                {/* Type Filter Buttons embedded here for cleaner layout on mobile */}
-               <select 
+               <Dropdown
                   value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-               >
-                 <option value="all">All Types</option>
-                 <option value="doctor">Doctors</option>
-                 <option value="herbalist">Herbalists</option>
-                 <option value="hospital">Hospitals</option>
-               </select>
+                  onChange={setFilterType}
+                  options={[
+                    { value: 'all', label: 'All Types' },
+                    { value: 'doctor', label: 'Doctors' },
+                    { value: 'herbalist', label: 'Herbalists' },
+                    { value: 'hospital', label: 'Hospitals' },
+                  ]}
+                  placeholder="All Types"
+                  className="w-full z-10"
+               />
             </div>
           </div>
         </div>

@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getArticles, Article } from '@/services/articleService';
+import { getArticles } from '@/services/articleService';
+import { Article } from '@/types/article';
 import { ArrowRight, BookOpen, Loader2, ShieldCheck } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { motion } from 'framer-motion';

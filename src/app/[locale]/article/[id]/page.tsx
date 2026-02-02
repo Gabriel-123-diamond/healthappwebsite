@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { getArticleById, Article } from '@/services/articleService';
+import { getArticleById } from '@/services/articleService';
+import { Article } from '@/types/article';
 import { ArrowLeft, Calendar, User, ShieldCheck, Tag, Loader2 } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 

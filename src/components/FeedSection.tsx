@@ -5,6 +5,7 @@ import { getFeedItems, FeedItem } from '@/services/feedService';
 import { PlayCircle, FileText, CheckCircle, ExternalLink, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
+import { Link } from '@/i18n/routing';
 
 export default function FeedSection() {
   const [items, setItems] = useState<FeedItem[]>([]);
@@ -41,7 +42,9 @@ export default function FeedSection() {
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{t.feed.recommended}</h2>
             <p className="text-slate-500 dark:text-slate-400">{t.feed.subtitle}</p>
           </div>
-          <button className="text-blue-600 font-medium hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">{t.common.viewAll}</button>
+          <Link href="/articles" className="text-blue-600 font-medium hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+            {t.common.viewAll}
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -76,9 +79,10 @@ function FeedCard({ item, index, t }: { item: FeedItem, index: number, t: any })
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, margin: "-50px" }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
       className="group bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full"
     >
       <div className="h-32 bg-slate-100 dark:bg-slate-700 relative overflow-hidden">

@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Building2, CheckCircle, Globe, MapPin, UserPlus } from 'lucide-react';
-import { Institution } from '@/services/institutionService';
+import { MapPin, Phone, Globe, ShieldCheck, Building2, CheckCircle, UserPlus } from 'lucide-react';
+import { Institution } from '@/types/institution';
 
 interface InstitutionHeaderProps {
   institution: Institution;

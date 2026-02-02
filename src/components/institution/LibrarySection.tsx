@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { BookOpen, FileText, Lock } from 'lucide-react';
-import { Institution } from '@/services/institutionService';
+import { FileText, Lock, Download, ChevronRight, BookOpen } from 'lucide-react';
+import { Institution } from '@/types/institution';
 
 interface LibrarySectionProps {
   libraries: Institution['library'];

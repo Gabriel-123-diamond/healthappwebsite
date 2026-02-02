@@ -3,7 +3,7 @@
 import SearchSection from "@/components/SearchSection";
 import FeedSection from "@/components/FeedSection";
 import { Shield, Users, Video, BookOpen, Calendar } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 

@@ -1,24 +1,33 @@
-export interface SearchHistoryItem {
-  id: string;
-  query: string;
-  mode: string;
-  summary?: string;
-  timestamp: Date;
-}
-
-const MOCK_HISTORY: SearchHistoryItem[] = [
-  { id: '1', query: 'headache relief', mode: 'both', summary: 'Combined medical and herbal approaches...', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2) },
-  { id: '2', query: 'insomnia', mode: 'herbal', summary: 'Chamomile and Valerian root...', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24) },
-  { id: '3', query: 'hypertension diet', mode: 'medical', summary: 'DASH diet and sodium reduction...', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 48) },
-];
+import { db } from '@/lib/firebase';
+import { collection, query, where, orderBy, getDocs, Timestamp } from 'firebase/firestore';
+import { SearchHistoryItem } from '@/types/history';
 
 export async function getSearchHistory(userId: string, start?: Date, end?: Date): Promise<SearchHistoryItem[]> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      let data = [...MOCK_HISTORY];
-      if (start) data = data.filter(item => item.timestamp >= start);
-      if (end) data = data.filter(item => item.timestamp <= end);
-      resolve(data);
-    }, 500);
-  });
+  try {
+    const historyRef = collection(db, 'users', userId, 'searchHistory');
+    let q = query(historyRef, orderBy('timestamp', 'desc'));
+
+    if (start) {
+      q = query(q, where('timestamp', '>=', Timestamp.fromDate(start)));
+    }
+    if (end) {
+      q = query(q, where('timestamp', '<=', Timestamp.fromDate(end)));
+    }
+
+    const snapshot = await getDocs(q);
+    
+    return snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        query: data.query,
+        mode: data.mode,
+        summary: data.summary,
+        timestamp: (data.timestamp as Timestamp).toDate(),
+      } as SearchHistoryItem;
+    });
+  } catch (error) {
+    console.error("Error fetching search history:", error);
+    return [];
+  }
 }

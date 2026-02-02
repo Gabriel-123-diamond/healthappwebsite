@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebaseAdmin';
 import { geohashForLocation } from 'geofire-common';
+import { MOCK_EXPERTS } from '@/data/mockExperts';
 
 export async function POST(request: Request) {
   try {
@@ -43,6 +44,17 @@ export async function POST(request: Request) {
 
     const experts = [];
     const institutions = [];
+
+    // --- Add MOCK_EXPERTS to the list first ---
+    MOCK_EXPERTS.forEach(mockExpert => {
+      // Ensure mock experts have geohash if missing (though interface says they have lat/lng)
+      const geohash = geohashForLocation([mockExpert.lat, mockExpert.lng]);
+      experts.push({
+        ...mockExpert,
+        geohash,
+        createdAt: new Date().toISOString()
+      });
+    });
 
     // --- Generate 60 Doctors ---
     for (let i = 0; i < 60; i++) {

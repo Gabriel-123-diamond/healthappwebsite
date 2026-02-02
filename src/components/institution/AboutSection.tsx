@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Institution } from '@/services/institutionService';
+import { Institution } from '@/types/institution';
 
 interface AboutSectionProps {
   institution: Institution;

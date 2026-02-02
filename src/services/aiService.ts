@@ -1,22 +1,6 @@
 import { auth } from "@/lib/firebase";
-import { getExperts, Expert } from "@/services/directoryService";
-
-const SPECIALTY_KEYWORDS: Record<string, string[]> = {
-  'Cardiologist': ['heart', 'cardiac', 'pulse', 'blood pressure', 'chest pain', 'stroke', 'palpitations'],
-  'Dermatologist': ['skin', 'rash', 'acne', 'eczema', 'hair', 'mole', 'dermatitis', 'itch'],
-  'Neurologist': ['brain', 'headache', 'migraine', 'dizzy', 'seizure', 'nerve', 'neuropathy', 'concussion'],
-  'Psychiatrist': ['mental', 'depression', 'anxiety', 'stress', 'mood', 'psychology', 'bipolar'],
-  'Orthopedist': ['bone', 'joint', 'fracture', 'knee', 'back', 'spine', 'muscle', 'arthritis'],
-  'Pediatrician': ['child', 'baby', 'infant', 'kid', 'fever', 'growth', 'vaccine'],
-  'Dentist': ['tooth', 'teeth', 'gum', 'cavity', 'dental', 'mouth', 'ache'],
-  'Ophthalmologist': ['eye', 'vision', 'sight', 'blind', 'glaucoma', 'cataract', 'blur'],
-  'Herbalist': ['herb', 'natural', 'plant', 'root', 'tea', 'holistic', 'traditional', 'remedy', 'supplement'],
-  'Traditional Chinese Medicine': ['chinese', 'acupuncture', 'qi', 'meridian', 'herbal', 'tea', 'pulse', 'tongue'],
-  'Nutritionist': ['diet', 'food', 'weight', 'nutrition', 'vitamin', 'obesity', 'meal'],
-  'General Practitioner': ['flu', 'cold', 'fever', 'cough', 'virus', 'infection', 'checkup', 'general', 'sick'],
-  'Hospital': ['emergency', 'trauma', 'accident', 'urgent', 'surgery', 'hospital', 'ambulance', 'bleeding'],
-  'Emergency': ['trauma', 'accident', 'urgent', 'hospital', 'bleeding', 'crisis'],
-};
+import { getExperts } from "@/services/directoryService";
+import { findMatchingExperts } from "@/lib/expertMatcher";
 
 export interface SearchResult {
   id: string;
@@ -99,46 +83,10 @@ export const searchHealthTopic = async (query: string, mode: 'medical' | 'herbal
 
   const data = await response.json();
   
-  // Real directory matching logic
-  const lowerQuery = query.toLowerCase();
-  // Filter out very short words, but keep words > 2 chars (e.g. "flu", "eye", "ear")
-  const queryTerms = lowerQuery.split(/\s+/).filter(t => t.length > 2); 
+  // Use extracted expert matching logic
+  const allMatches = findMatchingExperts(query, experts, mode);
 
-  // Filter by Mode
-  let filteredExperts: Expert[] = experts;
-  if (mode === 'medical') {
-    filteredExperts = experts.filter(e => ['doctor', 'specialist', 'hospital'].includes(e.type));
-  } else if (mode === 'herbal') {
-    filteredExperts = experts.filter(e => e.type === 'herbalist');
-  }
-  
-  const allMatches = filteredExperts.filter(e => {
-    const expertName = e.name.toLowerCase();
-    const expertSpecialty = e.specialty.toLowerCase();
-
-    const nameMatch = expertName.includes(lowerQuery);
-    const specialtyMatch = expertSpecialty.includes(lowerQuery);
-    
-    // Fuzzy match: if any significant term in the query matches the specialty
-    const fuzzyMatch = queryTerms.some(term => expertSpecialty.includes(term));
-
-    // Semantic match using keywords
-    let keywordMatch = false;
-    for (const [specialtyKey, keywords] of Object.entries(SPECIALTY_KEYWORDS)) {
-       // If the expert's specialty matches the key (e.g. "Cardiologist")
-       if (expertSpecialty.includes(specialtyKey.toLowerCase()) || specialtyKey.toLowerCase().includes(expertSpecialty)) {
-           // Check if any query term matches the keywords for this specialty
-           if (queryTerms.some(term => keywords.some(k => k.includes(term) || term.includes(k)))) {
-               keywordMatch = true;
-               break;
-           }
-       }
-    }
-
-    return nameMatch || specialtyMatch || fuzzyMatch || keywordMatch;
-  });
-
-  const directoryMatches = allMatches.slice(0, 2).map(e => ({
+  const directoryMatches = allMatches.slice(0, 4).map(e => ({
     id: e.id,
     name: e.name,
     specialty: e.specialty,
