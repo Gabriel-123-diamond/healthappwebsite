@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
-import { checkSafety } from "@/services/safetyService";
+import { checkSafetyServer } from "@/lib/safetyServer";
 import { getGeminiModel } from "@/lib/gemini";
 import { fetchEvidence } from "@/services/evidenceService";
 
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Safety Check
-    const safetyResult = checkSafety(query);
+    const safetyResult = await checkSafetyServer(query);
     if (!safetyResult.isSafe) {
       console.log("Safety red flag detected");
       return NextResponse.json({ 

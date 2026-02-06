@@ -52,8 +52,8 @@ export default function JournalEntryForm({ onEntryAdded }: JournalEntryFormProps
       
       <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
-            Severity: {severity}/10
+          <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-1">
+            Severity: {severity}/10 <span className="text-red-500">*</span>
           </label>
           <input 
             type="range" min="1" max="10" 
@@ -77,8 +77,8 @@ export default function JournalEntryForm({ onEntryAdded }: JournalEntryFormProps
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
-            Mood
+          <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-1">
+            Mood <span className="text-red-500">*</span>
           </label>
           <Dropdown
             value={mood}

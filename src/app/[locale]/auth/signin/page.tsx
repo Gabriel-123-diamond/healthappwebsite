@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth, db } from '@/lib/firebase';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, Loader2, Chrome, Eye, EyeOff } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
+import { doc, getDoc } from 'firebase/firestore';
 
 export default function SignInPage() {
   const [email, setEmail] = useState('');
@@ -17,14 +18,21 @@ export default function SignInPage() {
   const router = useRouter();
   const { t } = useLanguage();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
+  const handleAuthSuccess = async (user: any) => {
+    if (!user) return;
+    
+    try {
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (userDoc.exists() && userDoc.data()?.onboardingComplete === true) {
         router.push('/');
+      } else {
+        router.push('/onboarding');
       }
-    });
-    return () => unsubscribe();
-  }, [router]);
+    } catch (err) {
+      console.error("Error checking onboarding status:", err);
+      router.push('/'); // Fallback to home
+    }
+  };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,8 +40,8 @@ export default function SignInPage() {
     setError('');
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push('/');
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      await handleAuthSuccess(result.user);
     } catch (err: any) {
       setError(err.message || t.auth.failedSignIn);
     } finally {
@@ -46,8 +54,8 @@ export default function SignInPage() {
     setError('');
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      router.push('/');
+      const result = await signInWithPopup(auth, provider);
+      await handleAuthSuccess(result.user);
     } catch (err: any) {
       console.error("Google Sign In Error:", err);
       if (err.message && (err.message.includes('AppCheck') || err.message.includes('403'))) {

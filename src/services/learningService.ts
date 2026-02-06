@@ -1,3 +1,6 @@
+import { db } from '@/lib/firebase';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+
 export interface Lesson {
   id: string;
   title: string;
@@ -23,65 +26,32 @@ export interface LearningPath {
   modules: Module[];
 }
 
-const MOCK_PATHS: LearningPath[] = [
-  {
-    id: '1',
-    title: 'Managing Hypertension',
-    description: 'Learn the basics of high blood pressure, medication management, and lifestyle changes.',
-    category: 'Medical',
-    icon: 'Activity',
-    progress: 35,
-    totalModules: 3,
-    modules: [
-      {
-        id: 'm1',
-        title: 'Understanding Blood Pressure',
-        lessons: [
-          { id: 'l1', title: 'What is Systolic vs Diastolic?', duration: '3 min', type: 'video', isCompleted: true },
-          { id: 'l2', title: 'The Silent Killer: Symptoms', duration: '5 min', type: 'article', isCompleted: false },
-        ]
-      },
-      {
-        id: 'm2',
-        title: 'Dietary Changes',
-        lessons: [
-          { id: 'l3', title: 'The DASH Diet Explained', duration: '10 min', type: 'article', isCompleted: false },
-          { id: 'l4', title: 'Reducing Sodium Intake', duration: '4 min', type: 'video', isCompleted: false },
-        ]
-      }
-    ]
-  },
-  {
-    id: '2',
-    title: 'Herbal Remedies 101',
-    description: 'A beginner’s guide to safe and effective herbal teas, tinctures, and salves.',
-    category: 'Herbal',
-    icon: 'Leaf',
-    progress: 0,
-    totalModules: 4,
-    modules: []
-  },
-  {
-    id: '3',
-    title: 'Sleep Hygiene Masterclass',
-    description: 'Practical steps to improve your sleep quality naturally.',
-    category: 'Lifestyle',
-    icon: 'Moon',
-    progress: 80,
-    totalModules: 2,
-    modules: []
-  }
-];
+const COLLECTION_NAME = 'learningPaths';
 
 export async function getLearningPaths(): Promise<LearningPath[]> {
-  // Simulate network delay
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(MOCK_PATHS), 500);
-  });
+  try {
+    const snapshot = await getDocs(collection(db, COLLECTION_NAME));
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    } as LearningPath));
+  } catch (error) {
+    console.error("Error fetching learning paths:", error);
+    return [];
+  }
 }
 
 export async function getLearningPathById(id: string): Promise<LearningPath | undefined> {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(MOCK_PATHS.find(p => p.id === id)), 500);
-  });
+  try {
+    const docRef = doc(db, COLLECTION_NAME, id);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      return { id: docSnap.id, ...docSnap.data() } as LearningPath;
+    }
+    return undefined;
+  } catch (error) {
+    console.error(`Error fetching learning path ${id}:`, error);
+    return undefined;
+  }
 }

@@ -66,11 +66,6 @@ export const getExperts = async (type: string = 'all'): Promise<Expert[]> => {
     
     const snapshot = await getDocs(q);
     
-    // Fallback to mock data if no experts found (for development/demo)
-    if (snapshot.empty && type === 'all') {
-      return MOCK_EXPERTS as Expert[];
-    }
-    
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Expert));
   } catch (error) {
     console.error("Error fetching experts:", error);
@@ -84,14 +79,11 @@ export const getExpertById = async (id: string): Promise<Expert | undefined> => 
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      return docSnap.data() as Expert;
-    } else {
-      // Fallback to mock data if not found in Firestore
-      return MOCK_EXPERTS.find(expert => expert.id === id) as Expert | undefined;
+      return { id: docSnap.id, ...docSnap.data() } as Expert;
     }
+    return undefined;
   } catch (error) {
     console.error("Error fetching expert:", error);
-    // Fallback on error as well
-    return MOCK_EXPERTS.find(expert => expert.id === id) as Expert | undefined;
+    return undefined;
   }
 };

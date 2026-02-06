@@ -1,35 +1,73 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth, db } from '@/lib/firebase';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Mail, Lock, Loader2, Chrome, User, Eye, EyeOff } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Mail, Lock, Loader2, Chrome, Eye, EyeOff, Ticket, Check } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
+import { doc, getDoc } from 'firebase/firestore';
 
 export default function SignUpPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [referralCode, setReferralCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t } = useLanguage();
+  const refFromUrl = searchParams.get('ref');
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
+    if (refFromUrl) {
+      setReferralCode(refFromUrl.toUpperCase());
+    }
+  }, [refFromUrl]);
+
+  const handleAuthSuccess = async (user: any) => {
+    if (!user) return;
+    
+    // Check for referral code and return destination
+    const finalRefCode = referralCode || refFromUrl;
+    const returnTo = searchParams.get('returnTo') || '/';
+    
+    try {
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      const alreadyComplete = userDoc.exists() && userDoc.data()?.onboardingComplete === true;
+
+      if (alreadyComplete) {
         router.push('/');
+      } else {
+        // Construct destination with referral code if present
+        const destination = finalRefCode ? `/onboarding?ref=${finalRefCode}` : '/onboarding';
+        router.push(destination);
       }
-    });
-    return () => unsubscribe();
-  }, [router]);
+    } catch (err) {
+      console.error("Error checking onboarding status:", err);
+      router.push(finalRefCode ? `/onboarding?ref=${finalRefCode}` : '/onboarding');
+    }
+  };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+
+    if (!email || !password || !confirmPassword) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError(t.auth.passwordsNoMatch);
       return;
@@ -38,9 +76,8 @@ export default function SignUpPage() {
     setError('');
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      // Redirect to Onboarding instead of Home for new users
-      router.push('/onboarding');
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      await handleAuthSuccess(result.user);
     } catch (err: any) {
       setError(err.message || t.auth.failedCreate);
     } finally {
@@ -53,9 +90,8 @@ export default function SignUpPage() {
     setError('');
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      // Always redirect to onboarding for new Google Sign Ups to capture Role/Location
-      router.push('/onboarding');
+      const result = await signInWithPopup(auth, provider);
+      await handleAuthSuccess(result.user);
     } catch (err: any) {
       console.error("Google Sign Up Error:", err);
       if (err.message && (err.message.includes('AppCheck') || err.message.includes('403'))) {
@@ -84,7 +120,9 @@ export default function SignUpPage() {
         <form className="mt-8 space-y-6" onSubmit={handleSignUp}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="sr-only">{t.auth.email}</label>
+              <label htmlFor="email" className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest flex items-center gap-1 mb-1">
+                {t.auth.email} <span className="text-red-500">*</span>
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Mail className="h-5 w-5 text-slate-400" />
@@ -103,7 +141,9 @@ export default function SignUpPage() {
               </div>
             </div>
             <div>
-              <label htmlFor="password" sledge-sr-only="true" className="sr-only">{t.auth.password}</label>
+              <label htmlFor="password" sledge-sr-only="true" className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest flex items-center gap-1 mb-1">
+                {t.auth.password} <span className="text-red-500">*</span>
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-slate-400" />
@@ -129,7 +169,9 @@ export default function SignUpPage() {
               </div>
             </div>
             <div>
-              <label htmlFor="confirmPassword" sledge-sr-only="true" className="sr-only">{t.auth.confirmPassword}</label>
+              <label htmlFor="confirmPassword" sledge-sr-only="true" className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest flex items-center gap-1 mb-1">
+                {t.auth.confirmPassword} <span className="text-red-500">*</span>
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-slate-400" />
@@ -153,6 +195,28 @@ export default function SignUpPage() {
                   {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
+            </div>
+
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Ticket className="h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+              </div>
+              <input
+                id="referralCode"
+                name="referralCode"
+                type="text"
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value.toUpperCase().trim())}
+                className="appearance-none rounded-xl relative block w-full pl-10 px-3 py-3 border border-slate-300 dark:border-slate-600 placeholder-slate-500 dark:placeholder-slate-400 text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-colors font-mono tracking-wider"
+                placeholder="REFERRAL CODE (OPTIONAL)"
+              />
+              {refFromUrl && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                  <div className="p-1 bg-blue-100 dark:bg-blue-900/40 rounded-full">
+                    <Check className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

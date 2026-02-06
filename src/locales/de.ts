@@ -70,6 +70,8 @@ export const de: typeof en = {
   support: en.support,
   history: en.history,
   saved: en.saved,
-  articles: en.articles,
-  institution: en.institution
-};
+    articles: en.articles,
+    institution: en.institution,
+    countries: en.countries
+  };
+  

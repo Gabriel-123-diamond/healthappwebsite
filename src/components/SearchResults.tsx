@@ -54,25 +54,25 @@ const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching, fi
           viewport={{ margin: "-100px" }}
           exit="hidden"
           variants={containerVariants}
-          className="text-left max-w-4xl mx-auto bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden"
+          className="text-left max-w-4xl mx-auto bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden"
         >
-          <div className="p-8 border-b border-slate-100 dark:border-slate-700">
+          <div className="p-5 sm:p-8 border-b border-slate-100 dark:border-slate-700">
             {response.confidenceScore && (
               <ConfidenceScore score={response.confidenceScore} explanation={response.explanation} />
             )}
 
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-blue-600" />
+            <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
               AI Summary
             </h3>
-            <div className="prose prose-slate max-w-none dark:prose-invert text-slate-700 dark:text-slate-300 leading-relaxed">
+            <div className="prose prose-slate prose-sm sm:prose-base max-w-none dark:prose-invert text-slate-700 dark:text-slate-300 leading-relaxed">
               <ReactMarkdown
                 components={{
                   p: ({children}) => <ScrollReveal className="mb-4">{children}</ScrollReveal>,
                   li: ({children}) => <ScrollReveal className="mb-2"><li className="list-disc ml-4">{children}</li></ScrollReveal>,
-                  h1: ({children}) => <ScrollReveal className="mt-6 mb-4"><h1 className="text-2xl font-bold">{children}</h1></ScrollReveal>,
-                  h2: ({children}) => <ScrollReveal className="mt-6 mb-4"><h2 className="text-xl font-bold">{children}</h2></ScrollReveal>,
-                  h3: ({children}) => <ScrollReveal className="mt-4 mb-2"><h3 className="text-lg font-bold">{children}</h3></ScrollReveal>,
+                  h1: ({children}) => <ScrollReveal className="mt-6 mb-4"><h1 className="text-xl sm:text-2xl font-black">{children}</h1></ScrollReveal>,
+                  h2: ({children}) => <ScrollReveal className="mt-6 mb-4"><h2 className="text-lg sm:text-xl font-black">{children}</h2></ScrollReveal>,
+                  h3: ({children}) => <ScrollReveal className="mt-4 mb-2"><h3 className="text-base sm:text-lg font-black">{children}</h3></ScrollReveal>,
                 }}
               >
                 {response.answer}
@@ -98,13 +98,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching, fi
           <SourceList results={filteredResults} filterFormat={filterFormat} />
 
           {query && (
-            <div className="px-8 pb-8">
+            <div className="px-5 sm:px-8 pb-8">
               <SearchFeedback query={query} />
             </div>
           )}
 
           {query && filteredResults.length > 0 && (
-            <div className="p-8 pt-0 bg-slate-50 dark:bg-slate-900/50 flex justify-center">
+            <div className="p-5 sm:p-8 pt-0 bg-slate-50 dark:bg-slate-900/50 flex justify-center">
               <Link
                 href={`/search?q=${encodeURIComponent(query)}&mode=${mode}`}
                 onClick={() => {
@@ -112,10 +112,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching, fi
                     sessionStorage.setItem(`search_cache_${query}_${mode}`, JSON.stringify(response));
                   }
                 }}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 transition-all shadow-sm group"
+                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3.5 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-xl text-sm font-black text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-blue-200 transition-all shadow-sm active:scale-95 group"
               >
                 View More Results
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-blue-500" />
               </Link>
             </div>
           )}
