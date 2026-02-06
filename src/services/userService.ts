@@ -17,6 +17,7 @@ export interface UserProfile {
   city?: string;
   ageRange?: string;
   interests?: string[];
+  onboardingStep?: number;
   createdAt?: any;
   updatedAt?: any;
 }

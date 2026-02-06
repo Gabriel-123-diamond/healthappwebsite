@@ -55,8 +55,8 @@ export const useOnboarding = () => {
             }
             
             // Resume from saved step if it exists
-            if ((profile as any).onboardingStep) {
-              setStep((profile as any).onboardingStep);
+            if (profile.onboardingStep) {
+              setStep(profile.onboardingStep);
             }
 
             // Populate form with existing data
