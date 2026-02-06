@@ -1,4 +1,3 @@
-import axios from 'axios';
 
 export interface VideoResult {
   id: string;
@@ -21,17 +20,22 @@ export const youtubeService = {
     }
 
     try {
-      const response = await axios.get(BASE_URL, {
-        params: {
-          part: 'snippet',
-          maxResults: 5,
-          q: query,
-          type: 'video',
-          key: API_KEY,
-        },
-      });
+      const url = new URL(BASE_URL);
+      url.searchParams.append('part', 'snippet');
+      url.searchParams.append('maxResults', '5');
+      url.searchParams.append('q', query);
+      url.searchParams.append('type', 'video');
+      url.searchParams.append('key', API_KEY);
 
-      return response.data.items.map((item: any) => ({
+      const response = await fetch(url.toString());
+      
+      if (!response.ok) {
+        throw new Error(`YouTube API responded with status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      return data.items.map((item: any) => ({
         id: item.id.videoId,
         title: item.snippet.title,
         thumbnailUrl: item.snippet.thumbnails.medium.url,
