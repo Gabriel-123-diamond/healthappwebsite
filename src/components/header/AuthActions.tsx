@@ -5,15 +5,16 @@ import { Link, useRouter, usePathname } from '@/i18n/routing';
 import { LogOut, User as UserIcon, Loader2, Sun, Moon, Globe, Check } from 'lucide-react';
 import { User, signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import { Theme } from '@/context/ThemeContext';
 
 interface AuthActionsProps {
   user: User | null;
   loading: boolean;
   locale: string;
   t: any;
-  theme: string;
-  setTheme: (theme: string) => void;
-  resolvedTheme?: string;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+  resolvedTheme?: 'light' | 'dark';
 }
 
 export default function AuthActions({ user, loading, locale, t, setTheme, resolvedTheme }: AuthActionsProps) {

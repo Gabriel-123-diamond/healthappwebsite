@@ -13,7 +13,7 @@ interface MobileMenuProps {
   loading: boolean;
   locale: string;
   t: any;
-  resolvedTheme?: string;
+  resolvedTheme?: 'light' | 'dark';
   onToggleTheme: () => void;
 }
 
