@@ -1,5 +1,6 @@
 import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
+import { collection, query, limit, getDocs } from 'firebase/firestore';
+import { FIRESTORE_COLLECTIONS } from '@/lib/constants';
 
 export interface FeedItem {
   id: string;
@@ -17,7 +18,7 @@ export interface FeedItem {
 
 export async function getFeedItems(locale: string = 'en'): Promise<FeedItem[]> {
   try {
-    const feedRef = collection(db, 'feed_items');
+    const feedRef = collection(db, FIRESTORE_COLLECTIONS.FEED_ITEMS);
     
     // Simplified query to avoid index requirements
     const q = query(feedRef, limit(10));
@@ -25,7 +26,7 @@ export async function getFeedItems(locale: string = 'en'): Promise<FeedItem[]> {
     const snapshot = await getDocs(q);
     
     if (snapshot.empty) {
-      console.warn("No feed items found in Firestore collection 'feed_items'.");
+      console.warn(`No feed items found in Firestore collection '${FIRESTORE_COLLECTIONS.FEED_ITEMS}'.`);
       return [];
     }
 
@@ -43,5 +44,3 @@ export async function getFeedItems(locale: string = 'en'): Promise<FeedItem[]> {
     throw error;
   }
 }
-
-

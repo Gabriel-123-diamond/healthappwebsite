@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sparkles, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { auth } from '@/lib/firebase';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { checkSafety, SafetyCheckResult } from '@/services/safetyClientService';
-import { searchHealthTopic, AIResponse } from '@/services/aiService';
+import { useAIIntelligence } from '@/hooks/useAIIntelligence';
+import { useUserAuth } from '@/hooks/useUserAuth';
+import { useSearchSafety } from '@/hooks/useSearchSafety';
+import { useSearchFilters } from '@/hooks/useSearchFilters';
 import SearchResults from './SearchResults';
 import SearchInput from './search/SearchInput';
 import SearchFilters from './search/SearchFilters';
@@ -17,64 +17,33 @@ const SearchSection: React.FC = () => {
   const router = useRouter();
   const t = useTranslations();
   const [query, setQuery] = useState('');
-  const [searchMode, setSearchMode] = useState<'medical' | 'herbal' | 'both'>('both');
-  const [executedMode, setExecutedMode] = useState<'medical' | 'herbal' | 'both'>('both');
-  const [displayMode, setDisplayMode] = useState<'medical' | 'herbal' | 'both'>('both');
-  const [filterFormat, setFilterFormat] = useState<'all' | 'article' | 'video'>('all');
-  const [isSearching, setIsSearching] = useState(false);
-  const [safetyResult, setSafetyResult] = useState<SafetyCheckResult | null>(null);
-  const [aiResponse, setAiResponse] = useState<AIResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+  
+  const { loading: isLoadingAuth } = useUserAuth();
+  const safetyResult = useSearchSafety(query);
+  const { response: aiResponse, isSearching, error, performSearch } = useAIIntelligence();
+  const { 
+    searchMode, setSearchMode, 
+    executedMode, 
+    displayMode, setDisplayMode, 
+    filterFormat, setFilterFormat,
+    handleSearchComplete 
+  } = useSearchFilters();
+  
   const resultsRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setIsLoadingAuth(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  // Debounce safety check
-  useEffect(() => {
-    const timeoutId = setTimeout(async () => {
-      if (query.trim()) {
-        const result = await checkSafety(query);
-        setSafetyResult(result);
-      } else {
-        setSafetyResult(null);
-      }
-    }, 500);
-    return () => clearTimeout(timeoutId);
-  }, [query]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isLoadingAuth) return;
-    if (!query.trim() || safetyResult?.hasRedFlag) return;
+    if (isLoadingAuth || !query.trim() || safetyResult?.hasRedFlag) return;
 
-    setIsSearching(true);
-    setAiResponse(null);
-    setError(null);
-
-    try {
-      const response = await searchHealthTopic(query, searchMode);
-      setAiResponse(response);
-      setExecutedMode(searchMode);
-      setDisplayMode(searchMode);
-    } catch (err: any) {
-      console.error("Search failed:", err);
-      if (err.message === "User must be authenticated") {
-        router.push('/auth/signin');
-        return;
-      }
-      setError(err.message || "An unexpected error occurred during search.");
-    } finally {
-      setIsSearching(false);
-    }
+    await performSearch(query, searchMode);
+    handleSearchComplete(searchMode);
   };
+
+  useEffect(() => {
+    if (error === "User must be authenticated") {
+      router.push('/auth/signin');
+    }
+  }, [error, router]);
 
   const hasResults = !!aiResponse;
 
@@ -152,7 +121,7 @@ const SearchSection: React.FC = () => {
         />
 
         <AnimatePresence>
-          {error && (
+          {error && error !== "User must be authenticated" && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
