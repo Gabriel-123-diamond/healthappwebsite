@@ -189,7 +189,7 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
                   disabled={true} // Always disabled for existing numbers
                   suppressHydrationWarning
                   onChange={(e) => {
-                    const raw = e.target.value.replace(/\D/g, '').slice(0, maxLen);
+                    const raw = e.target.value.replace(/[^\d+]/g, '').slice(0, maxLen);
                     const formatted = raw.replace(/(\d{3})(?=\d)/g, '$1 ').trim();
                     updatePhone(index, { number: formatted });
                   }}
@@ -255,7 +255,7 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
                   type="tel"
                   value={newPhone.number}
                   onChange={(e) => {
-                    const raw = e.target.value.replace(/\D/g, '').slice(0, maxLen);
+                    const raw = e.target.value.replace(/[^\d+]/g, '').slice(0, maxLen);
                     const formatted = raw.replace(/(\d{3})(?=\d)/g, '$1 ').trim();
                     setNewPhone({ ...newPhone, number: formatted });
                   }}

@@ -148,7 +148,7 @@ export default function IdentityStep({ formData, setFormData, validationStatus, 
               value={formData.phone} 
               suppressHydrationWarning
               onChange={(e) => {
-                const raw = e.target.value.replace(/\D/g, '').slice(0, maxLen);
+                const raw = e.target.value.replace(/[^\d+]/g, '').slice(0, maxLen);
                 const formatted = raw.replace(/(\d{3})(?=\d)/g, '$1 ').trim();
                 setFormData({...formData, phone: formatted});
               }}
