@@ -63,7 +63,9 @@ export const ProfessionalIdentityStep: React.FC<ProfessionalIdentityStepProps> =
            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-tight leading-relaxed mb-2">
              Professional type is locked based on your registration.
            </p>
-           <button 
+           <motion.button 
+              whileHover={{ scale: 1.05, x: 5 }}
+              whileTap={{ scale: 0.95 }}
               onClick={onRevert}
               disabled={isReverting}
               className="text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 disabled:opacity-50"
@@ -73,7 +75,7 @@ export const ProfessionalIdentityStep: React.FC<ProfessionalIdentityStepProps> =
              ) : (
                <>Revert to sign-up <ChevronRight size={10} /></>
              )}
-           </button>
+           </motion.button>
          </div>
       </div>
 
@@ -159,7 +161,9 @@ export const ProfessionalIdentityStep: React.FC<ProfessionalIdentityStepProps> =
                   placeholder="e.g. Traditional Bone Setter"
                   className="flex-1"
                 />
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => {
                     if (formData.customSpecialtyName) {
                       addSpecialty(formData.customSpecialtyName);
@@ -171,7 +175,7 @@ export const ProfessionalIdentityStep: React.FC<ProfessionalIdentityStepProps> =
                   className="mt-6 px-6 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest"
                 >
                   Add
-                </button>
+                </motion.button>
               </motion.div>
             )}
 

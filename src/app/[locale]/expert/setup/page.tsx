@@ -5,6 +5,7 @@ import { ExpertLayout } from '@/components/expert/ExpertLayout';
 import { 
   ChevronRight, ChevronLeft, CheckCircle, Loader2, AlertCircle
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { ProfessionalIdentityStep } from '@/components/expert/setup/ProfessionalIdentityStep';
 import IdentityVerificationStep from '@/components/expert/setup/IdentityVerificationStep';
 import MedicalLicenseVerificationStep from '@/components/expert/setup/MedicalLicenseVerificationStep';
@@ -81,15 +82,19 @@ export default function ExpertSetupPage() {
         )}
 
         <div className="mt-16 flex items-center justify-between border-t border-slate-100 dark:border-slate-700/50 pt-10">
-          <button 
+          <motion.button 
+            whileHover={{ scale: 1.05, x: -5 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setStep(s => s - 1)} 
             disabled={step === 1 || saving}
             className="flex items-center gap-2 px-6 py-3 font-black uppercase tracking-widest text-[10px] text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-0 transition-all"
           >
             <ChevronLeft className="w-4 h-4" /> Back
-          </button>
+          </motion.button>
           
-          <button 
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => saveProgress(step < totalSteps ? step + 1 : undefined)}
             disabled={saving}
             className={`px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center gap-3 transition-all shadow-xl ${
@@ -99,7 +104,7 @@ export default function ExpertSetupPage() {
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : (
               step === totalSteps ? <><CheckCircle className="w-4 h-4" /> Submit for Review</> : <>Save & Continue <ChevronRight className="w-4 h-4" /></>
             )}
-          </button>
+          </motion.button>
         </div>
       </div>
     </ExpertLayout>
