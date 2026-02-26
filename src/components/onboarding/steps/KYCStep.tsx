@@ -36,7 +36,7 @@ export default function KYCStep({ formData, setFormData }: KYCStepProps) {
         </p>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-[40px] border border-slate-100 dark:border-slate-800 p-8 sm:p-10 shadow-sm space-y-10 transition-colors duration-500">
+      <div className="bg-white dark:bg-slate-900 rounded-[40px] border border-slate-100 dark:border-slate-800 p-5 sm:p-10 shadow-sm space-y-10 transition-colors duration-500">
         
         <div className="flex items-start gap-5 bg-slate-50 dark:bg-slate-800/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-800">
           <div className="p-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl">

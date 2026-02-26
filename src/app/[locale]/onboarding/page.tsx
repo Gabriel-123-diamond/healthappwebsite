@@ -82,7 +82,7 @@ export default function OnboardingPage() {
       >
         <OnboardingSidebar currentStep={step} steps={steps} />
         
-        <div className="p-8 sm:p-12 md:p-20 md:w-2/3 flex flex-col h-full bg-white dark:bg-slate-900 transition-colors duration-500 relative">
+        <div className="p-5 sm:p-12 md:p-20 md:w-2/3 flex flex-col h-full bg-white dark:bg-slate-900 transition-colors duration-500 relative">
           <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
             <ErrorBanner errors={fieldErrors} />
             <AnimatePresence mode="wait" initial={false}>

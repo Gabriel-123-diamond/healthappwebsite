@@ -31,7 +31,7 @@ export default function ExpertDetailsStep({ formData, setFormData, stepNumber = 
         </p>
       </div>
 
-      <div className="bg-white dark:bg-slate-900/50 rounded-[40px] border border-slate-100 dark:border-slate-800 p-8 sm:p-10 shadow-sm space-y-8">
+      <div className="bg-white dark:bg-slate-900/50 rounded-[40px] border border-slate-100 dark:border-slate-800 p-5 sm:p-10 shadow-sm space-y-8">
         <div className="space-y-6">
           <div className="space-y-3">
             <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-[0.2em] flex items-center gap-2">

@@ -67,7 +67,7 @@ export default function VerificationStep({ formData, setFormData }: Verification
       initial={{ opacity: 0, y: 20 }} 
       animate={{ opacity: 1, y: 0 }} 
       exit={{ opacity: 0, y: -20 }} 
-      className="space-y-8 pb-10 max-w-4xl mx-auto"
+      className="space-y-8 pb-10 max-w-4xl mx-auto px-1"
     >
       <div className="space-y-4">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.2em] border border-blue-500/20 shadow-sm">
@@ -174,16 +174,16 @@ function VerificationCard({ id, label, value, icon, status, otpValue, setOtpValu
   const isSending = status === 'sending';
 
   return (
-    <div className={`group relative p-5 sm:p-7 rounded-[32px] border-2 transition-all duration-500 ${
+    <div className={`group relative p-4 sm:p-6 md:p-7 rounded-[32px] border-2 transition-all duration-500 ${
       isVerified 
         ? 'bg-emerald-500/5 border-emerald-500/30 dark:bg-emerald-900/5' 
         : 'bg-white dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 hover:border-blue-500/30 shadow-sm'
     }`}>
-      <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-center gap-5">
+      <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="flex items-center gap-4 sm:gap-5 min-w-0">
           <motion.div 
             layout
-            className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-500 ${
+            className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-500 ${
             isVerified 
               ? 'bg-emerald-500 text-white shadow-lg' 
               : 'bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:text-blue-600'
@@ -192,7 +192,7 @@ function VerificationCard({ id, label, value, icon, status, otpValue, setOtpValu
           </motion.div>
           
           <div className="min-w-0 flex-1 space-y-1">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">{label}</p>
               <AnimatePresence>
                 {isResumed && (
@@ -206,20 +206,20 @@ function VerificationCard({ id, label, value, icon, status, otpValue, setOtpValu
                 )}
               </AnimatePresence>
             </div>
-            <p className="text-lg sm:text-xl font-black text-slate-900 dark:text-white break-words leading-tight tracking-tight">
+            <p className="text-base sm:text-lg md:text-xl font-black text-slate-900 dark:text-white break-words leading-tight tracking-tight">
               {value}
             </p>
           </div>
         </div>
 
-        <div className="shrink-0">
+        <div className="shrink-0 w-full lg:w-auto">
           <AnimatePresence mode="wait">
             {isVerified ? (
               <motion.div 
                 key="verified"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="flex items-center gap-3 px-5 py-2.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-500/20"
+                className="flex items-center justify-center lg:justify-end gap-3 px-5 py-2.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-500/20 w-full lg:w-auto"
               >
                 <CheckCircle2 size={16} strokeWidth={3} />
                 <span className="text-[10px] font-black uppercase tracking-widest">Verified</span>
@@ -229,25 +229,25 @@ function VerificationCard({ id, label, value, icon, status, otpValue, setOtpValu
                 key="actions"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="flex items-center gap-3"
+                className="flex items-center gap-3 w-full lg:w-auto"
               >
                 {isSent && (
                   <motion.button 
                     whileHover={{ scale: 1.1, rotate: 180 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={onReset}
-                    className="p-3.5 text-slate-400 hover:text-blue-600 transition-all bg-slate-50 dark:bg-slate-800 rounded-xl border border-transparent hover:border-blue-500/20"
+                    className="p-3 sm:p-3.5 text-slate-400 hover:text-blue-600 transition-all bg-slate-50 dark:bg-slate-800 rounded-xl border border-transparent hover:border-blue-500/20"
                     title="Edit Info"
                   >
                     <RefreshCw size={18} />
                   </motion.button>
                 )}
                 <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={onSend}
                   disabled={isSending || isSent}
-                  className={`px-8 py-3.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 min-w-[160px] ${
+                  className={`flex-1 lg:flex-none px-6 sm:px-8 py-3.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 lg:min-w-[160px] ${
                     isSent
                       ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700 pointer-events-none'
                       : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg hover:shadow-blue-500/20'
@@ -275,8 +275,8 @@ function VerificationCard({ id, label, value, icon, status, otpValue, setOtpValu
             exit={{ height: 0, opacity: 0 }} 
             className="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-6 overflow-hidden"
           >
-            <div className="flex flex-col sm:flex-row gap-4 items-end">
-              <div className="flex-1 space-y-2 w-full">
+            <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-end">
+              <div className="flex-1 space-y-2">
                 <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Access Pin</label>
                 <input 
                   type="text" 
@@ -288,11 +288,11 @@ function VerificationCard({ id, label, value, icon, status, otpValue, setOtpValu
                 />
               </div>
               <motion.button 
-                whileHover={{ scale: 1.05, backgroundColor: '#1d4ed8' }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={onVerify}
                 disabled={otpValue.length < 6}
-                className="w-full sm:w-auto px-10 py-3.5 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:shadow-blue-500/40 disabled:opacity-50 transition-all"
+                className="px-8 py-3.5 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:shadow-blue-500/40 disabled:opacity-50 transition-all flex items-center justify-center min-h-[48px]"
               >
                 Confirm
               </motion.button>
@@ -302,7 +302,7 @@ function VerificationCard({ id, label, value, icon, status, otpValue, setOtpValu
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="p-4 rounded-2xl bg-blue-500/5 dark:bg-blue-900/10 border border-blue-500/10 flex items-center justify-between gap-4"
+              className="p-4 rounded-2xl bg-blue-500/5 dark:bg-blue-900/10 border border-blue-500/10 flex flex-wrap items-center justify-between gap-4"
             >
               <div className="flex items-center gap-2">
                 <Sparkles size={12} className="text-blue-500" />

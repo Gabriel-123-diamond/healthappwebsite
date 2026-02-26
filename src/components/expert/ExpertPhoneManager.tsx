@@ -139,20 +139,20 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
           return (
             <div 
               key={index} 
-              className={`group relative flex flex-col sm:flex-row items-stretch sm:items-center rounded-2xl border transition-all duration-300 ${
+              className={`group relative flex flex-col md:flex-row items-stretch md:items-center rounded-2xl border transition-all duration-300 ${
                 isPrimary 
                   ? 'border-blue-100 dark:border-blue-900/30 bg-blue-50/30 dark:bg-blue-900/10 shadow-sm' 
                   : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-300 dark:hover:border-blue-700 shadow-sm hover:shadow-md'
               }`}
             >
               {/* Label Section */}
-              <div className="w-full sm:w-40 p-1 border-b sm:border-b-0 sm:border-r border-slate-100 dark:border-slate-800">
+              <div className="w-full md:w-32 lg:w-40 p-1 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800 shrink-0">
                 <div className="relative group/label">
                   <select
                     value={phone.label}
                     disabled={true} // Always disabled for existing numbers
                     onChange={(e) => updatePhone(index, { label: e.target.value })}
-                    className="w-full h-10 sm:h-12 px-4 text-[10px] sm:text-xs font-black uppercase tracking-wider bg-transparent border-none focus:ring-0 outline-none text-slate-600 dark:text-slate-300 cursor-pointer disabled:cursor-not-allowed appearance-none"
+                    className="w-full h-10 md:h-12 px-4 text-[10px] sm:text-xs font-black uppercase tracking-wider bg-transparent border-none focus:ring-0 outline-none text-slate-600 dark:text-slate-300 cursor-pointer disabled:cursor-not-allowed appearance-none"
                   >
                     {DEFAULT_LABELS.map(l => <option key={l} value={l} className="font-bold text-slate-700 dark:bg-slate-900">{l}</option>)}
                   </select>
@@ -161,7 +161,7 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
               </div>
 
               {/* Country Code Section */}
-              <div className="w-full sm:w-40 border-b sm:border-b-0 sm:border-r border-slate-100 dark:border-slate-800">
+              <div className="w-full md:w-32 lg:w-40 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800 shrink-0">
                 <CustomSelect
                   // Try to find a matching country by code to provide a unique value to CustomSelect
                   value={countries.find(c => c.code === phone.code)?.code + ":" + countries.find(c => c.code === phone.code)?.name}
@@ -176,7 +176,7 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
                     label: `${c.flag} ${c.code} (${c.name.charAt(0).toUpperCase() + c.name.slice(1)})` 
                   }))}
                   placeholder="+1"
-                  className="h-10 sm:h-12 border-none bg-transparent shadow-none hover:border-none focus:ring-0 px-4 text-xs sm:text-sm font-bold"
+                  className="h-10 md:h-12 border-none bg-transparent shadow-none hover:border-none focus:ring-0 px-4 text-xs sm:text-sm font-bold"
                   optionClassName="text-xs"
                 />
               </div>
@@ -194,10 +194,10 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
                     updatePhone(index, { number: formatted });
                   }}
                   placeholder="801 234 5678"
-                  className="w-full h-10 sm:h-12 px-5 bg-transparent border-none focus:ring-0 outline-none text-sm sm:text-base font-bold text-slate-900 dark:text-white placeholder:font-normal placeholder:text-slate-400 min-w-0 tracking-wider"
+                  className="w-full h-10 md:h-12 px-5 bg-transparent border-none focus:ring-0 outline-none text-sm sm:text-base font-bold text-slate-900 dark:text-white placeholder:font-normal placeholder:text-slate-400 min-w-0 tracking-wider"
                 />
                 
-                <div className="absolute right-2 sm:right-4 flex items-center gap-2 sm:gap-3 shrink-0">
+                <div className="absolute right-2 md:right-4 flex items-center gap-2 sm:gap-3 shrink-0">
                   {index === 0 && (
                     <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 bg-blue-600 rounded-full shadow-lg shadow-blue-200/50">
                        <Shield size={10} className="text-white" />
@@ -226,7 +226,7 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border-2 border-dashed border-blue-200 dark:border-blue-900/30 space-y-4"
+            className="p-4 sm:p-6 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border-2 border-dashed border-blue-200 dark:border-blue-900/30 space-y-4"
           >
             <div className="flex justify-between items-center">
               <h4 className="text-[10px] font-black uppercase tracking-widest text-blue-600">Add New Verified Number</h4>
@@ -234,8 +234,8 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
             </div>
 
             {verificationStep === 'idle' ? (
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="w-full sm:w-40">
+              <div className="flex flex-col lg:flex-row gap-3">
+                <div className="w-full lg:w-40 shrink-0">
                   <CustomSelect
                     value={`${newPhone.code}:${countries.find(c => c.code === newPhone.code)?.name}`}
                     onChange={(val) => {
@@ -264,18 +264,20 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
                     newPhone.number && !isLengthValid ? 'border-amber-200 focus:border-amber-500' : 'border-transparent focus:border-blue-500'
                   }`}
                 />
-                <button 
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={handleSendOtp}
                   disabled={isVerifying || !isLengthValid}
-                  className="px-8 py-4 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:grayscale transition-all"
+                  className="px-8 py-4 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:grayscale transition-all flex items-center justify-center min-h-[52px]"
                 >
                   {isVerifying ? <Loader2 size={16} className="animate-spin" /> : 'Send OTP'}
-                </button>
+                </motion.button>
               </div>
             ) : (
               <div className="space-y-4">
                 <p className="text-xs font-bold text-slate-500">Enter the 6-digit code sent to {newPhone.code} {newPhone.number}</p>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="text"
                     maxLength={6}
@@ -284,13 +286,15 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
                     placeholder="000000"
                     className="flex-1 px-6 py-4 rounded-2xl bg-white dark:bg-slate-900 border-2 border-transparent focus:border-blue-500 outline-none font-mono text-2xl tracking-[0.5em] text-center font-black"
                   />
-                  <button 
+                  <motion.button 
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={handleVerifyOtp}
                     disabled={isVerifying || otp.length < 6}
-                    className="px-8 py-4 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                    className="px-8 py-4 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 disabled:opacity-50 flex items-center justify-center min-h-[52px]"
                   >
                     {isVerifying ? <Loader2 size={16} className="animate-spin" /> : 'Verify & Add'}
-                  </button>
+                  </motion.button>
                 </div>
                 <button onClick={() => setVerificationStep('idle')} className="text-[9px] font-black uppercase text-blue-600 hover:underline">Change Number</button>
               </div>
@@ -303,7 +307,9 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
             )}
           </motion.div>
         ) : (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05, x: 5 }}
+            whileTap={{ scale: 0.95 }}
             onClick={handleStartAdd}
             className="group flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-600 hover:text-blue-700 transition-all px-2 py-1"
           >
@@ -311,7 +317,7 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
               <Plus size={12} />
             </div>
             Add Phone Number
-          </button>
+          </motion.button>
         )}
       </AnimatePresence>
     </div>
