@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Lock, Eye, EyeOff } from 'lucide-react';
 import { BaseInput } from './BaseInput';
+import { motion } from 'framer-motion';
 
 interface PasswordFieldProps {
   id: string;
@@ -36,7 +37,9 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({
   const [showPassword, setShowPassword] = useState(false);
 
   const toggleIcon = (
-    <button
+    <motion.button
+      whileHover={{ scale: 1.15 }}
+      whileTap={{ scale: 0.85 }}
       type="button"
       onClick={() => setShowPassword(!showPassword)}
       className="flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors focus:outline-none focus:text-blue-500 z-20"
@@ -44,7 +47,7 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({
       title={showPassword ? "Hide password" : "Show password"}
     >
       {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-    </button>
+    </motion.button>
   );
 
   return (

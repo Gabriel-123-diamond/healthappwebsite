@@ -110,15 +110,19 @@ export default function OnboardingPage() {
 
           <div className="mt-12 space-y-8">
             <div className="flex justify-between items-center gap-6">
-              <button 
+              <motion.button 
+                whileHover={{ scale: 1.05, x: -5 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={handleBack} 
                 className="group flex items-center gap-2 text-slate-400 font-black uppercase tracking-widest text-[10px] hover:text-slate-900 dark:hover:text-white transition-all px-6 py-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
                 {step === 1 ? t('auth.backToSignUp') : t('common.previous')}
-              </button>
+              </motion.button>
               
-              <button 
+              <motion.button 
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={handleNext} 
                 disabled={isLoading || (step === 2 && (validationStatus.username === 'taken' || validationStatus.phone === 'taken' || validationStatus.name === 'taken'))} 
                 className="relative overflow-hidden bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-14 py-5 rounded-[24px] font-black uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-4 shadow-2xl shadow-slate-900/20 dark:shadow-white/5 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-600 group"
@@ -133,7 +137,7 @@ export default function OnboardingPage() {
                 )}
                 {/* Gloss effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-              </button>
+              </motion.button>
             </div>
           </div>
         </div>

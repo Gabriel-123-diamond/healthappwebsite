@@ -208,13 +208,15 @@ export default function SignUpPage() {
           )}
 
           <div>
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
               className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-xs font-black uppercase tracking-[0.2em] rounded-[20px] text-white bg-slate-900 dark:bg-white dark:text-slate-900 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-slate-200 dark:shadow-none disabled:opacity-50"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : t.auth.signUp}
-            </button>
+            </motion.button>
           </div>
         </form>
 
@@ -227,14 +229,16 @@ export default function SignUpPage() {
           </div>
         </div>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02, backgroundColor: 'rgba(248, 250, 252, 1)' }}
+          whileTap={{ scale: 0.98 }}
           onClick={handleGoogleSignUp}
           disabled={loading}
           className="w-full flex justify-center items-center gap-3 py-4 px-4 border border-slate-100 dark:border-slate-800 rounded-[20px] text-xs font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm"
         >
           <Chrome className="w-5 h-5 text-blue-500" />
           Google Identity
-        </button>
+        </motion.button>
 
         <div className="text-center pt-4">
           <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
