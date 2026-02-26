@@ -46,4 +46,6 @@ issues.txt
 # Firebase Config
 firebase.json
 .firebaserc
+firestore.rules
+storage.rules
 .firestore.rules
