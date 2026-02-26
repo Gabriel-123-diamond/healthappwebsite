@@ -30,6 +30,8 @@ export interface UserProfile {
   city: string;
   state: string;
   country: string;
+  countryIso: string;
+  stateIso: string;
   ageRange: string;
   dateOfBirth?: string;
   role: UserRole;
@@ -41,11 +43,14 @@ export interface UserProfile {
   emailVerified: boolean;
   phoneVerified: boolean;
   kycStatus?: 'unverified' | 'pending' | 'verified' | 'rejected';
+  kycDocument?: string;
+  kycDocType?: string;
   updatedAt: string;
   createdAt: string;
   
   // Expert fields (Quick Access for Directory)
   specialty?: string;
+  customSpecialty?: string;
   specialties?: { name: string, years: string }[];
   yearsOfExperience?: string;
   licenseNumber?: string;
