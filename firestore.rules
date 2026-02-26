@@ -97,14 +97,13 @@ service cloud.firestore {
         request.resource.data.onboardingComplete == false;
         
       allow update: if isOwner(userId) && (
-        // Case 1: Reverting to sign-up/onboarding (Allow deleting role if not verified)
+        // Case 1: Onboarding progress (Allow updating profile fields if not fully verified expert)
         (
-          request.resource.data.onboardingComplete == false &&
+          resource.data.get('onboardingComplete', false) == false &&
           (!('verificationStatus' in resource.data) || resource.data.verificationStatus != 'verified') &&
-          request.resource.data.diff(resource.data).affectedKeys()
-            .hasOnly(['role', 'expertProfile', 'onboardingStep', 'onboardingComplete', 'specialty', 'licenseNumber', 'institutionName', 'updatedAt', 'specialties', 'yearsOfExperience', 'profileComplete'])
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['points', 'verificationStatus'])
         ) ||
-        // Case 2: Normal profile updates (Prevent privilege escalation)
+        // Case 2: Normal profile updates (Prevent privilege escalation for verified/completed profiles)
         (
           !request.resource.data.diff(resource.data).affectedKeys()
             .hasAny(['role', 'points', 'verificationStatus', 'emailVerified', 'phoneVerified'])
