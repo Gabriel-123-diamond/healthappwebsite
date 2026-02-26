@@ -139,14 +139,14 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
           return (
             <div 
               key={index} 
-              className={`group relative flex flex-col md:flex-row items-stretch md:items-center rounded-2xl border transition-all duration-300 ${
+              className={`group relative flex flex-col xl:flex-row items-stretch xl:items-center rounded-2xl border transition-all duration-300 ${
                 isPrimary 
                   ? 'border-blue-100 dark:border-blue-900/30 bg-blue-50/30 dark:bg-blue-900/10 shadow-sm' 
                   : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-300 dark:hover:border-blue-700 shadow-sm hover:shadow-md'
               }`}
             >
               {/* Label Section */}
-              <div className="w-full md:w-32 lg:w-40 p-1 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800 shrink-0">
+              <div className="w-full xl:w-32 2xl:w-40 p-1 border-b xl:border-b-0 xl:border-r border-slate-100 dark:border-slate-800 shrink-0">
                 <div className="relative group/label">
                   <select
                     value={phone.label}
@@ -161,7 +161,7 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
               </div>
 
               {/* Country Code Section */}
-              <div className="w-full md:w-32 lg:w-40 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800 shrink-0">
+              <div className="w-full xl:w-32 2xl:w-40 border-b xl:border-b-0 xl:border-r border-slate-100 dark:border-slate-800 shrink-0">
                 <CustomSelect
                   // Try to find a matching country by code to provide a unique value to CustomSelect
                   value={countries.find(c => c.code === phone.code)?.code + ":" + countries.find(c => c.code === phone.code)?.name}
@@ -234,8 +234,8 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
             </div>
 
             {verificationStep === 'idle' ? (
-              <div className="flex flex-col lg:flex-row gap-3">
-                <div className="w-full lg:w-40 shrink-0">
+              <div className="flex flex-col xl:flex-row gap-3">
+                <div className="w-full xl:w-40 shrink-0">
                   <CustomSelect
                     value={`${newPhone.code}:${countries.find(c => c.code === newPhone.code)?.name}`}
                     onChange={(val) => {
@@ -269,7 +269,7 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
                   whileTap={{ scale: 0.98 }}
                   onClick={handleSendOtp}
                   disabled={isVerifying || !isLengthValid}
-                  className="px-8 py-4 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:grayscale transition-all flex items-center justify-center min-h-[52px]"
+                  className="px-8 py-4 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:grayscale transition-all flex items-center justify-center min-h-[52px] xl:min-w-[140px]"
                 >
                   {isVerifying ? <Loader2 size={16} className="animate-spin" /> : 'Send OTP'}
                 </motion.button>
@@ -277,7 +277,7 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
             ) : (
               <div className="space-y-4">
                 <p className="text-xs font-bold text-slate-500">Enter the 6-digit code sent to {newPhone.code} {newPhone.number}</p>
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col xl:flex-row gap-3">
                   <input
                     type="text"
                     maxLength={6}
@@ -291,7 +291,7 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
                     whileTap={{ scale: 0.98 }}
                     onClick={handleVerifyOtp}
                     disabled={isVerifying || otp.length < 6}
-                    className="px-8 py-4 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 disabled:opacity-50 flex items-center justify-center min-h-[52px]"
+                    className="px-8 py-4 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 disabled:opacity-50 flex items-center justify-center min-h-[52px] xl:min-w-[160px]"
                   >
                     {isVerifying ? <Loader2 size={16} className="animate-spin" /> : 'Verify & Add'}
                   </motion.button>
