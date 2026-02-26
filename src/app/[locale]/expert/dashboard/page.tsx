@@ -76,7 +76,9 @@ export default function ExpertDashboard() {
           <div className="lg:col-span-8 space-y-10">
             <div className="flex bg-white dark:bg-slate-900 rounded-2xl p-1.5 border border-slate-100 dark:border-slate-800 shadow-sm w-fit">
               {(['queue', 'articles', 'courses'] as const).map(tab => (
-                <button 
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   key={tab} 
                   onClick={() => setActiveTab(tab)} 
                   className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
@@ -86,7 +88,7 @@ export default function ExpertDashboard() {
                   }`}
                 >
                   {tab === 'queue' ? 'Verification Queue' : tab === 'articles' ? 'My Archives' : 'My Courses'}
-                </button>
+                </motion.button>
               ))}
             </div>
 
