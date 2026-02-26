@@ -1,0 +1,4 @@
+# Bun configuration for hybrid system
+[install]
+# Bun will automatically detect package-lock.json
+# We use a postinstall script in package.json to keep it in sync
