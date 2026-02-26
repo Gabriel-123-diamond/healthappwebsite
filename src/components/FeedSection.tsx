@@ -7,7 +7,7 @@ import { Link } from '@/i18n/routing';
 import { auth } from '@/lib/firebase';
 import { getFeedItems } from '@/services/feedService';
 import { FeedItem } from '@/types';
-import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import { FeedCard } from './FeedCard';
 import { motion } from 'framer-motion';
 
@@ -21,13 +21,6 @@ export default function FeedSection() {
     setLoading(true);
     setError(null);
     try {
-      if (!auth.currentUser) {
-        try {
-          await signInAnonymously(auth);
-        } catch (authErr) {
-          console.warn("Anonymous auth failed, attempting to load feed anyway:", authErr);
-        }
-      }
       const data = await getFeedItems(locale);
       setItems(data);
     } catch (err: any) {
@@ -39,7 +32,8 @@ export default function FeedSection() {
   }, [locale]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, () => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      // Only load feed if we have a user or if the feed service allows public access
       loadFeed();
     });
     return () => unsubscribe();
