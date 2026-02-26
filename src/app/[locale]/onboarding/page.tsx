@@ -41,6 +41,8 @@ export default function OnboardingPage() {
     if (s.id === 'expert') return isExpert;
     // Hide Role selection (step 4) if already coming from an expert link
     if (s.id === 'role' && isExpert && searchParams.get('role')) return false;
+    // Hide Interests (step 7) for hospitals
+    if (s.id === 'interests' && formData.role === 'hospital') return false;
     return true;
   }).map((s, idx) => ({ ...s, number: idx + 1 }));
 

@@ -322,7 +322,12 @@ export const useOnboarding = () => {
           setIsLoading(false);
           return;
         }
-        await saveAndGoTo(7);
+
+        if (formData.role === 'hospital') {
+          await completeOnboarding();
+        } else {
+          await saveAndGoTo(7);
+        }
         return;
       }
 
