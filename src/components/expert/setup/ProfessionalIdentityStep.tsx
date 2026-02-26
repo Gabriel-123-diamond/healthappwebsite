@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { User, ShieldCheck, AlertCircle, ChevronRight, Loader2, Award, Plus, X } from 'lucide-react';
+import { User, ShieldCheck, AlertCircle, ChevronRight, Loader2, Award, Plus, X, Check } from 'lucide-react';
 import { BaseInput } from '@/components/common/BaseInput';
 import { ExpertPhoneManager } from '@/components/expert/ExpertPhoneManager';
 import CustomSelect from '@/components/common/CustomSelect';
