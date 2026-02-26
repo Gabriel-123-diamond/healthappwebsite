@@ -91,7 +91,7 @@ export default function CustomSelect({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            className="absolute top-full mt-2 left-0 w-full min-w-[300px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-slate-700/50 shadow-2xl shadow-slate-200/50 dark:shadow-black/50 z-50 max-h-[600px] overflow-hidden flex flex-col p-2"
+            className="absolute top-full mt-2 left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-slate-700/50 shadow-2xl shadow-slate-200/50 dark:shadow-black/50 z-50 max-h-[600px] overflow-hidden flex flex-col p-2"
           >
             <div className="p-2">
               <SearchInput 
