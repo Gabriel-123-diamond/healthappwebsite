@@ -12,9 +12,12 @@ import { countries } from '@/lib/countries';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { ONBOARDING_STEPS } from '@/types';
 
+import { useSearchParams } from 'next/navigation';
+
 export default function OnboardingPage() {
   const router = useRouter();
   const t = useTranslations();
+  const searchParams = useSearchParams();
   const {
     step,
     isLoading,
