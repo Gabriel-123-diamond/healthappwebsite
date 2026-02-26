@@ -152,6 +152,28 @@ export const useOnboarding = () => {
     }
   }, [searchParams]);
 
+  // Immediate save for critical milestones (like verification)
+  useEffect(() => {
+    if (initializing || !auth.currentUser) return;
+    
+    const saveCriticalMilestone = async () => {
+      try {
+        await userService.updateProfile(auth.currentUser!.uid, {
+          emailVerified: formData.emailVerified,
+          phoneVerified: formData.phoneVerified,
+          onboardingStep: step,
+          updatedAt: new Date().toISOString()
+        });
+      } catch (e) {
+        console.error("Critical save failed:", e);
+      }
+    };
+
+    if (formData.emailVerified || formData.phoneVerified) {
+      saveCriticalMilestone();
+    }
+  }, [formData.emailVerified, formData.phoneVerified, step, initializing]);
+
   // Debounced Progress Saving
   useEffect(() => {
     if (initializing || !auth.currentUser) return;
