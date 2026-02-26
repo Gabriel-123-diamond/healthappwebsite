@@ -109,7 +109,7 @@ const EXPERT_DATA = [
   {
     id: '2',
     name: 'Green Leaf Wellness',
-    type: 'herbalist',
+    type: 'herbal_practitioner',
     specialty: 'Traditional Chinese Medicine',
     location: 'San Francisco, CA, USA',
     rating: 4.8,
@@ -186,7 +186,7 @@ const EXPERT_DATA = [
   {
     id: '9',
     name: 'Berlin Naturheilpraxis',
-    type: 'herbalist',
+    type: 'herbal_practitioner',
     specialty: 'Homeopathy',
     location: 'Berlin, Germany',
     rating: 4.6,
@@ -252,7 +252,7 @@ const EXPERT_DATA = [
   {
     id: '15',
     name: 'Toronto Holistic Health',
-    type: 'herbalist',
+    type: 'herbal_practitioner',
     specialty: 'Naturopathy',
     location: 'Toronto, Canada',
     rating: 4.8,

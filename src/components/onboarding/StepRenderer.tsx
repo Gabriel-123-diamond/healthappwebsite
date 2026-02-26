@@ -69,74 +69,42 @@ export default function StepRenderer({
       );
     case 3:
       return (
-        isExpert ? (
-          <ExpertDetailsStep 
-            formData={formData} 
-            setFormData={setFormData}
-            stepNumber={3}
-          />
-        ) : (
-          <VerificationStep 
-            formData={formData} 
-            setFormData={setFormData} 
-          />
-        )
+        <VerificationStep 
+          formData={formData} 
+          setFormData={setFormData} 
+        />
       );
     case 4:
       return (
-        isExpert ? (
-          <VerificationStep 
-            formData={formData} 
-            setFormData={setFormData} 
-          />
-        ) : (
-          <RoleStep 
-            formData={formData} 
-            setFormData={setFormData} 
-            roles={roles} 
-          />
-        )
+        <RoleStep 
+          formData={formData} 
+          setFormData={setFormData} 
+          roles={roles} 
+        />
       );
     case 5:
       return (
-        isExpert ? (
-          <LocationStep 
-            formData={formData} 
-            setFormData={setFormData} 
-            countries={countries}
-            allStates={allStates}
-          />
-        ) : (
-          <ExpertDetailsStep 
-            formData={formData} 
-            setFormData={setFormData} 
-          />
-        )
+        <ExpertDetailsStep 
+          formData={formData} 
+          setFormData={setFormData} 
+          stepNumber={5}
+        />
       );
     case 6:
       return (
-        isExpert ? (
-          <InterestsStep 
-            formData={formData} 
-            toggleInterest={toggleInterest} 
-          />
-        ) : (
-          <LocationStep 
-            formData={formData} 
-            setFormData={setFormData} 
-            countries={countries}
-            allStates={allStates}
-          />
-        )
+        <LocationStep 
+          formData={formData} 
+          setFormData={setFormData} 
+          countries={countries}
+          allStates={allStates}
+        />
       );
     case 7:
       return (
-        isExpert ? null : (
-          <InterestsStep 
-            formData={formData} 
-            toggleInterest={toggleInterest} 
-          />
-        )
+        <InterestsStep 
+          formData={formData} 
+          toggleInterest={toggleInterest} 
+        />
       );
     default:
       return null;

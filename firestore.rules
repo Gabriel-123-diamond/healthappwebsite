@@ -20,7 +20,7 @@ service cloud.firestore {
     function userIsExpert() {
       return isSignedIn() && 
              exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') in ['doctor', 'herbalist', 'hospital', 'expert'];
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') in ['doctor', 'herbal_practitioner', 'hospital', 'expert'];
     }
 
     // Public collections (accessible by guests)

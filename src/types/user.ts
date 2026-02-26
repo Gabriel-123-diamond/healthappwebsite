@@ -9,12 +9,12 @@ export const isExpertRole = (role: string): boolean => {
 };
 
 export const ONBOARDING_STEPS = [
-  { number: 1, title: "Referral", id: 'referral' },
-  { number: 2, title: "Identity", id: 'identity' },
-  { number: 3, title: "Verification", id: 'verification' },
-  { number: 4, title: "Professional Role", id: 'role' },
-  { number: 5, title: "Expert Details", id: 'expert' },
-  { number: 6, title: "Location", id: 'location' },
+  { number: 1, title: "Sync Profile", id: 'start' },
+  { number: 2, title: "Basic Identity", id: 'identity' },
+  { number: 3, title: "Security Check", id: 'verification' },
+  { number: 4, title: "Platform Role", id: 'role' },
+  { number: 5, title: "Credentials", id: 'expert' },
+  { number: 6, title: "Your Base", id: 'location' },
   { number: 7, title: "Interests", id: 'interests' }
 ] as const;
 

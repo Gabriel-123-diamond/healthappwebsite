@@ -61,8 +61,8 @@ export default function ExpertDetailsStep({ formData, setFormData, stepNumber = 
             </motion.div>
           )}
 
-          <div className="pt-2">
-            {isHospital ? (
+          <div className="pt-2 space-y-6">
+            {isHospital && (
               <BaseInput
                 id="institutionName"
                 label="Institution Name"
@@ -73,18 +73,18 @@ export default function ExpertDetailsStep({ formData, setFormData, stepNumber = 
                 prefixIcon={<Building2 className="w-5 h-5 text-slate-400" />}
                 className="py-4 !rounded-2xl !border-slate-100 dark:!border-slate-800"
               />
-            ) : (
-              <BaseInput
-                id="licenseNumber"
-                label="License Number"
-                required
-                value={formData.licenseNumber}
-                onChange={(e) => setFormData({...formData, licenseNumber: e.target.value})}
-                placeholder="Registration or Medical License ID"
-                prefixIcon={<FileText className="w-5 h-5 text-slate-400" />}
-                className="py-4 !rounded-2xl !border-slate-100 dark:!border-slate-800"
-              />
             )}
+            
+            <BaseInput
+              id="licenseNumber"
+              label={isHospital ? "Registration / License ID" : "Professional License Number"}
+              required
+              value={formData.licenseNumber}
+              onChange={(e) => setFormData({...formData, licenseNumber: e.target.value})}
+              placeholder={isHospital ? "Hospital Registration Number" : "Medical License ID"}
+              prefixIcon={<FileText className="w-5 h-5 text-slate-400" />}
+              className="py-4 !rounded-2xl !border-slate-100 dark:!border-slate-800"
+            />
           </div>
         </div>
 

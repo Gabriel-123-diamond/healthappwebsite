@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Loader2, UserCircle, Stethoscope, Leaf, Building2, AlertCircle, ChevronLeft } from 'lucide-react';
 import OnboardingSidebar from '@/components/onboarding/OnboardingSidebar';
 import StepRenderer from '@/components/onboarding/StepRenderer';
+import { ErrorBanner } from '@/components/onboarding/ErrorBanner';
 import { useTranslations } from 'next-intl';
 import { countries } from '@/lib/countries';
 import { useOnboarding } from '@/hooks/useOnboarding';
@@ -33,7 +34,10 @@ export default function OnboardingPage() {
   const isExpert = ['doctor', 'herbal_practitioner', 'hospital'].includes(formData.role);
 
   const steps = ONBOARDING_STEPS.filter(s => {
+    // Hide Expert Details (step 5) for non-expert users
     if (s.id === 'expert') return isExpert;
+    // Hide Role selection (step 4) if already coming from an expert link
+    if (s.id === 'role' && isExpert && searchParams.get('role')) return false;
     return true;
   }).map((s, idx) => ({ ...s, number: idx + 1 }));
 
@@ -75,6 +79,7 @@ export default function OnboardingPage() {
         
         <div className="p-8 sm:p-12 md:p-20 md:w-2/3 flex flex-col h-full bg-white dark:bg-slate-900 transition-colors duration-500 relative">
           <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+            <ErrorBanner errors={fieldErrors} />
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={step}
@@ -82,7 +87,7 @@ export default function OnboardingPage() {
                 animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
                 exit={{ opacity: 0, x: -20, filter: 'blur(10px)' }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className="h-full"
+                className="h-full mt-6"
               >
                 <StepRenderer 
                   step={step}
@@ -101,32 +106,6 @@ export default function OnboardingPage() {
           </div>
 
           <div className="mt-12 space-y-8">
-            {/* Error Message UI */}
-            <AnimatePresence>
-              {fieldErrors.length > 0 && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10, height: 0 }}
-                  animate={{ opacity: 1, y: 0, height: 'auto' }}
-                  exit={{ opacity: 0, y: 10, height: 0 }}
-                  className="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20 rounded-3xl p-6 flex items-start gap-4 shadow-sm"
-                >
-                  <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-xl text-red-600 dark:text-red-400">
-                    <AlertCircle size={20} />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-xs font-black text-red-700 dark:text-red-400 uppercase tracking-widest mb-2">Attention Required</p>
-                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1">
-                      {fieldErrors.map((err, i) => (
-                        <li key={i} className="text-sm text-red-600 dark:text-red-400/80 font-medium flex items-center gap-2">
-                          <div className="w-1 h-1 rounded-full bg-red-400 shrink-0" /> {err}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
             <div className="flex justify-between items-center gap-6">
               <button 
                 onClick={handleBack} 

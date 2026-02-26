@@ -11,6 +11,17 @@ import { APP_CONFIG } from '@/config/app_constants';
 
 import { locationService } from '@/services/locationService';
 
+/**
+ * ONBOARDING FLOW (7 STABLE STEPS)
+ * 1. Start (Referral or KYC)
+ * 2. Identity (Basic Info)
+ * 3. Security (OTP Verification)
+ * 4. Platform Role (Selection)
+ * 5. Credentials (Expert Details - Skipped for 'user' role)
+ * 6. Your Base (Location)
+ * 7. Interests (Topic Selection)
+ */
+
 export const useOnboarding = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -40,7 +51,7 @@ export const useOnboarding = () => {
     dateOfBirth: "",
     role: (searchParams.get('role') || "user") as UserRole,
     interests: [] as string[],
-    // Expert-specific fields for onboarding
+    // Expert-specific fields
     specialty: "",
     customSpecialty: "",
     licenseNumber: "",
@@ -95,12 +106,10 @@ export const useOnboarding = () => {
               return;
             }
             
-            // Resume from saved step if it exists
             if (profile.onboardingStep) {
               setStep(profile.onboardingStep);
             }
 
-            // Populate form with existing data
             setFormData(prev => ({
               ...prev,
               firstName: profile.firstName || prev.firstName,
@@ -111,7 +120,10 @@ export const useOnboarding = () => {
               city: profile.city || prev.city,
               state: profile.state || prev.state,
               country: profile.country || prev.country,
+              countryIso: profile.countryIso || prev.countryIso,
+              stateIso: profile.stateIso || prev.stateIso,
               ageRange: profile.ageRange || prev.ageRange,
+              dateOfBirth: profile.dateOfBirth || prev.dateOfBirth,
               role: profile.role || prev.role,
               interests: profile.interests || prev.interests,
               specialty: profile.specialty || prev.specialty,
@@ -119,6 +131,7 @@ export const useOnboarding = () => {
               institutionName: profile.institutionName || prev.institutionName,
               emailVerified: profile.emailVerified || false,
               phoneVerified: profile.phoneVerified || false,
+              kycDocument: profile.kycDocument || prev.kycDocument,
             }));
           }
           setInitializing(false);
@@ -154,135 +167,129 @@ export const useOnboarding = () => {
       } catch (e) {
         console.error("Auto-save failed:", e);
       }
-    }, APP_CONFIG.AUTO_SAVE_DELAY); // Save after delay
+    }, APP_CONFIG.AUTO_SAVE_DELAY);
 
     return () => clearTimeout(timer);
   }, [formData, step, initializing]);
 
   const handleNext = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
     setFieldErrors([]);
     
-    if (step === 1) {
-      if (isExpert) {
-        if (!formData.kycDocument) {
-          setFieldErrors(["Identity verification (KYC) is mandatory for medical professionals."]);
-          return;
-        }
-        await saveProgressToFirestore(2);
-        setStep(2);
-        return;
-      }
-      
-      if (formData.referralCode.trim() === "") {
-        await saveProgressToFirestore(2);
-        setStep(2);
-        return;
-      }
-      setValidationStatus(prev => ({ ...prev, referral: "validating", referralError: "" }));
-      try {
-        const referrerUid = await referralService.validateReferralCode(formData.referralCode);
-        if (referrerUid) {
-          setValidationStatus(prev => ({ ...prev, referral: "valid" }));
-          if (auth.currentUser) {
-            await referralService.applyReferralCode(
-              formData.referralCode, 
-              referrerUid, 
-              auth.currentUser.uid, 
-              auth.currentUser.email
-            );
+    try {
+      // Step 1: Start (Referral / KYC)
+      if (step === 1) {
+        if (isExpert) {
+          if (!formData.kycDocument) {
+            setFieldErrors(["Identity verification (KYC) is mandatory for medical professionals."]);
+            setIsLoading(false);
+            return;
           }
-          await saveProgressToFirestore(2);
-          setStep(2);
-        } else {
-          setValidationStatus(prev => ({ ...prev, referral: "invalid", referralError: "Invalid referral code" }));
-          setFieldErrors(["Please enter a valid referral code or leave it blank."]);
+        } else if (formData.referralCode.trim() !== "") {
+          setValidationStatus(prev => ({ ...prev, referral: "validating", referralError: "" }));
+          try {
+            const referrerUid = await referralService.validateReferralCode(formData.referralCode);
+            if (referrerUid) {
+              setValidationStatus(prev => ({ ...prev, referral: "valid" }));
+              if (auth.currentUser) {
+                await referralService.applyReferralCode(formData.referralCode, referrerUid, auth.currentUser.uid, auth.currentUser.email);
+              }
+            } else {
+              setValidationStatus(prev => ({ ...prev, referral: "invalid", referralError: "Invalid referral code" }));
+              setFieldErrors(["Please enter a valid referral code or leave it blank."]);
+              setIsLoading(false);
+              return;
+            }
+          } catch (e) {
+            setValidationStatus(prev => ({ ...prev, referral: "idle", referralError: "Error validating code" }));
+            setIsLoading(false);
+            return;
+          }
         }
-      } catch (e) {
-        setValidationStatus(prev => ({ ...prev, referral: "idle", referralError: "Error validating code" }));
-      }
-      return;
-    }
-
-    if (step === 2) {
-      const errors = [];
-      if (!formData.firstName) errors.push("First name is required.");
-      if (!formData.lastName) errors.push("Last name is required.");
-      if (!formData.username) errors.push("Username is required.");
-      if (!formData.phone) errors.push("Phone number is required.");
-      if (isExpert && !formData.dateOfBirth) errors.push("Date of birth is required for verification.");
-      if (!isExpert && !formData.ageRange) errors.push("Age range is required.");
-      
-      if (validationStatus.username === 'taken') errors.push("Username is already taken.");
-      if (validationStatus.phone === 'taken') errors.push("Phone number is already associated with an account.");
-      if (validationStatus.name === 'taken') errors.push("This name combination is unavailable.");
-      if (validationStatus.name === 'invalid' as any) errors.push("Names must contain only letters.");
-
-      if (errors.length > 0) {
-        setFieldErrors(errors);
+        await saveAndGoTo(2);
         return;
       }
-      await saveProgressToFirestore(3);
-      setStep(3);
-      return;
-    }
 
-    if (step === 3) {
-      if (isExpert) {
+      // Step 2: Identity
+      if (step === 2) {
         const errors = [];
-        if (!formData.licenseNumber) errors.push("Professional license number is required.");
-        if (!formData.specialty) errors.push("Primary specialty is required.");
+        if (!formData.firstName) errors.push("First name is required.");
+        if (!formData.lastName) errors.push("Last name is required.");
+        if (!formData.username) errors.push("Username is required.");
+        if (!formData.phone) errors.push("Phone number is required.");
+        if (isExpert && !formData.dateOfBirth) errors.push("Date of birth is required.");
+        if (!isExpert && !formData.ageRange) errors.push("Age range is required.");
         
+        if (validationStatus.username === 'taken') errors.push("Username is already taken.");
+        if (validationStatus.phone === 'taken') errors.push("Phone number is already taken.");
+        if (validationStatus.name === 'taken') errors.push("This name is already registered.");
+
         if (errors.length > 0) {
           setFieldErrors(errors);
+          setIsLoading(false);
           return;
         }
-        await saveProgressToFirestore(4);
-        setStep(4);
+        await saveAndGoTo(3);
         return;
       }
-      
-      const errors = [];
-      if (!formData.emailVerified) errors.push("Please verify your email address.");
-      if (!formData.phoneVerified) errors.push("Please verify your phone number.");
-      
-      if (errors.length > 0) {
-        setFieldErrors(errors);
-        return;
-      }
-      await saveProgressToFirestore(4);
-      setStep(4);
-      return;
-    }
 
-    if (step === 4) {
-      if (isExpert) {
-        // Step 4 for Expert is OTP Verification
+      // Step 3: Security Check (Verification)
+      if (step === 3) {
         const errors = [];
         if (!formData.emailVerified) errors.push("Please verify your email address.");
         if (!formData.phoneVerified) errors.push("Please verify your phone number.");
         
         if (errors.length > 0) {
           setFieldErrors(errors);
+          setIsLoading(false);
           return;
         }
-        await saveProgressToFirestore(5);
-        setStep(5);
+
+        // Skip Role selection (4) if already coming from an expert link
+        if (isExpert && searchParams.get('role')) {
+          await saveAndGoTo(5);
+        } else {
+          await saveAndGoTo(4);
+        }
         return;
       }
 
-      if (!formData.role) {
-        setFieldErrors(["Please select a professional role."]);
+      // Step 4: Platform Role
+      if (step === 4) {
+        if (!formData.role) {
+          setFieldErrors(["Please select your professional role."]);
+          setIsLoading(false);
+          return;
+        }
+        
+        // If user role, skip credentials (step 5)
+        if (formData.role === 'user') {
+          await saveAndGoTo(6);
+        } else {
+          await saveAndGoTo(5);
+        }
         return;
       }
-      
-      await saveProgressToFirestore(5);
-      setStep(5);
-      return;
-    }
 
-    if (step === 5) {
-      if (isExpert) {
-        // Step 5 for Expert is Location
+      // Step 5: Credentials (Expert Only)
+      if (step === 5) {
+        const errors = [];
+        if (!formData.specialty) errors.push("Primary specialty is required.");
+        if (formData.role === 'hospital' && !formData.institutionName) errors.push("Institution name is required.");
+        if (!formData.licenseNumber) errors.push(formData.role === 'hospital' ? "Registration / License ID is required." : "Professional license number is required.");
+        
+        if (errors.length > 0) {
+          setFieldErrors(errors);
+          setIsLoading(false);
+          return;
+        }
+        await saveAndGoTo(6);
+        return;
+      }
+
+      // Step 6: Location
+      if (step === 6) {
         const errors = [];
         if (!formData.city) errors.push("City is required.");
         if (!formData.state) errors.push("State/Province is required.");
@@ -290,60 +297,30 @@ export const useOnboarding = () => {
         
         if (errors.length > 0) {
           setFieldErrors(errors);
+          setIsLoading(false);
           return;
         }
-        await saveProgressToFirestore(6);
-        setStep(6);
+        await saveAndGoTo(7);
         return;
       }
 
-      // Non-expert Step 5 is Expert Details (only if they chose expert role late)
-      const errors = [];
-      if (!formData.specialty) errors.push("Specialty is required.");
-      if (formData.role !== 'hospital' && !formData.licenseNumber) errors.push("License number is required.");
-      if (formData.role === 'hospital' && !formData.institutionName) errors.push("Institution name is required.");
-      
-      if (errors.length > 0) {
-        setFieldErrors(errors);
-        return;
-      }
-      await saveProgressToFirestore(6);
-      setStep(6);
-      return;
-    }
-
-    if (step === 6) {
-      if (isExpert) {
-        // Step 6 for Expert is Interests
+      // Step 7: Interests
+      if (step === 7) {
         if (formData.interests.length === 0) {
           setFieldErrors(["Please select at least one health interest."]);
+          setIsLoading(false);
           return;
         }
         await completeOnboarding();
-        return;
       }
-
-      const errors = [];
-      if (!formData.city) errors.push("City is required.");
-      if (!formData.state) errors.push("State/Province is required.");
-      if (!formData.country) errors.push("Country is required.");
-      
-      if (errors.length > 0) {
-        setFieldErrors(errors);
-        return;
-      }
-      await saveProgressToFirestore(7);
-      setStep(7);
-      return;
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    if (step === 7) {
-      if (formData.interests.length === 0) {
-        setFieldErrors(["Please select at least one health interest."]);
-        return;
-      }
-      await completeOnboarding();
-    }
+  const saveAndGoTo = async (nextStep: number) => {
+    await saveProgressToFirestore(nextStep);
+    setStep(nextStep);
   };
 
   const completeOnboarding = async () => {
@@ -351,7 +328,6 @@ export const useOnboarding = () => {
     try {
       if (auth.currentUser) {
         const fullName = `${formData.firstName} ${formData.lastName}`.toLowerCase();
-        
         const finalSpecialty = formData.specialty === 'Other' ? formData.customSpecialty : formData.specialty;
         
         await Promise.all([
@@ -364,8 +340,8 @@ export const useOnboarding = () => {
             username: formData.username.toLowerCase(),
             phone: `${formData.countryCode}${formData.phone.replace(/\s/g, '')}`,
             onboardingComplete: true,
-            onboardingStep: isExpert ? 6 : 7,
-            profileComplete: isExpert ? false : true 
+            onboardingStep: step,
+            profileComplete: !isExpert
           }),
           referralService.completeReferral(auth.currentUser.uid)
         ]);
@@ -380,12 +356,12 @@ export const useOnboarding = () => {
     }
   };
 
-  const saveProgressToFirestore = async (nextStep: number) => {
+  const saveProgressToFirestore = async (targetStep: number) => {
     if (!auth.currentUser) return;
     try {
       await userService.updateProfile(auth.currentUser.uid, {
         ...formData,
-        onboardingStep: nextStep,
+        onboardingStep: targetStep,
         onboardingComplete: false
       });
     } catch (e) {
@@ -394,13 +370,20 @@ export const useOnboarding = () => {
   };
 
   const handleBack = async () => {
-    if (step === 1) {
-      router.push('/auth/signup');
-    } else {
-      let prevStep = step - 1;
-      // Branching back logic can be complex, but for now linear is fine
-      await saveProgressToFirestore(prevStep);
-      setStep(prevStep);
+    if (isLoading) return;
+    setIsLoading(true);
+    try {
+      if (step === 1) {
+        router.push('/auth/signup');
+      } else if (step === 6 && formData.role === 'user') {
+        await saveAndGoTo(4); // Skip Expert Details (5) when going back
+      } else if (step === 5 && isExpert && searchParams.get('role')) {
+        await saveAndGoTo(3); // Skip Role selection (4) when going back if already assigned
+      } else {
+        await saveAndGoTo(step - 1);
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 

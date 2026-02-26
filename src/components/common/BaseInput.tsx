@@ -52,7 +52,7 @@ export const BaseInput = forwardRef<HTMLInputElement, BaseInputProps>(({
           {...props}
         />
         {suffixIcon && (
-          <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-400">
+          <div className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400">
             {suffixIcon}
           </div>
         )}
