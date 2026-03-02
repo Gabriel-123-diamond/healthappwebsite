@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { referralService } from '@/services/referralService';
 import { userService } from '@/services/userService';

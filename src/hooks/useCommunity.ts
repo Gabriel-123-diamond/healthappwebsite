@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useCallback } from 'react';
 import { communityService, CommunityPost, COMMUNITY_TOPICS } from '@/services/communityService';
 import { auth } from '@/lib/firebase';

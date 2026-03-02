@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { checkSafety, SafetyCheckResult } from '@/services/safetyClientService';
 

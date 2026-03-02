@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { MapPin, ExternalLink, Stethoscope, BookOpen } from 'lucide-react';
 import { Link } from '@/i18n/routing';

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Users, ChevronRight, BadgeCheck, MapPin, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';

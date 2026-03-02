@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useCallback } from 'react';
 import { searchHealthTopic, AIResponse } from '@/services/aiService';
 

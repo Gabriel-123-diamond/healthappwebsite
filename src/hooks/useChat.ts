@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { subscribeToMessages, sendMessage as sendMsgService } from '@/services/chatService';
 import { ChatMessage } from '@/types/chat';

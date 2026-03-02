@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { getLearningPaths, getRecommendedPaths, LearningPath } from '@/services/learningService';
 import { auth } from '@/lib/firebase';

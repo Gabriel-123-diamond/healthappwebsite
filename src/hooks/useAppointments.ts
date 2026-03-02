@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { getUserAppointments } from '@/services/appointmentService';
 import { auth } from '@/lib/firebase';

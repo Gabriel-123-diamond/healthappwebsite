@@ -1,3 +1,5 @@
+'use client';
+
 import { Shield, ShieldCheck, ShieldAlert, Clock, Sparkles } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { motion } from 'framer-motion';

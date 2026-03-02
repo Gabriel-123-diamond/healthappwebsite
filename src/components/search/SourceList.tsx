@@ -1,3 +1,5 @@
+'use client';
+
 import { motion } from 'framer-motion';
 import { SourceItem } from './SourceItem';
 import { ShieldCheck, Lock, ChevronRight } from 'lucide-react';
