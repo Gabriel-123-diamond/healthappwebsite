@@ -132,6 +132,7 @@ export default function CustomAnalogTimePicker({
                 
                 <div className="flex flex-col gap-2 mb-8 ml-2">
                   <button 
+                    type="button"
                     onClick={() => {
                       setIsPM(false);
                       const h24 = hours === 12 ? 0 : hours;
@@ -142,6 +143,7 @@ export default function CustomAnalogTimePicker({
                     AM
                   </button>
                   <button 
+                    type="button"
                     onClick={() => {
                       setIsPM(true);
                       const h24 = hours === 12 ? 12 : hours + 12;
@@ -164,6 +166,7 @@ export default function CustomAnalogTimePicker({
                   {[0, 15, 30, 45].map(m => (
                     <button
                       key={m}
+                      type="button"
                       onClick={() => {
                         const h24 = isPM ? (hours === 12 ? 12 : hours + 12) : (hours === 12 ? 0 : hours);
                         onChange(`${h24.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
@@ -177,7 +180,11 @@ export default function CustomAnalogTimePicker({
               </div>
 
               <button 
-                onClick={() => setIsOpen(false)}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(false);
+                }}
                 className="w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl active:scale-95 transition-all"
               >
                 Set Time

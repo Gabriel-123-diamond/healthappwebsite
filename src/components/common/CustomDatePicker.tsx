@@ -175,6 +175,7 @@ export default function CustomDatePicker({
         </div>
 
         <button 
+          type="button"
           onClick={() => setIsOpen(!isOpen)}
           className="p-1 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
         >
@@ -203,6 +204,7 @@ export default function CustomDatePicker({
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-8">
                   <button 
+                    type="button"
                     onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} 
                     className="p-3 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl transition-all text-slate-400 hover:text-blue-600 active:scale-90"
                   >
@@ -211,12 +213,14 @@ export default function CustomDatePicker({
                   
                   <div className="flex items-center gap-2">
                     <button 
+                      type="button"
                       onClick={() => setView('month')}
                       className="font-black text-slate-900 dark:text-white uppercase tracking-[0.2em] text-[11px] hover:text-blue-600 transition-all px-4 py-2 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20"
                     >
                       {format(currentMonth, 'MMMM')}
                     </button>
                     <button 
+                      type="button"
                       onClick={() => setView('year')}
                       className="font-black text-slate-900 dark:text-white uppercase tracking-[0.2em] text-[11px] hover:text-blue-600 transition-all px-4 py-2 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20"
                     >
@@ -225,6 +229,7 @@ export default function CustomDatePicker({
                   </div>
 
                   <button 
+                    type="button"
                     onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} 
                     className="p-3 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl transition-all text-slate-400 hover:text-blue-600 active:scale-90"
                   >
@@ -247,6 +252,7 @@ export default function CustomDatePicker({
                   
                   {days.map(day => (
                     <button
+                      type="button"
                       key={day.toISOString()}
                       onClick={() => handleDayClick(day)}
                       className={getDayClass(day)}
@@ -258,6 +264,7 @@ export default function CustomDatePicker({
 
                 <div className="mt-8 pt-6 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
                   <button 
+                    type="button"
                     onClick={() => handleDayClick(new Date())}
                     className="text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 hover:opacity-70 transition-opacity"
                   >
@@ -275,6 +282,7 @@ export default function CustomDatePicker({
               <div className="grid grid-cols-3 gap-3 relative z-10">
                 {months.map((m, i) => (
                   <button
+                    type="button"
                     key={m}
                     onClick={() => handleMonthSelect(i)}
                     className={`py-5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all ${
@@ -293,6 +301,7 @@ export default function CustomDatePicker({
               <div className="grid grid-cols-3 gap-3 max-h-[320px] overflow-y-auto custom-scrollbar pr-2 relative z-10">
                 {years.map((y) => (
                   <button
+                    type="button"
                     key={y}
                     onClick={() => handleYearSelect(y)}
                     className={`py-5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all ${
