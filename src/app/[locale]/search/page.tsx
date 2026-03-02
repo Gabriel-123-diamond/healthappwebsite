@@ -132,7 +132,7 @@ function SearchContent() {
             <div className="space-y-12">
               <div className="bg-white dark:bg-slate-900 rounded-[48px] shadow-3xl shadow-blue-900/5 border border-slate-100 dark:border-slate-800 overflow-hidden">
                 <SearchMetadata response={results} />
-                <AiSummarySection answer={results.answer} isBlurred={false} />
+                <AiSummarySection answer={results.answer} isBlurred={isLoggedOut} />
               </div>
 
               {isLoggedOut && (
