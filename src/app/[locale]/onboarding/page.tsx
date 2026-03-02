@@ -50,8 +50,8 @@ export default function OnboardingPage() {
     2: t('steps.identity'),
     3: t('steps.security'),
     4: t('steps.location'),
-    5: t('steps.interests'),
-    6: t('steps.role')
+    5: t('steps.role'),
+    6: t('steps.interests'),
   };
 
   const renderStep = () => {
@@ -60,14 +60,14 @@ export default function OnboardingPage() {
       case 2: return <IdentityStep formData={formData} setFormData={setFormData} validationStatus={validationStatus} countries={allCountries} states={allStates} cities={allCities} />;
       case 3: return <VerificationStep formData={formData} setFormData={setFormData} />;
       case 4: return <LocationStep formData={formData} setFormData={setFormData} countries={allCountries} allStates={allStates} />;
-      case 5: return <InterestsStep formData={formData} toggleInterest={toggleInterest} />;
-      case 6: return <RoleStep formData={formData} setFormData={setFormData} />;
+      case 5: return <RoleStep formData={formData} setFormData={setFormData} />;
+      case 6: return <InterestsStep formData={formData} toggleInterest={toggleInterest} />;
       default: return null;
     }
   };
 
-  const totalSteps = 6;
-  const progress = (step / totalSteps) * 100;
+  const totalSteps = formData.role === 'hospital' ? 5 : 6;
+  const progress = (step / 6) * 100; // Keep 6 as the base for progress consistency or adjust to totalSteps
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors py-12 pt-32 sm:pt-40 px-4 sm:px-6 lg:px-8 relative overflow-hidden flex items-center justify-center">

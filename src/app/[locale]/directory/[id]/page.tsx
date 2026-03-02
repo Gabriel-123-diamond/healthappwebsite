@@ -47,7 +47,7 @@ export default function ExpertDetailsPage() {
   if (!expert) return null;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors pt-24 sm:pt-32 pb-24">
+    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors pt-32 sm:pt-40 pb-24">
       <div className="max-w-6xl mx-auto px-4">
         {/* Navigation */}
         <div className="mb-10">

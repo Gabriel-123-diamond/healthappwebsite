@@ -108,10 +108,10 @@
   },
   "directory": {
     "title": "Find Trusted Health Experts",
-    "subtitle": "Connect with verified doctors, certified herbal practitioners, and accredited medical institutions.",
+    "subtitle": "Connect with verified doctors, certified natural wellness practitioners, and accredited medical institutions.",
     "allExperts": "All Experts",
     "doctors": "Doctors",
-    "herbalists": "Herbal Practitioners",
+    "herbalists": "Natural Wellness Practitioners",
     "hospitals": "Hospitals",
     "verified": "VERIFIED"
   },
@@ -569,7 +569,7 @@
     "nearby": "NEARBY",
     "allTypes": "All Types",
     "doctors": "Doctors",
-    "herbalists": "Practitioners",
+    "herbalists": "Natural Wellness Practitioners",
     "clinics": "Clinics",
     "noExperts": "No experts found matching filters",
     "viewProfile": "View Profile",
@@ -672,7 +672,7 @@
       "userDesc": "Access intelligence and verified experts.",
       "doctor": "Medical Doctor",
       "doctorDesc": "Provide verified clinical expertise.",
-      "herbal": "Herbalist",
+      "herbal": "Natural Wellness Practitioner",
       "herbalDesc": "Offer validated traditional wisdom.",
       "hospital": "Health Center",
       "hospitalDesc": "Register a clinical institution."

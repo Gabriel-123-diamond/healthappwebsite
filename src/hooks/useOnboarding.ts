@@ -19,8 +19,8 @@ import { locationService } from '@/services/locationService';
  * 2. Identity (Basic Info)
  * 3. Security (OTP Verification)
  * 4. Your Base (Location)
- * 5. Interests (Topic Selection)
- * 6. Platform Role (User Selection)
+ * 5. Platform Role (User Selection)
+ * 6. Interests (Topic Selection) - Skipped for Hospitals
  */
 
 interface LocationItem {
@@ -344,28 +344,31 @@ export const useOnboarding = () => {
         return;
       }
 
-      // Step 5: Interests
+      // Step 5: Platform Role
       if (step === 5) {
-        if (formData.interests.length === 0) {
-          setFieldErrors(["Please select at least one health interest."]);
-          setIsLoading(false);
-          return;
-        }
-        
-        await saveAndGoTo(6);
-        return;
-      }
-
-      // Step 6: Platform Role
-      if (step === 6) {
         if (!formData.role) {
           setFieldErrors(["Please select your platform role."]);
           setIsLoading(false);
           return;
         }
 
-        // Onboarding completes here for everyone. 
-        // Experts will fill KYC/Tier only when they choose to upgrade.
+        if (formData.role === 'hospital') {
+          // Hospitals skip interests and complete onboarding
+          await completeOnboarding();
+        } else {
+          await saveAndGoTo(6);
+        }
+        return;
+      }
+
+      // Step 6: Interests
+      if (step === 6) {
+        if (formData.interests.length === 0) {
+          setFieldErrors(["Please select at least one health interest."]);
+          setIsLoading(false);
+          return;
+        }
+        
         await completeOnboarding();
         return;
       }

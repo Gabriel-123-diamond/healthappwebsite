@@ -59,12 +59,12 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({
         <div className="flex flex-wrap items-center gap-4 pt-2">
           {/* Tab Selector */}
           <div className="flex items-center gap-1.5 p-1.5 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-            {['all', 'experts', 'articles', 'videos'].map((tab) => (
+            {['all', 'specialists', 'articles', 'videos'].map((tab) => (
               <button
                 key={tab}
-                onClick={() => { setActiveTab(tab as any); setCurrentPage(1); }}
+                onClick={() => { setActiveTab(tab === 'specialists' ? 'experts' : tab as any); setCurrentPage(1); }}
                 className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                  activeTab === tab 
+                  (activeTab === 'experts' ? 'specialists' : activeTab) === tab 
                     ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-lg' 
                     : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}

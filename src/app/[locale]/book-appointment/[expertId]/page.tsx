@@ -55,7 +55,7 @@ export default function BookingPage({ params }: { params: Promise<{ expertId: st
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-12 px-4 transition-colors duration-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pt-32 sm:pt-40 pb-12 px-4 transition-colors duration-200">
       <div className="max-w-xl mx-auto">
         <button 
           onClick={() => router.back()} 

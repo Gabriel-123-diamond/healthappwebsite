@@ -111,6 +111,7 @@ export default function IdentityStep({
                   value={formData.dateOfBirth || ''}
                   onChange={(val) => setFormData({ ...formData, dateOfBirth: val })}
                   placeholder={t('dob')}
+                  maxDate={new Date()}
                 />
               </div>
               <div className="flex-1 min-w-[120px]">

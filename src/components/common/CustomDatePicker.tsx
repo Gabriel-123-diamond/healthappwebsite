@@ -61,16 +61,25 @@ export default function CustomDatePicker({
 
   const years = useMemo(() => {
     const currentYear = getYear(new Date());
-    const startYear = currentYear - 100;
-    return Array.from({ length: 101 }, (_, i) => startYear + i).reverse();
-  }, []);
+    const startYear = minDate ? getYear(minDate) : currentYear - 100;
+    const endYear = maxDate ? getYear(maxDate) : currentYear + 10;
+    const length = Math.max(0, endYear - startYear + 1);
+    return Array.from({ length }, (_, i) => startYear + i).reverse();
+  }, [minDate, maxDate]);
 
   const months = [
     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
   ];
 
+  const isDateDisabled = (day: Date) => {
+    if (minDate && day < startOfMonth(minDate)) return true;
+    if (maxDate && day > maxDate) return true;
+    return false;
+  };
+
   const handleDayClick = (day: Date) => {
+    if (isDateDisabled(day)) return;
     onChange(day.toISOString().split('T')[0]);
     setIsOpen(false);
   };
@@ -87,6 +96,11 @@ export default function CustomDatePicker({
 
   const getDayClass = (day: Date) => {
     const base = "h-9 w-9 sm:h-10 sm:w-10 flex items-center justify-center rounded-xl text-[10px] sm:text-xs transition-all relative";
+    
+    if (isDateDisabled(day)) {
+      return `${base} opacity-20 cursor-not-allowed pointer-events-none`;
+    }
+
     if (selectedDate && isSameDay(day, selectedDate)) {
       return `${base} bg-blue-600 text-white font-black z-10 shadow-lg shadow-blue-200 dark:shadow-none`;
     }
