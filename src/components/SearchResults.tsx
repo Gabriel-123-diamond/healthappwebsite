@@ -126,7 +126,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching, fi
                     experts={response.directoryMatches} 
                     total={response.totalDirectoryMatches || response.directoryMatches.length} 
                     query={query} 
-                    isLoggedOut={false}
+                    isLoggedOut={isLoggedOut}
                   />
                 </div>
               )}

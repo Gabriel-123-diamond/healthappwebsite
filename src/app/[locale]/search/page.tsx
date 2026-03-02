@@ -169,7 +169,7 @@ function SearchContent() {
 
               {(activeTab === 'all' || activeTab === 'experts') && (
                 <div className="space-y-8">
-                  <VerifiedExperts experts={filteredExperts} total={filteredExperts.length} query={query} isLoggedOut={false} />
+                  <VerifiedExperts experts={filteredExperts} total={filteredExperts.length} query={query} isLoggedOut={isLoggedOut} />
                 </div>
               )}
 
