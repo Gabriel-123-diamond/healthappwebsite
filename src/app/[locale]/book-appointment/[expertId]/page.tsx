@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Calendar, Clock, CheckCircle } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import CustomDatePicker from '@/components/common/CustomDatePicker';
-import CustomTimePicker from '@/components/common/CustomTimePicker';
+import CustomAnalogTimePicker from '@/components/common/CustomAnalogTimePicker';
 
 export default function BookingPage({ params }: { params: Promise<{ expertId: string }> }) {
   // Unwrap params using React.use() or await in async component
@@ -99,7 +99,7 @@ export default function BookingPage({ params }: { params: Promise<{ expertId: st
                     Select Time
                   </div>
                 </label>
-                <CustomTimePicker 
+                <CustomAnalogTimePicker 
                   value={selectedTime}
                   onChange={(val) => setSelectedTime(val)}
                   placeholder="Select Appointment Time"
