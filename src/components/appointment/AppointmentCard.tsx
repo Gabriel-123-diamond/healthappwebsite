@@ -47,7 +47,17 @@ export default function AppointmentCard({ appointment, onChatClick }: Appointmen
         </div>
       </div>
 
-      <div className="flex items-center gap-4 pt-6 md:pt-0 border-t md:border-t-0 border-slate-50 dark:border-slate-800/50">
+      <div className="flex flex-wrap items-center gap-4 pt-6 md:pt-0 border-t md:border-t-0 border-slate-50 dark:border-slate-800/50">
+        {appointment.status === 'confirmed' && (
+          <Link 
+            href={`/appointments/${appointment.id}/call`}
+            className="flex-1 md:flex-none flex items-center justify-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-[20px] font-black uppercase tracking-widest text-[10px] hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-95"
+          >
+            <Video className="w-4 h-4" />
+            Join Video Call
+          </Link>
+        )}
+        
         <button 
           onClick={() => onChatClick(appointment.expertId, appointment.expertName)}
           className="flex-1 md:flex-none flex items-center justify-center gap-3 bg-white dark:bg-slate-800 text-slate-900 dark:text-white px-8 py-4 rounded-[20px] font-black uppercase tracking-widest text-[10px] border border-slate-200 dark:border-slate-700 hover:border-blue-500/50 hover:text-blue-600 transition-all shadow-sm active:scale-95 group/btn"

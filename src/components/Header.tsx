@@ -12,6 +12,7 @@ import { useTheme } from '@/context/ThemeContext';
 import DesktopNav from './header/DesktopNav';
 import AuthActions from './header/AuthActions';
 import MobileMenu from './header/MobileMenu';
+import PushNotificationManager from './PushNotificationManager';
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
@@ -67,6 +68,7 @@ export default function Header() {
         ? 'bg-white/70 dark:bg-slate-950/70 backdrop-blur-2xl border-b border-slate-200/30 dark:border-slate-800/30 py-3 shadow-2xl shadow-blue-500/5' 
         : 'bg-transparent py-6 border-b border-transparent'
     }`}>
+      <PushNotificationManager />
       {/* Scroll Progress Bar */}
       <motion.div 
         className="absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-blue-600 to-indigo-600 origin-left z-50"

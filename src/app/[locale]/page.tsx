@@ -3,6 +3,7 @@
 import React from 'react';
 import SearchSection from "@/components/SearchSection";
 import FeedSection from "@/components/FeedSection";
+import SymptomWizard from "@/components/discovery/SymptomWizard";
 import { Shield, Users, Video, BookOpen, Calendar, ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { motion } from "framer-motion";
@@ -21,9 +22,16 @@ export default function Home() {
       
       <div className="relative z-10">
         <SearchSection />
-        
-        <FeedSection />
 
+        <section className="py-32 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16 space-y-4">
+            <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Not sure where to start?</h2>
+            <p className="text-slate-500 dark:text-slate-400 font-medium">Use our guided discovery wizard to narrow down your concerns.</p>
+          </div>
+          <SymptomWizard />
+        </section>
+
+        <FeedSection />
         {/* Intelligence Pillars */}
         <section className="py-32 px-4 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-y border-slate-100 dark:border-slate-800">
           <div className="max-w-7xl mx-auto">

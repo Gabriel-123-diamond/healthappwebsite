@@ -12,6 +12,7 @@ import { countries } from '@/lib/countries';
 import { Dropdown } from '@/components/ui/Dropdown';
 import { useUserAuth } from '@/hooks/useUserAuth';
 import { RestrictedPage } from '@/components/common/RestrictedPage';
+import { ExpertCardSkeleton } from '@/components/ui/Skeleton';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -277,9 +278,10 @@ export default function DirectoryPage() {
 
         {/* List */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-32 gap-4">
-            <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
-            <p className="text-slate-400 font-black uppercase tracking-widest text-[10px]">{t('updating')}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+              <ExpertCardSkeleton key={i} />
+            ))}
           </div>
         ) : (
           <>

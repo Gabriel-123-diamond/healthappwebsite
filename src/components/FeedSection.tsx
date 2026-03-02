@@ -10,6 +10,8 @@ import { FeedItem } from '@/types';
 import { onAuthStateChanged } from 'firebase/auth';
 import { FeedCard } from './FeedCard';
 import { motion } from 'framer-motion';
+import { FeedCardSkeleton } from './ui/Skeleton';
+import { offlineService } from '@/services/offlineService';
 
 export default function FeedSection() {
   const [items, setItems] = useState<FeedItem[]>([]);
@@ -19,14 +21,24 @@ export default function FeedSection() {
   const { t, locale } = useLanguage();
 
   const loadFeed = useCallback(async () => {
-    setLoading(true);
+    // 1. Try to load from cache first
+    const cached = offlineService.getCachedData('main_feed', 12);
+    if (cached) {
+      setItems(cached);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+
     setError(null);
     try {
       const data = await getFeedItems(locale);
       setItems(data);
+      // 2. Cache the fresh data
+      offlineService.cacheData('main_feed', data);
     } catch (err: any) {
       console.error("FeedSection load error:", err);
-      setError(err.message || "Failed to load feed items");
+      if (!cached) setError(err.message || "Failed to load feed items");
     } finally {
       setLoading(false);
     }
@@ -41,18 +53,11 @@ export default function FeedSection() {
   }, [loadFeed]);
 
   if (loading) return (
-    <div className="py-24 max-w-7xl mx-auto px-4">
-      <div className="flex flex-col items-center space-y-8">
-        <div className="flex gap-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="w-3 h-3 rounded-full bg-blue-600 animate-bounce" style={{ animationDelay: `${i * 0.1}s` }} />
-          ))}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-[480px] bg-slate-100 dark:bg-slate-800/50 rounded-[40px] animate-pulse" />
-          ))}
-        </div>
+    <div className="py-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 sm:gap-10">
+        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+          <FeedCardSkeleton key={i} />
+        ))}
       </div>
     </div>
   );

@@ -2,49 +2,72 @@
 
 import { useEffect } from 'react';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
-import { app } from '@/lib/firebase';
+import { app, db, auth } from '@/lib/firebase';
+import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export default function PushNotificationManager() {
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-      const registerServiceWorker = async () => {
-        try {
-          await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-            scope: '/',
+    if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return;
+
+    const messaging = getMessaging(app);
+
+    const saveToken = async (token: string, userId: string) => {
+      try {
+        const userRef = doc(db, 'users', userId);
+        await updateDoc(userRef, {
+          fcmToken: token,
+          lastTokenUpdate: serverTimestamp(),
+        });
+      } catch (error) {
+        console.error('Error saving FCM token to Firestore:', error);
+      }
+    };
+
+    const registerAndGetToken = async (userId: string) => {
+      try {
+        const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          const token = await getToken(messaging, {
+            vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+            serviceWorkerRegistration: registration,
           });
-          const registration = await navigator.serviceWorker.ready;
-          console.log('Service Worker ready:', registration.scope);
-
-          if (!registration.pushManager) {
-            console.warn('Push Manager not available in this browser/context.');
-            return;
-          }
-
-          const messaging = getMessaging(app);
           
-          // Request permission
-          const permission = await Notification.requestPermission();
-          if (permission === 'granted') {
-            try {
-              const token = await getToken(messaging, {
-                vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
-                serviceWorkerRegistration: registration,
-              });
-              if (token) {
-                // Token acquired, but don't log it in production
-              }
-            } catch (tokenError) {
-              console.error('Error getting FCM token:', tokenError);
-            }
+          if (token) {
+            await saveToken(token, userId);
           }
-        } catch (error) {
-          console.error('Service Worker registration failed:', error);
         }
-      };
+      } catch (error) {
+        console.error('FCM Registration failed:', error);
+      }
+    };
 
-      registerServiceWorker();
-    }
+    // Handle Auth state to ensure token is linked to user
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        registerAndGetToken(user.uid);
+      }
+    });
+
+    // Handle Foreground Messages
+    const unsubscribeMessage = onMessage(messaging, (payload) => {
+      console.log('Foreground message received:', payload);
+      // You could use a toast library here or show a custom UI
+      if (payload.notification) {
+        new Notification(payload.notification.title || 'Ikiké Health AI', {
+          body: payload.notification.body,
+          icon: '/favicon.ico'
+        });
+      }
+    });
+
+    return () => {
+      unsubscribeAuth();
+      unsubscribeMessage();
+    };
   }, []);
 
-  return null; // This component doesn't render anything
+  return null;
 }

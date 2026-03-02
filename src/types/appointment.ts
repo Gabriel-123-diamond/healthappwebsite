@@ -7,4 +7,6 @@ export interface Appointment {
   time: string;
   status: 'pending' | 'confirmed' | 'cancelled';
   createdAt: string;
+  meetingLink?: string;
+  meetingId?: string;
 }
