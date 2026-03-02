@@ -8,10 +8,9 @@ import { motion } from 'framer-motion';
 
 interface AiSummarySectionProps {
   answer: string;
-  isBlurred?: boolean;
 }
 
-export const AiSummarySection: React.FC<AiSummarySectionProps> = ({ answer, isBlurred = false }) => {
+export const AiSummarySection: React.FC<AiSummarySectionProps> = ({ answer }) => {
   return (
     <div className="relative group">
       {/* Premium Glow Effect */}
@@ -24,10 +23,10 @@ export const AiSummarySection: React.FC<AiSummarySectionProps> = ({ answer, isBl
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className={`text-xl font-black text-slate-900 dark:text-white tracking-tight ${isBlurred ? 'blur-[8px] select-none' : ''}`}>AI Clinical Synthesis</h3>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">AI Clinical Synthesis</h3>
               <div className="flex items-center gap-2 mt-0.5">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className={`text-[10px] font-black uppercase tracking-widest text-slate-400 ${isBlurred ? 'blur-[4px] select-none' : ''}`}>Verified Sources Analyzed</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Verified Sources Analyzed</span>
               </div>
             </div>
           </div>
@@ -38,7 +37,7 @@ export const AiSummarySection: React.FC<AiSummarySectionProps> = ({ answer, isBl
           </div>
         </div>
 
-        <div className={`prose prose-slate prose-lg max-w-none dark:prose-invert text-slate-700 dark:text-slate-300 leading-relaxed font-medium ${isBlurred ? 'blur-[12px] select-none pointer-events-none opacity-40' : ''}`}>
+        <div className="prose prose-slate prose-lg max-w-none dark:prose-invert text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
           <ReactMarkdown
             components={{
               p: ({children}) => <ScrollReveal className="mb-6 last:mb-0">{children}</ScrollReveal>,
