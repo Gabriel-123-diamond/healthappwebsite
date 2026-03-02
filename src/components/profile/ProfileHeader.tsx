@@ -47,13 +47,13 @@ export default function ProfileHeader({ user, userProfile, onEdit }: ProfileHead
         </div>
 
         <div className="flex-1 min-w-0 text-center sm:text-left pt-1">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-            <div className="space-y-1">
+          <div className="flex flex-col xl:flex-row xl:items-start justify-between gap-6 mb-8">
+            <div className="space-y-2">
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight truncate">
+                <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight truncate">
                   {userProfile?.fullName || user.displayName || 'Intelligence Node'}
                 </h1>
-                <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${
+                <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border shadow-sm ${
                   role === 'user' 
                     ? 'bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/10' 
                     : 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-500/20'
@@ -67,14 +67,15 @@ export default function ProfileHeader({ user, userProfile, onEdit }: ProfileHead
               </p>
             </div>
             
-            <div className="flex items-center gap-2">
-              <div className="flex bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/10 p-1">
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+              <div className="flex bg-slate-50 dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/10 p-1.5 shadow-inner">
                 {['en', 'fr', 'es', 'de', 'zh', 'ar'].map((lang) => (
                   <button
                     key={lang}
+                    type="button"
                     onClick={() => handleLanguageChange(lang)}
-                    className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase transition-all ${
-                      locale === lang ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-blue-500'
+                    className={`px-3.5 py-2 rounded-xl text-[10px] font-black uppercase transition-all duration-300 ${
+                      locale === lang ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105' : 'text-slate-400 hover:text-blue-500'
                     }`}
                   >
                     {lang}
@@ -83,10 +84,11 @@ export default function ProfileHeader({ user, userProfile, onEdit }: ProfileHead
               </div>
               
               <button 
+                type="button"
                 onClick={onEdit}
-                className="px-4 py-2 bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white transition-all active:scale-95 shadow-sm border border-slate-100 dark:border-white/10 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest"
+                className="px-6 py-3.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-slate-200 dark:shadow-none border border-transparent flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest"
               >
-                <Settings className="w-3.5 h-3.5" />
+                <Settings className="w-4 h-4" />
                 {t('settings')}
               </button>
             </div>
