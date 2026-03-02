@@ -10,10 +10,13 @@ import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { countries } from '@/lib/countries';
 import { Dropdown } from '@/components/ui/Dropdown';
+import { useUserAuth } from '@/hooks/useUserAuth';
+import { RestrictedPage } from '@/components/common/RestrictedPage';
 
 const ITEMS_PER_PAGE = 12;
 
 export default function DirectoryPage() {
+  const { user, loading: authLoading } = useUserAuth();
   const t = useTranslations('directoryPage');
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('query') || '';
@@ -105,6 +108,14 @@ export default function DirectoryPage() {
     selectedCountry !== '',
     selectedState !== ''
   ].filter(Boolean).length;
+
+  if (authLoading) return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+      <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+    </div>
+  );
+
+  if (!user) return <RestrictedPage />;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors py-12 pt-24 sm:pt-32 px-4 relative overflow-hidden">

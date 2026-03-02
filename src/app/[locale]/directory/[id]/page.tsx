@@ -1,20 +1,50 @@
-import React from 'react';
-import { getExpertByIdServer } from '@/services/directoryServiceServer';
-import { notFound } from 'next/navigation';
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { useParams, notFound } from 'next/navigation';
+import { getExpertById } from '@/services/directoryService';
+import { PublicExpert } from '@/types/expert';
 import { Link } from '@/i18n/routing';
 import ExpertHeader from '@/components/expert/ExpertHeader';
 import ExpertServicesList from '@/components/expert/ExpertServicesList';
 import ExpertContactCard from '@/components/expert/ExpertContactCard';
-import { ChevronLeft, Info, FileText, ShieldCheck } from 'lucide-react';
+import { ChevronLeft, Info, FileText, ShieldCheck, Loader2 } from 'lucide-react';
+import { useUserAuth } from '@/hooks/useUserAuth';
+import { RestrictedPage } from '@/components/common/RestrictedPage';
 
-export default async function ExpertDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-  // Await params object before accessing properties
-  const { id } = await params;
-  const expert = await getExpertByIdServer(id);
+export default function ExpertDetailsPage() {
+  const { id } = useParams();
+  const { user, loading: authLoading } = useUserAuth();
+  const [expert, setExpert] = useState<PublicExpert | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!expert) {
+  useEffect(() => {
+    if (typeof id === 'string') {
+      getExpertById(id).then(data => {
+        setExpert(data || null);
+        setLoading(false);
+      });
+    }
+  }, [id]);
+
+  if (authLoading || (loading && !expert)) return (
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950">
+      <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+    </div>
+  );
+
+  if (!user) return (
+    <RestrictedPage 
+      title="Specialist Profile Restricted"
+      description="Detailed clinical profiles, verified credentials, and appointment booking are reserved for authenticated network members."
+    />
+  );
+
+  if (!expert && !loading) {
     notFound();
   }
+
+  if (!expert) return null;
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors pt-24 sm:pt-32 pb-24">
@@ -33,7 +63,7 @@ export default async function ExpertDetailsPage({ params }: { params: Promise<{ 
             type={expert.type} 
             specialty={expert.specialty} 
             rating={expert.rating} 
-            verified={expert.verified} 
+            verified={expert.verificationStatus === 'verified'} 
           />
 
           {/* Content */}
