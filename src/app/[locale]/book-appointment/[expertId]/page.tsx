@@ -1,21 +1,20 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useBooking } from '@/hooks/useBooking';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeft, Calendar, Clock, CheckCircle, AlertCircle } from 'lucide-react';
-import { Link } from '@/i18n/routing';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft, Calendar, Clock, CheckCircle, AlertCircle, ShieldAlert, Loader2 } from 'lucide-react';
 import CustomDatePicker from '@/components/common/CustomDatePicker';
 import CustomAnalogTimePicker from '@/components/common/CustomAnalogTimePicker';
 import NiceModal from '@/components/common/NiceModal';
+import { bookingSessionService, BookingSession } from '@/services/bookingSessionService';
 
 export default function BookingPage({ params }: { params: Promise<{ expertId: string }> }) {
   const resolvedParams = React.use(params);
-  const { expertId } = resolvedParams;
+  const { expertId: sessionId } = resolvedParams; // expertId in route is now our sessionId
   
-  const searchParams = useSearchParams();
-  const expertName = searchParams.get('name') || 'the Expert';
-
+  const [session, setSession] = useState<BookingSession | null>(null);
+  const [validating, setValidating] = useState(true);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [modalConfig, setModalConfig] = useState<{
@@ -33,8 +32,26 @@ export default function BookingPage({ params }: { params: Promise<{ expertId: st
 
   const router = useRouter();
   
-  const { bookAppointment, isLoading } = useBooking(expertId, expertName);
-  const consultationFee = 2500; // Example fee in Naira or local currency
+  // Only initialize booking hook if we have a valid session
+  const { bookAppointment, isLoading } = useBooking(
+    session?.expertId || '', 
+    session?.expertName || 'Expert'
+  );
+  
+  const consultationFee = 2500;
+
+  useEffect(() => {
+    async function validateSession() {
+      const validSession = await bookingSessionService.getValidSession(sessionId);
+      if (!validSession) {
+        setValidating(false);
+        return;
+      }
+      setSession(validSession);
+      setValidating(false);
+    }
+    validateSession();
+  }, [sessionId]);
 
   const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' | 'payment' = 'info', onConfirm?: () => void) => {
     setModalConfig({
@@ -55,10 +72,11 @@ export default function BookingPage({ params }: { params: Promise<{ expertId: st
   };
 
   const executeBooking = async () => {
+    if (!session) return;
     setModalConfig(prev => ({ ...prev, isOpen: false }));
     try {
       await bookAppointment(selectedDate, selectedTime);
-      showAlert('Booking Successful', `Your appointment with ${expertName} has been requested for ${selectedDate} at ${selectedTime}.`, 'success');
+      showAlert('Booking Successful', `Your appointment with ${session.expertName} has been requested for ${selectedDate} at ${selectedTime}.`, 'success');
       setTimeout(() => router.push('/appointments'), 2000);
     } catch (error) {
       if (error instanceof Error && error.message === 'User not authenticated') {
@@ -83,11 +101,40 @@ export default function BookingPage({ params }: { params: Promise<{ expertId: st
 
     showAlert(
       'Confirm Consultation', 
-      `You are about to book a consultation with ${expertName}. A fee of ₦${consultationFee.toLocaleString()} will be charged to your account.`,
+      `You are about to book a consultation with ${session?.expertName}. A fee of ₦${consultationFee.toLocaleString()} will be charged to your account.`,
       'payment',
       executeBooking
     );
   };
+
+  if (validating) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <Loader2 className="w-12 h-12 animate-spin text-blue-600 mb-4" />
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Verifying Secure Link</p>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
+        <div className="bg-white dark:bg-slate-900 p-12 rounded-[48px] shadow-2xl border border-slate-100 dark:border-slate-800 text-center max-w-md w-full">
+          <div className="w-20 h-20 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-8 text-red-600">
+            <ShieldAlert size={40} />
+          </div>
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight mb-4">Link Expired</h1>
+          <p className="text-slate-500 dark:text-slate-400 mb-10 font-medium">This secure booking link has expired or is invalid. Please return to the specialist directory to initialize a new session.</p>
+          <button 
+            onClick={() => router.push('/directory')}
+            className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-5 rounded-[24px] font-black uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-slate-200 dark:shadow-none"
+          >
+            Back to Directory
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pt-32 sm:pt-40 pb-12 px-4 transition-colors duration-200">
@@ -115,10 +162,10 @@ export default function BookingPage({ params }: { params: Promise<{ expertId: st
             <div className="relative z-10">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
                 <CheckCircle size={12} />
-                Secure Booking
+                Secure Booking Session
               </div>
               <h1 className="text-3xl font-black mb-2 tracking-tight">Book Appointment</h1>
-              <p className="text-blue-100 font-medium opacity-90">Schedule a consultation with {expertName}</p>
+              <p className="text-blue-100 font-medium opacity-90">Schedule a consultation with {session.expertName}</p>
             </div>
             {/* Background Decor */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16" />
@@ -138,7 +185,7 @@ export default function BookingPage({ params }: { params: Promise<{ expertId: st
                   value={selectedDate}
                   onChange={(val) => {
                     setSelectedDate(val);
-                    if (selectedTime) setSelectedTime(''); // Reset time when date changes
+                    if (selectedTime) setSelectedTime(''); 
                   }}
                   placeholder="Select Appointment Date"
                   minDate={new Date()}
@@ -207,10 +254,15 @@ export default function BookingPage({ params }: { params: Promise<{ expertId: st
                   </>
                 )}
               </button>
-              <p className="text-center mt-6 text-[10px] font-medium text-slate-400 leading-relaxed uppercase tracking-wider">
-                Secured by Ikiké Health Payment Protocol. <br />
-                Refunds available up to 24h before appointment.
-              </p>
+              <div className="mt-6 flex flex-col items-center gap-2">
+                <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
+                  Secure Session ID: <span className="font-mono text-slate-300">{sessionId.substring(0, 8)}...</span>
+                </p>
+                <p className="text-[10px] font-medium text-slate-400 leading-relaxed uppercase tracking-wider text-center">
+                  Secured by Ikiké Health Payment Protocol. <br />
+                  Refunds available up to 24h before appointment.
+                </p>
+              </div>
             </div>
           </form>
         </div>
