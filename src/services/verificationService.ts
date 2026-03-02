@@ -1,5 +1,4 @@
-import { db, storage } from '@/lib/firebase';
-import { collection, addDoc, updateDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { auth, storage } from '@/lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export interface VerificationRequest {
@@ -42,26 +41,32 @@ export const verificationService = {
     documentUrl: string, 
     documentType: 'license' | 'id' | 'certificate' | 'other'
   ) => {
-    // 1. Create the verification request record
-    const requestData = {
-      expertId,
-      licenseNumber,
-      documentType,
-      documentUrl,
-      status: 'pending',
-      submittedAt: serverTimestamp(),
-    };
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("User not authenticated");
 
-    const docRef = await addDoc(collection(db, 'verification_requests'), requestData);
+      const token = await user.getIdToken();
+      const response = await fetch('/api/expert/verify', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          licenseNumber,
+          documentUrl,
+          documentType
+        })
+      });
 
-    // 2. Update the user's verification status
-    const userRef = doc(db, 'users', expertId);
-    await updateDoc(userRef, {
-      verificationStatus: 'pending',
-      lastVerificationRequestId: docRef.id,
-      updatedAt: serverTimestamp(),
-    });
+      if (!response.ok) {
+        throw new Error('Failed to submit application securely');
+      }
 
-    return docRef.id;
+      return await response.json();
+    } catch (error) {
+      console.error('Error submitting verification application:', error);
+      throw error;
+    }
   }
 };

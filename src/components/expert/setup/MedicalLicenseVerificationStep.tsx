@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { FileText, Calendar, ShieldCheck, Upload, CheckCircle2 } from 'lucide-react';
 import { BaseInput } from '@/components/common/BaseInput';
 import CustomSelect from '@/components/common/CustomSelect';
-import { MonthYearPicker } from '@/components/common/MonthYearPicker';
+import CustomDatePicker from '@/components/common/CustomDatePicker';
 
 interface MedicalLicenseVerificationStepProps {
   formData: any;
@@ -14,21 +14,21 @@ interface MedicalLicenseVerificationStepProps {
 }
 
 export default function MedicalLicenseVerificationStep({ formData, handleUpdate, validationErrors }: MedicalLicenseVerificationStepProps) {
-  const [uploads, setUploads] = useState<Record<string, boolean>>({
-    licenseCert: !!formData.license?.licenseCertUrl,
-    annualLicense: !!formData.license?.annualLicenseUrl,
-  });
+  const [isUploading, setIsUploading] = useState(false);
 
-  const handleFileUpload = (field: string) => {
-    setUploads(prev => ({ ...prev, [field]: true }));
-    handleUpdate('license', { ...formData.license, [`${field}Url`]: `mock-url-${field}` });
+  const handleFileUpload = () => {
+    setIsUploading(true);
+    setTimeout(() => {
+      setIsUploading(false);
+      handleUpdate('license', { ...formData.license, licenseUrl: 'mock-license-url' });
+    }, 1500);
   };
 
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
       <div>
-        <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-2">Medical License Verification</h3>
-        <p className="text-slate-500 dark:text-slate-400 font-medium text-sm">Provide your professional license details for MDCN verification.</p>
+        <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-2">Medical Credentials</h3>
+        <p className="text-slate-500 dark:text-slate-400 font-medium text-sm">Verify your professional medical license to practice on the platform.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -37,83 +37,71 @@ export default function MedicalLicenseVerificationStep({ formData, handleUpdate,
           label="Medical License Number"
           required
           value={formData.license?.licenseNumber || ''}
-          onChange={(e) => handleUpdate('license', { ...formData.license, licenseNumber: e.target.value })}
-          placeholder="e.g. MDCN/R/12345"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleUpdate('license', { ...formData.license, licenseNumber: e.target.value })}
           prefixIcon={<FileText className="w-4 h-4 text-slate-400" />}
           error={validationErrors.licenseNumber}
         />
-        <MonthYearPicker
-          label="Date of License Issuance"
+
+        <BaseInput
+          id="issuanceYear"
+          label="Issuance Year"
           required
           value={formData.license?.issuanceYear || ''}
-          onChange={(val) => handleUpdate('license', { ...formData.license, issuanceYear: val })}
-          placeholder="Select Month/Year"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleUpdate('license', { ...formData.license, issuanceYear: e.target.value })}
+          prefixIcon={<Calendar className="w-4 h-4 text-slate-400" />}
           error={validationErrors.issuanceYear}
         />
-        <BaseInput
-          id="expiryDate"
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CustomDatePicker
           label="License Expiry Date"
-          type="date"
           required
           value={formData.license?.expiryDate || ''}
-          onChange={(e) => handleUpdate('license', { ...formData.license, expiryDate: e.target.value })}
-          prefixIcon={<Calendar className="w-4 h-4 text-slate-400" />}
+          onChange={(val) => handleUpdate('license', { ...formData.license, expiryDate: val })}
           error={validationErrors.expiryDate}
         />
+
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest">Practicing Status</label>
+          <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest flex items-center gap-1">
+            <ShieldCheck className="w-4 h-4 text-blue-500" /> Current Status
+          </label>
           <CustomSelect
-            options={[
-              { value: 'active', label: 'Active / Practicing' },
-              { value: 'inactive', label: 'Inactive' },
-              { value: 'retired', label: 'Retired' }
-            ]}
             value={formData.license?.practicingStatus || 'active'}
             onChange={(val) => handleUpdate('license', { ...formData.license, practicingStatus: val })}
+            options={[
+              { value: 'active', label: 'Currently Practicing' },
+              { value: 'inactive', label: 'Inactive / On Leave' },
+              { value: 'student', label: 'In Residency / Student' },
+            ]}
             placeholder="Select Status"
+            className="!rounded-2xl !py-4"
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* MDCN License Certificate */}
-        <div className="space-y-3">
-          <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest">MDCN License Certificate</label>
-          <div 
-            onClick={() => handleFileUpload('licenseCert')}
-            className={`p-6 rounded-2xl border-2 border-dashed flex items-center gap-4 cursor-pointer transition-all ${
-              uploads.licenseCert 
-                ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800' 
-                : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-400'
-            }`}
-          >
-            <div className={`p-3 rounded-xl ${uploads.licenseCert ? 'bg-emerald-100' : 'bg-slate-100'}`}>
-              {uploads.licenseCert ? <CheckCircle2 className="w-6 h-6 text-emerald-600" /> : <Upload className="w-6 h-6 text-slate-400" />}
+      <div className="space-y-4">
+        <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest flex items-center gap-1">
+          <Upload className="w-4 h-4 text-blue-500" /> License Document
+        </label>
+        
+        <div 
+          onClick={handleFileUpload}
+          className={`p-10 rounded-[32px] border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center gap-4 ${
+            formData.license?.licenseUrl 
+              ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-500/30' 
+              : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-500/30 shadow-sm'
+          }`}
+        >
+          <div className="flex flex-col items-center text-center gap-3">
+            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-500 ${
+              formData.license?.licenseUrl ? 'bg-emerald-500 text-white' : 'bg-white dark:bg-slate-800 text-slate-400'
+            }`}>
+              {formData.license?.licenseUrl ? <CheckCircle2 size={32} /> : <Upload size={32} />}
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-900 dark:text-white">Upload Certificate</p>
-              <p className="text-[10px] text-slate-500">PDF, JPG, or PNG</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Annual Practicing License */}
-        <div className="space-y-3">
-          <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest">Annual Practicing License</label>
-          <div 
-            onClick={() => handleFileUpload('annualLicense')}
-            className={`p-6 rounded-2xl border-2 border-dashed flex items-center gap-4 cursor-pointer transition-all ${
-              uploads.annualLicense 
-                ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800' 
-                : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-400'
-            }`}
-          >
-            <div className={`p-3 rounded-xl ${uploads.annualLicense ? 'bg-emerald-100' : 'bg-slate-100'}`}>
-              {uploads.annualLicense ? <CheckCircle2 className="w-6 h-6 text-emerald-600" /> : <Upload className="w-6 h-6 text-slate-400" />}
-            </div>
-            <div>
-              <p className="text-xs font-bold text-slate-900 dark:text-white">Upload Current License</p>
-              <p className="text-[10px] text-slate-500">PDF, JPG, or PNG</p>
+              <p className="font-bold text-slate-900 dark:text-white">Upload Current License</p>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">PDF, JPG, or PNG</p>
             </div>
           </div>
         </div>

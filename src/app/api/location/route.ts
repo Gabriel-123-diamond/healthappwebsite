@@ -1,16 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { adminAuth } from '@/lib/firebaseAdmin';
 
 const API_KEY = process.env.NEXT_PUBLIC_CSC_API_KEY;
 const BASE_URL = 'https://api.countrystatecity.in/v1';
 
 export async function GET(req: NextRequest) {
-  // Basic security: ensure request comes from our own domain
-  const referer = req.headers.get('referer');
-  const host = req.headers.get('host');
-  const isInternal = referer?.includes(host || 'localhost') || referer?.includes(process.env.NEXT_PUBLIC_APP_URL || '');
+  // Authentication Check
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-  if (!isInternal) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const token = authHeader.split("Bearer ")[1];
+  try {
+    await adminAuth.verifyIdToken(token);
+  } catch (e) {
+    return NextResponse.json({ error: "Invalid session" }, { status: 401 });
   }
 
   const { searchParams } = new URL(req.url);

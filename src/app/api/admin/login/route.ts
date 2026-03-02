@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { adminDb } from "@/lib/firebaseAdmin";
 
 export async function POST(req: NextRequest) {
   try {
-    const { password } = await req.json();
+    const { password, uid } = await req.json();
     const adminPassword = process.env.ADMIN_PASSWORD;
 
     if (!adminPassword) {
@@ -11,7 +12,21 @@ export async function POST(req: NextRequest) {
     }
 
     if (password === adminPassword) {
-      // Generate a secure session token using HMAC-SHA256
+      // 1. If UID is provided, assign 'admin' role in Firestore
+      if (uid) {
+        try {
+          await adminDb.collection('users').doc(uid).update({
+            role: 'admin',
+            updatedAt: new Date().toISOString()
+          });
+          console.log(`[Admin Login] User ${uid} elevated to ADMIN role.`);
+        } catch (dbErr) {
+          console.error(`[Admin Login] Failed to update role for ${uid}:`, dbErr);
+          // We continue anyway as the password was correct
+        }
+      }
+
+      // 2. Generate a secure session token using HMAC-SHA256
       // This proves the server generated it without exposing the password itself.
       const today = new Date().toISOString().split('T')[0];
       const hmac = crypto.createHmac('sha256', adminPassword);

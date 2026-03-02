@@ -2,85 +2,83 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Check, ArrowRight, ShieldCheck } from 'lucide-react';
+import { UserCircle, Stethoscope, Leaf, Building2, ChevronRight, ShieldCheck } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface RoleStepProps {
   formData: any;
   setFormData: (data: any) => void;
-  roles: any[];
 }
 
-export default function RoleStep({ formData, setFormData, roles }: RoleStepProps) {
+export default function RoleStep({ formData, setFormData }: RoleStepProps) {
+  const t = useTranslations('onboarding.role');
+
+  const roles = [
+    { id: 'user', icon: <UserCircle className="w-6 h-6" />, title: t('user'), desc: t('userDesc'), color: 'blue' },
+    { id: 'doctor', icon: <Stethoscope className="w-6 h-6" />, title: t('doctor'), desc: t('doctorDesc'), color: 'indigo' },
+    { id: 'herbal_practitioner', icon: <Leaf className="w-6 h-6" />, title: t('herbal'), desc: t('herbalDesc'), color: 'emerald' },
+    { id: 'hospital', icon: <Building2 className="w-6 h-6" />, title: t('hospital'), desc: t('hospitalDesc'), color: 'purple' },
+  ];
+
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8 sm:space-y-10">
-      <div className="space-y-3">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest border border-blue-100 dark:border-blue-800">
-          Step 3: Professional Identity
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95 }} 
+      animate={{ opacity: 1, scale: 1 }} 
+      exit={{ opacity: 0, scale: 1.05 }} 
+      className="space-y-10"
+    >
+      <div className="space-y-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.2em] border border-blue-500/20 shadow-sm">
+          <ShieldCheck size={12} />
+          Protocol Selection
         </div>
-        <h3 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.1]">
-          Select Your Profile <br className="hidden sm:block" />
-          <span className="text-blue-600">Categorization</span>
-        </h3>
-        <p className="text-base sm:text-lg text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-lg">
-          Choose how you will engage with the health intelligence community.
-        </p>
+        
+        <div className="space-y-1">
+          <h3 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
+            {t('title')}
+          </h3>
+          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-xl">
+            {t('subtitle')}
+          </p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-        {roles.map((role) => (
-          <button
-            key={role.id}
-            onClick={() => setFormData({...formData, role: role.id})}
-            className={`flex flex-col items-start p-6 sm:p-8 rounded-[32px] sm:rounded-[40px] border-2 transition-all duration-500 text-left relative overflow-hidden group ${
-              formData.role === role.id 
-                ? 'border-blue-600 bg-blue-50/30 dark:bg-blue-900/20 shadow-2xl shadow-blue-500/10' 
-                : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-200 dark:hover:border-blue-800 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none'
-            }`}
-          >
-            <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl mb-6 sm:mb-8 flex items-center justify-center transition-all duration-500 ${
-              formData.role === role.id 
-                ? 'bg-blue-600 text-white scale-110 shadow-xl shadow-blue-600/30 rotate-3' 
-                : 'bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 group-hover:text-blue-500'
-            }`}>
-              <role.icon className="w-6 h-6 sm:w-7 sm:h-7" strokeWidth={2.5} />
-            </div>
-
-            <div className="space-y-2 relative z-10">
-              <div className="flex items-center gap-2">
-                <span className={`block font-black text-xl sm:text-2xl tracking-tight ${formData.role === role.id ? 'text-blue-900 dark:text-blue-400' : 'text-slate-900 dark:text-white'}`}>
-                  {role.label}
-                </span>
-                {['doctor', 'herbal_practitioner', 'hospital'].includes(role.id) && (
-                  <ShieldCheck size={16} className="text-blue-500 opacity-50" />
-                )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        {roles.map((role) => {
+          const isSelected = formData.role === role.id;
+          return (
+            <button
+              key={role.id}
+              onClick={() => setFormData({ ...formData, role: role.id })}
+              className={`flex items-start gap-5 p-6 sm:p-8 rounded-[32px] border-2 text-left transition-all duration-500 relative group ${
+                isSelected
+                  ? 'bg-blue-600 border-blue-600 text-white shadow-2xl shadow-blue-500/30'
+                  : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-white/5 text-slate-600 dark:text-slate-400 hover:border-blue-500/30'
+              }`}
+            >
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors duration-500 ${
+                isSelected ? 'bg-white/20 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:text-blue-600'
+              }`}>
+                {role.icon}
               </div>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-[200px]">
-                {role.desc}
-              </p>
-            </div>
-
-            {/* Interactive Footer */}
-            <div className={`mt-6 sm:mt-8 flex items-center gap-2 font-black uppercase tracking-widest text-[9px] sm:text-[10px] transition-all duration-500 ${
-              formData.role === role.id ? 'text-blue-600' : 'text-slate-300 opacity-0 group-hover:opacity-100 group-hover:translate-x-2'
-            }`}>
-              {formData.role === role.id ? (
-                <>
-                  <div className="p-1 bg-blue-600 rounded-full text-white">
-                    <Check size={10} strokeWidth={4} />
+              <div className="space-y-1">
+                <h4 className={`text-lg font-black uppercase tracking-tight ${isSelected ? 'text-white' : 'text-slate-900 dark:text-white'}`}>
+                  {role.title}
+                </h4>
+                <p className={`text-xs font-medium leading-relaxed ${isSelected ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                  {role.desc}
+                </p>
+              </div>
+              {isSelected && (
+                <div className="absolute top-6 right-6">
+                  <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-blue-600 shadow-lg">
+                    <ChevronRight size={14} strokeWidth={4} />
                   </div>
-                  Selected Identity
-                </>
-              ) : (
-                <>
-                  Choose role <ArrowRight size={12} strokeWidth={3} />
-                </>
+                </div>
               )}
-            </div>
-
-            {/* Visual Flare */}
-            <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-600/10 to-transparent blur-3xl transition-opacity duration-500 ${formData.role === role.id ? 'opacity-100' : 'opacity-0'}`} />
-          </button>
-        ))}
+            </button>
+          );
+        })}
       </div>
     </motion.div>
   );

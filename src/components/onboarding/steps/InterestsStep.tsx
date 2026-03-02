@@ -1,67 +1,111 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { INTEREST_TOPICS } from '@/config/app_constants';
-import { Sparkles, Heart } from 'lucide-react';
+'use client';
+
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { BookOpen, Search, Check, Plus, Sparkles } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface InterestsStepProps {
   formData: any;
-  toggleInterest: (topic: string) => void;
+  toggleInterest: (interest: string) => void;
 }
 
 export default function InterestsStep({ formData, toggleInterest }: InterestsStepProps) {
+  const t = useTranslations('onboarding.interests');
+  const [search, setSearch] = useState('');
+
+  const allInterests = [
+    "Hypertension", "Diabetes", "Mental Health", "Nutrition", 
+    "Herbal Medicine", "Yoga", "Sleep Hygiene", "Heart Health",
+    "Weight Loss", "Skin Care", "Gut Health", "Immunity"
+  ];
+
+  const filtered = allInterests.filter(i => 
+    i.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8 sm:space-y-10">
-      <div className="space-y-3">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest border border-blue-100 dark:border-blue-800">
-          Step 7: Personalization
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95 }} 
+      animate={{ opacity: 1, scale: 1 }} 
+      exit={{ opacity: 0, scale: 1.05 }} 
+      className="space-y-10"
+    >
+      <div className="space-y-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.2em] border border-blue-500/20 shadow-sm">
+          <BookOpen size={12} />
+          Knowledge Stream
         </div>
-        <h3 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">Your Interests</h3>
-        <p className="text-base sm:text-lg text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-lg">
-          Select the health topics you care about most to curate your intelligence feed.
-        </p>
-      </div>
-
-      <div className="bg-slate-50/50 dark:bg-slate-800/50 rounded-[32px] sm:rounded-[40px] border border-slate-100 dark:border-slate-700 p-6 sm:p-10 shadow-sm transition-colors duration-500">
-        <div className="flex items-center gap-2 mb-8 text-slate-400 dark:text-slate-500">
-          <Heart size={14} className="fill-current" />
-          <span className="text-[10px] font-black uppercase tracking-widest">Select at least one topic</span>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-          {INTEREST_TOPICS.map((topic) => (
-            <button 
-              key={topic} 
-              onClick={() => toggleInterest(topic)} 
-              className={`p-4 sm:p-6 rounded-[24px] sm:rounded-[32px] text-[10px] sm:text-sm font-black transition-all duration-300 border-2 text-center flex items-center justify-center min-h-[70px] sm:min-h-[90px] relative overflow-hidden group ${
-                formData.interests.includes(topic) 
-                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xl scale-[1.02]' 
-                  : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-transparent hover:border-blue-200 dark:hover:border-blue-800 shadow-sm'
-              }`}
-            >
-              <span className="relative z-10">{topic}</span>
-              
-              {formData.interests.includes(topic) && (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="absolute top-2 right-2 sm:top-3 sm:right-3"
-                >
-                  <Sparkles size={10} className="sm:w-3 sm:h-3 text-blue-400" />
-                </motion.div>
-              )}
-
-              {/* Hover effect background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-10 p-6 rounded-3xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/20 text-center">
-          <p className="text-xs font-bold text-blue-600 dark:text-blue-400">
-            Selected: <span className="text-blue-900 dark:text-blue-200 ml-1">{formData.interests.length} topics</span>
+        
+        <div className="space-y-1">
+          <h3 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
+            {t('title')}
+          </h3>
+          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-xl">
+            {t('subtitle')}
           </p>
         </div>
       </div>
+
+      <div className="space-y-8">
+        <div className="relative group">
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors w-5 h-5" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t('search')}
+            className="w-full pl-14 pr-6 py-5 bg-slate-50 dark:bg-white/5 border-2 border-transparent rounded-3xl focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 outline-none transition-all font-bold text-slate-900 dark:text-white shadow-sm"
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-3">
+          <AnimatePresence mode='popLayout'>
+            {filtered.map((interest) => {
+              const isSelected = formData.interests.includes(interest);
+              return (
+                <motion.button
+                  layout
+                  key={interest}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => toggleInterest(interest)}
+                  className={`flex items-center gap-3 px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${
+                    isSelected
+                      ? 'bg-blue-600 text-white shadow-xl shadow-blue-500/30'
+                      : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-100 dark:border-white/5 hover:border-blue-500/30'
+                  }`}
+                >
+                  {interest}
+                  {isSelected ? <Check size={14} strokeWidth={4} /> : <Plus size={14} strokeWidth={4} className="opacity-40" />}
+                </motion.button>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {formData.interests.length > 0 && (
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-6 bg-blue-50 dark:bg-blue-900/10 rounded-[32px] border border-blue-100 dark:border-blue-900/30 flex items-center justify-between gap-4"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg">
+              <Sparkles size={18} />
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase text-blue-600 dark:text-blue-400 tracking-widest">Feed Optimization</p>
+              <p className="text-sm font-bold text-slate-900 dark:text-white">Active filters across your intelligence grid.</p>
+            </div>
+          </div>
+          <span className="text-xl font-black text-blue-600 dark:text-blue-400">{formData.interests.length}</span>
+        </motion.div>
+      )}
     </motion.div>
   );
 }

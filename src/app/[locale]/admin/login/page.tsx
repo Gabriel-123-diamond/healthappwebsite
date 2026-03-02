@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Lock, Loader2 } from 'lucide-react';
 import { PasswordField } from '@/components/common/PasswordField';
 
+import { auth } from '@/lib/firebase';
+
 export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,10 +19,11 @@ export default function AdminLoginPage() {
     setError('');
 
     try {
+      const uid = auth.currentUser?.uid;
       const res = await fetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ password, uid }),
       });
 
       const data = await res.json();

@@ -1,0 +1,170 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+const fs = require('fs');
+const path = require('path');
+
+const localesDir = path.join(__dirname, '../messages');
+const locales = ['en', 'fr', 'es', 'de', 'zh', 'ar'];
+
+const translations = {
+  en: {
+    badge: "Clinical Genesis",
+    titlePart1: "Bridging ",
+    titlePart2: "Nature",
+    titlePart3: " and ",
+    titlePart4: "Science",
+    subtitle: "Ikiké Health AI is a global-standard documentation platform bridging the gap between modern clinical science and traditional herbal wisdom through explainable AI.",
+    visionTitle: "Foundational Vision",
+    visionText: "We envision a world where every individual has access to reliable, evidence-based health documentation that respects both scientific rigor and cultural traditions.",
+    value1Title: "Evidence Integrity",
+    value1Text: "Summaries derived strictly from peer-reviewed clinical archives.",
+    value2Title: "Global Context",
+    value2Text: "Culturally sensitive health insights tailored for a global population.",
+    value3Title: "Verified Network",
+    value3Text: "A manually credentialed registry of medical professionals.",
+    engineActive: "Ikiké Engine Active",
+    integrityTitle: "Platform Integrity",
+    integritySubtitle: "Built on strict clinical safety and privacy standards.",
+    security1Title: "Safety Intercept",
+    security1Text: "Real-time algorithmic monitoring for clinical red-flag symptoms.",
+    security2Title: "Verified Protocol",
+    security2Text: "Human-in-the-loop validation ensuring documentation meets clinical standards.",
+    security3Title: "Clinical Privacy",
+    security3Text: "Full data sovereignty with end-to-end clinical grade encryption."
+  },
+  fr: {
+    badge: "Genèse Clinique",
+    titlePart1: "Relier la ",
+    titlePart2: "Nature",
+    titlePart3: " et la ",
+    titlePart4: "Science",
+    subtitle: "Ikiké Health AI est une plateforme de documentation de référence mondiale comblant le fossé entre la science clinique moderne et la sagesse traditionnelle des plantes grâce à une IA explicable.",
+    visionTitle: "Vision Fondatrice",
+    visionText: "Nous envisageons un monde où chaque individu a accès à une documentation de santé fiable et fondée sur des preuves qui respecte à la fois la rigueur scientifique et les traditions culturelles.",
+    value1Title: "Intégrité des Preuves",
+    value1Text: "Résumés dérivés strictement d'archives cliniques évaluées par des pairs.",
+    value2Title: "Contexte Global",
+    value2Text: "Des informations sur la santé culturellement sensibles adaptées à une population mondiale.",
+    value3Title: "Réseau Vérifié",
+    value3Text: "Un registre de professionnels de la santé accrédité manuellement.",
+    engineActive: "Moteur Ikiké Actif",
+    integrityTitle: "Intégrité de la Plateforme",
+    integritySubtitle: "Construit sur des normes strictes de sécurité clinique et de confidentialité.",
+    security1Title: "Interception de Sécurité",
+    security1Text: "Surveillance algorithmique en temps réel des symptômes cliniques d'alerte rouge.",
+    security2Title: "Protocole Vérifié",
+    security2Text: "Validation par un humain garantissant que la documentation répond aux normes cliniques.",
+    security3Title: "Confidentialité Clinique",
+    security3Text: "Souveraineté totale des données avec un cryptage de bout en bout de niveau clinique."
+  },
+  es: {
+    badge: "Génesis Clínica",
+    titlePart1: "Uniendo la ",
+    titlePart2: "Naturaleza",
+    titlePart3: " y la ",
+    titlePart4: "Ciencia",
+    subtitle: "Ikiké Health AI es una plataforma de documentación de estándar global que cierra la brecha entre la ciencia clínica moderna y la sabiduría herbal tradicional a través de IA explicable.",
+    visionTitle: "Visión Fundacional",
+    visionText: "Imaginamos un mundo donde cada individuo tenga acceso a documentación de salud confiable y basada en evidencia que respete tanto el rigor científico como las tradiciones culturales.",
+    value1Title: "Integridad de la Evidencia",
+    value1Text: "Resúmenes derivados estrictamente de archivos clínicos revisados por pares.",
+    value2Title: "Contexto Global",
+    value2Text: "Información de salud culturalmente sensible adaptada a una población global.",
+    value3Title: "Red Verificada",
+    value3Text: "Un registro de profesionales médicos acreditado manualmente.",
+    engineActive: "Motor Ikiké Activo",
+    integrityTitle: "Integridad de la Plataforma",
+    integritySubtitle: "Construido sobre estrictos estándares de seguridad clínica y privacidad.",
+    security1Title: "Intercepción de Seguridad",
+    security1Text: "Monitoreo algorítmico en tiempo real para síntomas clínicos de alerta roja.",
+    security2Title: "Protocolo Verificado",
+    security2Text: "Validación humana garantizando que la documentación cumpla con los estándares clínicos.",
+    security3Title: "Privacidad Clínica",
+    security3Text: "Soberanía total de datos con cifrado de extremo a extremo de grado clínico."
+  },
+  de: {
+    badge: "Klinische Genesis",
+    titlePart1: "Verbindung von ",
+    titlePart2: "Natur",
+    titlePart3: " und ",
+    titlePart4: "Wissenschaft",
+    subtitle: "Ikiké Health AI ist eine Dokumentationsplattform von globalem Standard, die die Lücke zwischen moderner klinischer Wissenschaft und traditionellem Kräuterwissen durch erklärbare KI schließt.",
+    visionTitle: "Gründungsvision",
+    visionText: "Wir stellen uns eine Welt vor, in der jeder Einzelne Zugang zu verlässlicher, evidenzbasierter Gesundheitsdokumentation hat, die sowohl wissenschaftliche Strenge als auch kulturelle Traditionen respektiert.",
+    value1Title: "Evidenzintegrität",
+    value1Text: "Zusammenfassungen, die ausschließlich aus peer-reviewten klinischen Archiven stammen.",
+    value2Title: "Globaler Kontext",
+    value2Text: "Kulturell sensible Gesundheitserkenntnisse, zugeschnitten auf eine globale Bevölkerung.",
+    value3Title: "Verifiziertes Netzwerk",
+    value3Text: "Ein manuell akkreditiertes Register von medizinischen Fachkräften.",
+    engineActive: "Ikiké-Engine Aktiv",
+    integrityTitle: "Plattformintegrität",
+    integritySubtitle: "Aufgebaut auf strengen klinischen Sicherheits- und Datenschutzstandards.",
+    security1Title: "Sicherheitsintercept",
+    security1Text: "Echtzeit-algorithmische Überwachung auf klinische Warnsymptome.",
+    security2Title: "Verifiziertes Protokoll",
+    security2Text: "Human-in-the-Loop-Validierung stellt sicher, dass die Dokumentation klinischen Standards entspricht.",
+    security3Title: "Klinische Privatsphäre",
+    security3Text: "Vollständige Datensouveränität mit durchgehender klinischer Verschlüsselung."
+  },
+  zh: {
+    badge: "临床创世纪",
+    titlePart1: "连接",
+    titlePart2: "自然",
+    titlePart3: "与",
+    titlePart4: "科学",
+    subtitle: "Ikiké Health AI 是一项全球标准的记录平台，通过可解释的 AI 弥合了现代临床科学与传统草药智慧之间的差距。",
+    visionTitle: "基础愿景",
+    visionText: "我们设想这样一个世界：每个人都能获得可靠的、基于证据的健康记录，尊重科学严谨性和文化传统。",
+    value1Title: "证据完整性",
+    value1Text: "严格源自同行评审的临床档案的总结。",
+    value2Title: "全球背景",
+    value2Text: "为全球人口量身定制的文化敏感健康见解。",
+    value3Title: "验证网络",
+    value3Text: "人工认证的医疗专业人员名录。",
+    engineActive: "Ikiké 引擎活跃",
+    integrityTitle: "平台完整性",
+    integritySubtitle: "建立在严格的临床安全和隐私标准之上。",
+    security1Title: "安全拦截",
+    security1Text: "针对临床危险症状的实时算法监控。",
+    security2Title: "验证协议",
+    security2Text: "人在回路验证确保记录符合临床标准。",
+    security3Title: "临床隐私",
+    security3Text: "具有端到端临床级加密的完全数据主权。"
+  },
+  ar: {
+    badge: "التكوين السريري",
+    titlePart1: "سد الفجوة بين ",
+    titlePart2: "الطبيعة",
+    titlePart3: " و ",
+    titlePart4: "العلم",
+    subtitle: "Ikiké Health AI هي منصة توثيق ذات معايير عالمية تسد الفجوة بين العلوم السريرية الحديثة وحكمة الأعشاب التقليدية من خلال الذكاء الاصطناعي القابل للتفسير.",
+    visionTitle: "الرؤية التأسيسية",
+    visionText: "نتصور عالمًا يتمتع فيه كل فرد بإمكانية الوصول إلى وثائق صحية موثوقة وقائمة على الأدلة تحترم الصرامة العلمية والتقاليد الثقافية.",
+    value1Title: "نزاهة الأدلة",
+    value1Text: "ملخصات مستمدة بدقة من الأرشيفات السريرية التي تمت مراجعتها من قبل الأقران.",
+    value2Title: "السياق العالمي",
+    value2Text: "رؤى صحية حساسة ثقافيًا مصممة لسكان العالم.",
+    value3Title: "شبكة معتمدة",
+    value3Text: "سجل معتمد يدويًا للمتخصصين الطبيين.",
+    engineActive: "محرك Ikiké نشط",
+    integrityTitle: "نزاهة المنصة",
+    integritySubtitle: "مبني على معايير صارمة للسلامة السريرية والخصوصية.",
+    security1Title: "اعتراض السلامة",
+    security1Text: "مراقبة خوارزمية في الوقت الفعلي لأعراض الخطر السريري.",
+    security2Title: "بروتوكول معتمد",
+    security2Text: "تحقق بشري يضمن تلبية التوثيق للمعايير السريرية.",
+    security3Title: "الخصوصية السريرية",
+    security3Text: "سيادة كاملة على البيانات مع تشفير من طرف إلى طرف من الدرجة السريرية."
+  }
+};
+
+locales.forEach(locale => {
+  const filePath = path.join(localesDir, `${locale}.json`);
+  if (fs.existsSync(filePath)) {
+    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    // If 'about' is a string, replace it, otherwise assign object
+    data.aboutPage = translations[locale]; 
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    console.log(`Updated ${locale}.json`);
+  }
+});

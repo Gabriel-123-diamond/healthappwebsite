@@ -12,26 +12,35 @@ export function useLearning() {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      const [paths, recommended] = await Promise.all([
-        getLearningPaths(),
-        getRecommendedPaths()
-      ]);
-      setAllPaths(paths);
-      setRecommendedPaths(recommended);
-      setLoading(false);
+      try {
+        const [paths, recommended] = await Promise.all([
+          getLearningPaths(),
+          getRecommendedPaths()
+        ]);
+        setAllPaths(paths);
+        setRecommendedPaths(recommended);
+      } catch (error) {
+        console.error("Error loading learning paths:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     const unsubscribe = onAuthStateChanged(auth, () => {
       loadData();
     });
 
-    // Check local storage for offline paths
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    // Check local storage for offline paths on mount
     if (typeof window !== 'undefined') {
-      const offline = Object.keys(localStorage).filter(k => k.startsWith('learning-path-')).map(k => k.replace('learning-path-', ''));
+      const offline = Object.keys(localStorage)
+        .filter(k => k.startsWith('learning-path-'))
+        .map(k => k.replace('learning-path-', ''));
       setOfflinePaths(offline);
     }
-
-    return () => unsubscribe();
   }, []);
 
   return { allPaths, recommendedPaths, loading, offlinePaths };

@@ -105,7 +105,7 @@ export default function Home() {
                 </div>
                 
                 <div className="flex flex-wrap gap-6">
-                  <Link href="/directory" className="group/btn relative inline-flex items-center gap-4 px-10 py-5 rounded-[24px] bg-white text-slate-900 font-black uppercase tracking-widest text-[11px] hover:scale-[1.02] transition-all shadow-2xl active:scale-95 overflow-hidden">
+                  <Link href="/directory" className="group/btn relative inline-flex items-center gap-4 px-10 py-5 rounded-[24px] bg-white dark:bg-slate-950 text-slate-900 dark:text-white font-black uppercase tracking-widest text-[11px] hover:scale-[1.02] transition-all shadow-2xl active:scale-95 overflow-hidden">
                     <span className="relative z-10 flex items-center gap-3">
                       {t('home.ctaButton')}
                       <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />

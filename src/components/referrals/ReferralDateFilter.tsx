@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
-import { Clock, CheckCircle2, ListFilter, Calendar, RotateCcw } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Clock, CheckCircle2, ListFilter, Calendar, RotateCcw, ChevronDown } from 'lucide-react';
 import DateRangePicker from '../common/DateRangePicker';
 import PointsRangeFilter from './PointsRangeFilter';
 import { REWARD_POINTS } from '@/services/referralService';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ReferralDateFilterProps {
   startDate: string;
@@ -29,6 +30,8 @@ export default function ReferralDateFilter({
   setPointsFilter,
   filteredPoints,
 }: ReferralDateFilterProps) {
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const statusRef = useRef<HTMLDivElement>(null);
   
   const resetFilters = () => {
     setStartDate('');
@@ -44,6 +47,24 @@ export default function ReferralDateFilter({
     setStartDate(start.toISOString().split('T')[0]);
     setEndDate(end.toISOString().split('T')[0]);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (statusRef.current && !statusRef.current.contains(event.target as Node)) {
+        setIsStatusOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const statusOptions = [
+    { id: 'all', label: 'All Referrals', icon: ListFilter },
+    { id: 'pending', label: 'Pending Only', icon: Clock },
+    { id: 'completed', label: 'Completed Only', icon: CheckCircle2 },
+  ];
+
+  const currentStatus = statusOptions.find(o => o.id === statusFilter) || statusOptions[0];
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-3xl sm:rounded-[48px] p-6 sm:p-10 border border-slate-100 dark:border-slate-800 shadow-2xl space-y-8 sm:space-y-10 relative overflow-hidden transition-colors">
@@ -67,31 +88,52 @@ export default function ReferralDateFilter({
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 items-end relative z-10">
         
-        {/* 1. Status Segment */}
-        <div className="space-y-4">
+        {/* 1. Status Custom Dropdown */}
+        <div className="space-y-4" ref={statusRef}>
           <div className="flex items-center gap-2 mb-1">
             <ListFilter size={14} className="text-blue-500" />
             <h3 className="font-black text-slate-900 dark:text-white uppercase tracking-widest text-[10px]">Referral Status</h3>
           </div>
-          <div className="flex p-1.5 bg-slate-50 dark:bg-slate-800 rounded-[20px] border border-slate-100/50 dark:border-slate-700 w-full overflow-x-auto no-scrollbar">
-            {[
-              { id: 'all', label: 'All', icon: ListFilter },
-              { id: 'pending', label: 'Pending', icon: Clock },
-              { id: 'completed', label: 'Completed', icon: CheckCircle2 },
-            ].map((type) => (
-              <button
-                key={type.id}
-                onClick={() => setStatusFilter(type.id as any)}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
-                  statusFilter === type.id 
-                    ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-lg shadow-blue-900/5' 
-                    : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
-                }`}
-              >
-                <type.icon size={12} className="shrink-0" />
-                {type.label}
-              </button>
-            ))}
+          <div className="relative">
+            <button
+              onClick={() => setIsStatusOpen(!isStatusOpen)}
+              className="w-full flex items-center justify-between px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border-2 border-transparent hover:border-blue-200 dark:hover:border-blue-900 transition-all font-bold text-slate-900 dark:text-white text-sm shadow-sm"
+            >
+              <div className="flex items-center gap-3">
+                <currentStatus.icon size={16} className="text-blue-500" />
+                <span>{currentStatus.label}</span>
+              </div>
+              <ChevronDown size={16} className={`text-slate-400 transition-transform duration-200 ${isStatusOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            <AnimatePresence>
+              {isStatusOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute top-full mt-2 w-full bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 overflow-hidden z-50 p-1.5"
+                >
+                  {statusOptions.map((option) => (
+                    <button
+                      key={option.id}
+                      onClick={() => {
+                        setStatusFilter(option.id as any);
+                        setIsStatusOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
+                        statusFilter === option.id 
+                          ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
+                          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-blue-600'
+                      }`}
+                    >
+                      <option.icon size={16} className={statusFilter === option.id ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'} />
+                      {option.label}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
@@ -103,8 +145,8 @@ export default function ReferralDateFilter({
               <h3 className="font-black text-slate-900 dark:text-white uppercase tracking-widest text-[10px]">Date Interval</h3>
             </div>
             <div className="flex gap-2">
-              <button onClick={() => setPresetRange(7)} className="text-[9px] font-black text-blue-500 hover:underline uppercase">7D</button>
-              <button onClick={() => setPresetRange(30)} className="text-[9px] font-black text-blue-500 hover:underline uppercase">30D</button>
+              <button onClick={() => setPresetRange(7)} className="text-[9px] font-black text-blue-500 dark:text-blue-400 hover:underline uppercase transition-colors">7D</button>
+              <button onClick={() => setPresetRange(30)} className="text-[9px] font-black text-blue-500 dark:text-blue-400 hover:underline uppercase transition-colors">30D</button>
             </div>
           </div>
           <DateRangePicker 

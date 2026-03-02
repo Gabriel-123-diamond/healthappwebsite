@@ -4,11 +4,8 @@ import React from 'react';
 import ReferralStep from './steps/ReferralStep';
 import IdentityStep from './steps/IdentityStep';
 import VerificationStep from './steps/VerificationStep';
-import RoleStep from './steps/RoleStep';
-import ExpertDetailsStep from './steps/ExpertDetailsStep';
 import LocationStep from './steps/LocationStep';
 import InterestsStep from './steps/InterestsStep';
-import KYCStep from './steps/KYCStep';
 
 interface StepRendererProps {
   step: number;
@@ -18,6 +15,8 @@ interface StepRendererProps {
     username: string;
     phone: string;
     name: string;
+    licenseNumber: string;
+    idNumber: string;
     referral: string;
     referralError: string;
   };
@@ -42,20 +41,14 @@ export default function StepRenderer({
   t
 }: StepRendererProps) {
   
-  const isExpert = ['doctor', 'herbal_practitioner', 'hospital', 'expert'].includes(formData.role);
-
   switch (step) {
     case 1:
       return (
-        isExpert ? (
-          <KYCStep formData={formData} setFormData={setFormData} />
-        ) : (
-          <ReferralStep 
-            formData={formData} 
-            setFormData={setFormData} 
-            validationStatus={validationStatus} 
-          />
-        )
+        <ReferralStep 
+          formData={formData} 
+          setFormData={setFormData} 
+          validationStatus={validationStatus} 
+        />
       );
     case 2:
       return (
@@ -64,7 +57,8 @@ export default function StepRenderer({
           setFormData={setFormData} 
           validationStatus={validationStatus} 
           countries={countries} 
-          t={t} 
+          states={allStates || []}
+          cities={allCities || []}
         />
       );
     case 3:
@@ -76,22 +70,6 @@ export default function StepRenderer({
       );
     case 4:
       return (
-        <RoleStep 
-          formData={formData} 
-          setFormData={setFormData} 
-          roles={roles} 
-        />
-      );
-    case 5:
-      return (
-        <ExpertDetailsStep 
-          formData={formData} 
-          setFormData={setFormData} 
-          stepNumber={5}
-        />
-      );
-    case 6:
-      return (
         <LocationStep 
           formData={formData} 
           setFormData={setFormData} 
@@ -99,7 +77,7 @@ export default function StepRenderer({
           allStates={allStates}
         />
       );
-    case 7:
+    case 5:
       return (
         <InterestsStep 
           formData={formData} 

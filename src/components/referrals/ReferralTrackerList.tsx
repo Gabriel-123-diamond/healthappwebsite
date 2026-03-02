@@ -55,7 +55,7 @@ export default function ReferralTrackerList({ referrals, loading }: ReferralTrac
               <div className="text-left sm:text-right shrink-0 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100 dark:border-slate-800 flex sm:block items-center justify-between">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest sm:hidden">Points</p>
                 <p className={`text-lg font-black ${
-                  ref.status === 'completed' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-600'
+                  ref.status === 'completed' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'
                 }`}>
                   {ref.status === 'completed' ? `+${REWARD_POINTS} PTS` : 'WAITING'}
                 </p>

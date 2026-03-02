@@ -15,6 +15,12 @@ export const en = {
     learn: 'Learn',
     about: 'About',
     viewAll: 'View All',
+    syncInterrupted: 'Sync Interrupted',
+    syncInterruptedSubtitle: "We're having trouble connecting to the global health intelligence grid.",
+    retryConnection: 'Retry Connection',
+    intelligenceDiscovery: 'Intelligence discovery',
+    noActiveInsights: 'No active insights found',
+    reSyncFeed: 'Re-Sync Feed',
   },
   search: {
     medical: 'Medical Science',

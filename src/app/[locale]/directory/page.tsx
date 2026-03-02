@@ -6,7 +6,7 @@ import { PublicExpert } from '@/types/expert';
 import { MapPin, Star, BadgeCheck, Stethoscope, Leaf, Building2, Loader2, ChevronLeft, ChevronRight, Search, SlidersHorizontal, X, Navigation, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { useLanguage } from '@/context/LanguageContext';
+import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { countries } from '@/lib/countries';
 import { Dropdown } from '@/components/ui/Dropdown';
@@ -14,6 +14,7 @@ import { Dropdown } from '@/components/ui/Dropdown';
 const ITEMS_PER_PAGE = 12;
 
 export default function DirectoryPage() {
+  const t = useTranslations('directoryPage');
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('query') || '';
   
@@ -31,8 +32,6 @@ export default function DirectoryPage() {
   
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-
-  const { t } = useLanguage();
 
   useEffect(() => {
     const fetchExperts = async () => {
@@ -120,21 +119,21 @@ export default function DirectoryPage() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 text-blue-600 dark:text-blue-400 text-xs font-black uppercase tracking-widest mb-4"
           >
             <Users className="w-3.5 h-3.5" />
-            Global Directory
+            {t('badge')}
           </motion.div>
           <motion.h1 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-5xl font-black text-slate-900 dark:text-white tracking-tight"
           >
-            {t.directory.title}
+            {t('title')}
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-lg font-medium"
           >
-            {t.directory.subtitle}
+            {t('subtitle')}
           </motion.p>
         </div>
 
@@ -145,7 +144,7 @@ export default function DirectoryPage() {
               <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search by name, specialty, or condition..."
+                placeholder={t('searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border-none focus:ring-2 focus:ring-blue-500 outline-none transition-all font-bold text-slate-900 dark:text-white"
@@ -162,19 +161,19 @@ export default function DirectoryPage() {
                 }`}
               >
                 <Navigation className={`w-4 h-4 ${nearbyOnly ? 'fill-current' : ''}`} />
-                Nearby
+                {t('nearby')}
               </button>
 
               <button 
                 onClick={() => setShowFilters(!showFilters)}
                 className={`px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 transition-all ${
                   showFilters || activeFiltersCount > 0
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
                     : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-100 dark:border-slate-700 hover:bg-slate-50'
                 }`}
               >
                 <SlidersHorizontal className="w-4 h-4" />
-                Filters
+                {t('filters')}
                 {activeFiltersCount > 0 && (
                   <span className="w-5 h-5 rounded-full bg-white text-blue-600 flex items-center justify-center text-[10px]">
                     {activeFiltersCount}
@@ -195,7 +194,7 @@ export default function DirectoryPage() {
               >
                 <div className="bg-white dark:bg-slate-900 p-8 rounded-[32px] border border-slate-100 dark:border-slate-800 shadow-xl grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div className="space-y-3">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Professional Type</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">{t('profType')}</label>
                     <div className="flex flex-wrap gap-2">
                       {['all', 'doctor', 'herbal_practitioner', 'hospital'].map((type) => (
                         <button
@@ -207,36 +206,36 @@ export default function DirectoryPage() {
                               : 'bg-slate-50 dark:bg-slate-800 text-slate-500 hover:bg-slate-100'
                           }`}
                         >
-                          {type === 'herbal_practitioner' ? 'herbal practitioner' : type}
+                          {type === 'all' ? t('all') : type === 'herbal_practitioner' ? t('herbal') : t(type)}
                         </button>
                       ))}
                     </div>
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Country</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">{t('country')}</label>
                     <Dropdown
                       value={selectedCountry}
                       onChange={(val) => { setSelectedCountry(val); setSelectedState(''); }}
                       options={[
-                        { value: '', label: 'All Countries' },
+                        { value: '', label: t('allCountries') },
                         ...countries.map(c => ({
                           value: c.name,
                           label: c.name,
                         }))
                       ]}
-                      placeholder="Select Country"
+                      placeholder={t('selectCountry')}
                     />
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">State / Region</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">{t('stateRegion')}</label>
                     <input 
                       type="text"
-                      placeholder="e.g. Lagos, California..."
+                      placeholder={t('placeholderState')}
                       value={selectedState}
                       onChange={(e) => setSelectedState(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border-none outline-none font-bold text-sm"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border-none outline-none font-bold text-sm text-slate-900 dark:text-white transition-colors"
                     />
                   </div>
                 </div>
@@ -248,7 +247,7 @@ export default function DirectoryPage() {
         {/* Results Info */}
         <div className="mb-8 flex justify-between items-center px-2">
           <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">
-            Showing <span className="text-slate-900 dark:text-white">{filteredExperts.length}</span> professionals
+            {t('showing')} <span className="text-slate-900 dark:text-white">{filteredExperts.length}</span> {t('professionals')}
           </p>
           {activeFiltersCount > 0 && (
             <button 
@@ -260,7 +259,7 @@ export default function DirectoryPage() {
               }}
               className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-red-500 hover:text-red-600 transition-colors"
             >
-              <X className="w-3 h-3" /> Clear All
+              <X className="w-3 h-3" /> {t('clearAll')}
             </button>
           )}
         </div>
@@ -269,7 +268,7 @@ export default function DirectoryPage() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32 gap-4">
             <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
-            <p className="text-slate-400 font-black uppercase tracking-widest text-[10px]">Updating Directory...</p>
+            <p className="text-slate-400 font-black uppercase tracking-widest text-[10px]">{t('updating')}</p>
           </div>
         ) : (
           <>
@@ -290,8 +289,8 @@ export default function DirectoryPage() {
                 <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Search className="w-8 h-8 text-slate-300" />
                 </div>
-                <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">No Matches Found</h3>
-                <p className="text-slate-500 dark:text-slate-400 font-medium">Try adjusting your filters or search query.</p>
+                <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">{t('noMatches')}</h3>
+                <p className="text-slate-500 dark:text-slate-400 font-medium">{t('noMatchesDesc')}</p>
               </motion.div>
             )}
 
@@ -374,7 +373,7 @@ function ExpertCard({ expert, t }: { expert: PublicExpert, t: any }) {
               {expert.verificationStatus === 'verified' && (
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800 text-[10px] font-black uppercase tracking-widest">
                   <BadgeCheck className="w-3.5 h-3.5" />
-                  Verified
+                  {t('verified')}
                 </div>
               )}
               <div className="flex items-center gap-1 text-amber-500 bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded-lg border border-amber-100 dark:border-amber-800">

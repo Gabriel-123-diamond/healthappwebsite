@@ -1,7 +1,19 @@
+import { auth } from "@/lib/firebase";
+
 export const locationService = {
+  async _getHeaders(): Promise<Record<string, string>> {
+    const user = auth.currentUser;
+    if (!user) return {};
+    const token = await user.getIdToken();
+    return {
+      'Authorization': `Bearer ${token}`
+    };
+  },
+
   async getCountries() {
     try {
-      const response = await fetch('/api/location?type=countries');
+      const headers = await this._getHeaders();
+      const response = await fetch('/api/location?type=countries', { headers });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
     } catch (error) {
@@ -12,7 +24,8 @@ export const locationService = {
 
   async getStates(countryIso: string) {
     try {
-      const response = await fetch(`/api/location?type=states&countryIso=${countryIso}`);
+      const headers = await this._getHeaders();
+      const response = await fetch(`/api/location?type=states&countryIso=${countryIso}`, { headers });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
     } catch (error) {
@@ -23,7 +36,8 @@ export const locationService = {
 
   async getCities(countryIso: string, stateIso: string) {
     try {
-      const response = await fetch(`/api/location?type=cities&countryIso=${countryIso}&stateIso=${stateIso}`);
+      const headers = await this._getHeaders();
+      const response = await fetch(`/api/location?type=cities&countryIso=${countryIso}&stateIso=${stateIso}`, { headers });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
     } catch (error) {

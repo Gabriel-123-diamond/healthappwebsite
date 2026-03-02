@@ -3,8 +3,11 @@
 import React from 'react';
 import { Shield, Users, Heart, Globe, Award, Sparkles, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 export default function AboutPage() {
+  const t = useTranslations('aboutPage');
+
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors pt-24 sm:pt-32 pb-24 relative overflow-hidden">
       {/* Background Decor */}
@@ -21,16 +24,16 @@ export default function AboutPage() {
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-blue-50/50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.3em] border border-blue-100 dark:border-blue-800/50 shadow-sm mx-auto"
           >
             <Activity size={14} className="animate-pulse" />
-            Clinical Genesis
+            {t('badge')}
           </motion.div>
           
           <h1 className="text-5xl sm:text-7xl md:text-8xl font-black text-slate-900 dark:text-white tracking-tighter leading-[0.9]">
-            Bridging <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Nature</span> <br className="hidden sm:block" />
-            and <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600">Science</span>.
+            {t('titlePart1')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">{t('titlePart2')}</span> <br className="hidden sm:block" />
+            {t('titlePart3')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600">{t('titlePart4')}</span>.
           </h1>
           
           <p className="text-xl sm:text-2xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto font-medium leading-relaxed opacity-80">
-            Ikiké Health AI is a global-standard documentation platform bridging the gap between modern clinical science and traditional herbal wisdom through explainable AI.
+            {t('subtitle')}
           </p>
         </div>
       </section>
@@ -40,18 +43,18 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="space-y-10">
             <div className="space-y-4">
-              <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-none uppercase">Foundational Vision</h2>
+              <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-none uppercase">{t('visionTitle')}</h2>
               <div className="h-1 w-20 bg-blue-600 rounded-full" />
             </div>
             
             <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-              We envision a world where every individual has access to reliable, evidence-based health documentation that respects both scientific rigor and cultural traditions.
+              {t('visionText')}
             </p>
             
             <div className="space-y-6">
-              <ValueItem icon={<Shield className="w-5 h-5" />} title="Evidence Integrity" text="Summaries derived strictly from peer-reviewed clinical archives." />
-              <ValueItem icon={<Globe className="w-5 h-5" />} title="Global Context" text="Culturally sensitive health insights tailored for a global population." />
-              <ValueItem icon={<Users className="w-5 h-5" />} title="Verified Network" text="A manually credentialed registry of medical professionals." />
+              <ValueItem icon={<Shield className="w-5 h-5" />} title={t('value1Title')} text={t('value1Text')} />
+              <ValueItem icon={<Globe className="w-5 h-5" />} title={t('value2Title')} text={t('value2Text')} />
+              <ValueItem icon={<Users className="w-5 h-5" />} title={t('value3Title')} text={t('value3Text')} />
             </div>
           </div>
           
@@ -63,7 +66,7 @@ export default function AboutPage() {
               <Heart className="w-full h-full text-blue-600/5 dark:text-blue-400/5 absolute inset-0 -translate-x-1/4 -translate-y-1/4" size={400} />
               <div className="relative z-10 text-center space-y-6">
                 <Sparkles size={80} className="text-blue-600 dark:text-blue-400 mx-auto animate-spin-slow" />
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-600 dark:text-blue-400">Ikiké Engine Active</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-600 dark:text-blue-400">{t('engineActive')}</p>
               </div>
             </motion.div>
           </div>
@@ -74,25 +77,25 @@ export default function AboutPage() {
       <section className="px-4">
         <div className="max-w-7xl mx-auto bg-slate-900 dark:bg-blue-600 rounded-[64px] p-12 sm:p-20 text-white shadow-3xl shadow-blue-900/20 relative overflow-hidden group">
           <div className="relative z-10 text-center max-w-3xl mx-auto mb-20 space-y-4">
-            <h2 className="text-4xl sm:text-5xl font-black tracking-tight leading-none uppercase">Platform Integrity</h2>
-            <p className="text-lg font-medium text-white/70">Built on strict clinical safety and privacy standards.</p>
+            <h2 className="text-4xl sm:text-5xl font-black tracking-tight leading-none uppercase">{t('integrityTitle')}</h2>
+            <p className="text-lg font-medium text-white/70">{t('integritySubtitle')}</p>
           </div>
           
           <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-12 sm:gap-16">
             <SecurityCard 
               icon={<Shield size={32} className="text-blue-400 group-hover:text-white" />}
-              title="Safety Intercept"
-              text="Real-time algorithmic monitoring for clinical red-flag symptoms."
+              title={t('security1Title')}
+              text={t('security1Text')}
             />
             <SecurityCard 
               icon={<Award size={32} className="text-amber-400 group-hover:text-white" />}
-              title="Verified Protocol"
-              text="Human-in-the-loop validation ensuring documentation meets clinical standards."
+              title={t('security2Title')}
+              text={t('security2Text')}
             />
             <SecurityCard 
               icon={<Users size={32} className="text-emerald-400 group-hover:text-white" />}
-              title="Clinical Privacy"
-              text="Full data sovereignty with end-to-end clinical grade encryption."
+              title={t('security3Title')}
+              text={t('security3Text')}
             />
           </div>
           

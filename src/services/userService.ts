@@ -29,44 +29,33 @@ export const userService = {
    * Checks if a phone number is already registered or verified by another user.
    */
   isPhoneTaken: async (fullPhoneNumber: string) => {
-    try {
-      // 1. Check primary phone field
-      const q1 = query(collection(db, 'users'), where('phone', '==', fullPhoneNumber));
-      const snap1 = await getDocs(q1);
-      
-      if (!snap1.empty) {
-        const currentUid = auth.currentUser?.uid;
-        if (!currentUid || snap1.docs.some(doc => doc.id !== currentUid)) {
-          return true;
-        }
-      }
-
-      // 2. Check within expert profile secondary phones
-      // Note: Firestore array-contains-any or complex filters on objects in arrays are limited.
-      // For a production app, we would use a dedicated 'verified_phones' collection.
-      // For now, we'll check the primary field which is the most common case.
-      
-      return false;
-    } catch (error) {
-      console.error('Error checking phone uniqueness:', error);
-      return false;
-    }
+    return !(await userService.checkAvailability('phone', fullPhoneNumber));
   },
 
   /**
    * Checks if a specific field value is already taken by another user.
    */
-  checkAvailability: async (field: 'username' | 'phone' | 'fullName', value: string) => {
+  checkAvailability: async (field: 'username' | 'phone' | 'fullName' | 'licenseNumber' | 'email' | 'idNumber', value: string) => {
     try {
-      const q = query(collection(db, 'users'), where(field, '==', value));
-      const snapshot = await getDocs(q);
+      const currentUser = auth.currentUser;
+      if (!currentUser) return true; // Default to available if not logged in
       
-      const currentUid = auth.currentUser?.uid;
-      // If the only user with this value is the current user, it's considered available
-      if (currentUid) {
-        return snapshot.empty || snapshot.docs.every(doc => doc.id === currentUid);
+      const token = await currentUser.getIdToken();
+      const response = await fetch('/api/user/check', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ field, value })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to check availability');
       }
-      return snapshot.empty;
+
+      const data = await response.json();
+      return !data.taken; // return true if available (not taken)
     } catch (error) {
       console.error(`Error checking ${field} availability:`, error);
       return true; // Fallback to available to not block user on error
@@ -75,35 +64,30 @@ export const userService = {
 
   /**
    * Updates specific fields in the user's profile.
+   * NOTE: Fields like role, points, and verificationStatus are locked in Firestore rules 
+   * and must be updated via secure server-side APIs.
    * @param uid The user's ID.
    * @param data The partial data to update.
    */
   updateProfile: async (uid: string, data: Partial<UserProfile>) => {
     try {
       const userRef = doc(db, 'users', uid);
+      
+      // Clean restricted fields that must be updated via API
+      const { 
+        role: _role, points: _points, emailVerified: _ev, phoneVerified: _pv, 
+        verificationStatus: _vs, tier: _tier, onboardingComplete: _oc, 
+        ...cleanData 
+      } = data as any;
+
       await setDoc(userRef, {
-        ...data,
+        ...cleanData,
         updatedAt: new Date().toISOString(),
       }, { merge: true });
     } catch (error) {
       console.error('Error updating profile:', error);
       throw error;
     }
-  },
-
-  /**
-   * Completes the expert profile setup.
-   * @param uid The user's ID.
-   * @param bio The expert's bio.
-   * @param phoneNumber The expert's phone number.
-   */
-  completeExpertProfile: async (uid: string, bio: string, phoneNumber: string) => {
-    return userService.updateProfile(uid, {
-      bio,
-      phone: phoneNumber,
-      profileComplete: true,
-      verificationStatus: 'pending',
-    });
   },
 
   /**
@@ -124,6 +108,161 @@ export const userService = {
    * Updates an expert's verification status.
    * DEPRECATED: Use /api/admin/expert/verify for server-side security.
    */
+
+  /**
+   * Securely submits an expert profile for verification via API.
+   */
+  submitExpertProfile: async (data: any) => {
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) return null;
+
+      const token = await currentUser.getIdToken();
+      const response = await fetch('/api/expert/submit', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) throw new Error('Failed to submit expert profile');
+      return await response.json();
+    } catch (error) {
+      console.error('Error submitting expert profile:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Securely completes onboarding via API.
+   */
+  completeOnboarding: async (formData: any) => {
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) return null;
+
+      const token = await currentUser.getIdToken();
+      const response = await fetch('/api/user/onboarding/complete', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) throw new Error('Failed to complete onboarding');
+      return await response.json();
+    } catch (error) {
+      console.error('Error completing onboarding:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Securely upgrades user tier via API.
+   */
+  upgradeTier: async (tier: 'basic' | 'professional' | 'standard' | 'premium') => {
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) return null;
+
+      const token = await currentUser.getIdToken();
+      const response = await fetch('/api/user/upgrade', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ tier })
+      });
+
+      if (!response.ok) throw new Error('Failed to upgrade tier');
+      return await response.json();
+    } catch (error) {
+      console.error('Error upgrading tier:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Securely verifies an email via OTP via API.
+   */
+  verifyEmail: async (email: string, otp: string) => {
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) return null;
+
+      const token = await currentUser.getIdToken();
+      const response = await fetch('/api/user/verify-email', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, otp })
+      });
+
+      if (!response.ok) throw new Error('Failed to verify email');
+      return await response.json();
+    } catch (error) {
+      console.error('Error verifying email:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Securely verifies a phone number via API.
+   */
+  verifyPhone: async (phone: string) => {
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) return null;
+
+      const token = await currentUser.getIdToken();
+      const response = await fetch('/api/user/verify-phone', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone })
+      });
+
+      if (!response.ok) throw new Error('Failed to verify phone');
+      return await response.json();
+    } catch (error) {
+      console.error('Error verifying phone:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Syncs verification status from Auth to Firestore via secure API.
+   */
+  syncVerificationStatus: async () => {
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) return null;
+
+      const token = await currentUser.getIdToken();
+      const response = await fetch('/api/user/verify', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) throw new Error('Failed to sync verification');
+      return await response.json();
+    } catch (error) {
+      console.error('Error syncing verification:', error);
+      throw error;
+    }
+  },
 
   /**
    * Fetches the user's profile data.

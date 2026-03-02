@@ -12,7 +12,7 @@ class EncryptionService {
 
     if (typeof window === 'undefined') return;
 
-    let keyData = localStorage.getItem(KEY_STORAGE_KEY);
+    const keyData = localStorage.getItem(KEY_STORAGE_KEY);
 
     if (!keyData) {
       // Generate new key

@@ -97,7 +97,9 @@ export const useExpertSetup = () => {
           } else if (profile?.phone) {
              setFormData(prev => ({
                ...prev,
-               specialties: profile.specialty ? [{ name: profile.specialty, years: profile.yearsOfExperience || '0' }] : [],
+               specialties: profile.specialties && profile.specialties.length > 0 
+                 ? profile.specialties 
+                 : (profile.specialty ? [{ name: profile.specialty, years: profile.yearsOfExperience || '0' }] : []),
                phones: [{ number: profile.phone.replace(profile.countryCode || '', ''), code: profile.countryCode || '+234', label: 'Primary' }],
                yearsOfExperience: profile.yearsOfExperience || '',
              }));
@@ -118,7 +120,11 @@ export const useExpertSetup = () => {
     const errors: Record<string, string> = {};
     
     if (stepNumber === 1) {
-      if (formData.specialties.length === 0) errors.specialties = "At least one specialty is required.";
+      if (formData.specialties.length === 0) {
+        errors.specialties = "At least one specialty is required.";
+      } else if (formData.specialties.some(s => !s.years || parseInt(s.years) <= 0)) {
+        errors.specialties = "Specify years of experience (at least 1) for all specialties.";
+      }
       if (formData.phones.length === 0 || !formData.phones[0].number) errors.phones = "Primary phone is required.";
     }
     
@@ -204,18 +210,28 @@ export const useExpertSetup = () => {
           updatedAt: now,
         };
 
-        await userService.updateProfile(user.uid, {
-          expertProfile: expertUpdate,
-          bio: formData.bio,
-          specialties: formData.specialties,
-          specialty: formData.specialties[0]?.name || '',
-          yearsOfExperience: maxYears,
-          verificationStatus: expertUpdate.verificationStatus,
-          ...(nextStep === undefined ? { profileComplete: true } : {})
-        });
-
-        if (nextStep) setStep(nextStep);
-        else router.push('/expert/dashboard');
+        if (nextStep === undefined) {
+          await userService.submitExpertProfile({
+            expertProfile: expertUpdate,
+            bio: formData.bio,
+            specialties: formData.specialties,
+            specialty: formData.specialties[0]?.name || '',
+            yearsOfExperience: maxYears,
+            licenseNumber: formData.license.licenseNumber
+          });
+          router.push('/expert/dashboard');
+        } else {
+          await userService.updateProfile(user.uid, {
+            expertProfile: expertUpdate,
+            bio: formData.bio,
+            specialties: formData.specialties,
+            specialty: formData.specialties[0]?.name || '',
+            yearsOfExperience: maxYears,
+            licenseNumber: formData.license.licenseNumber,
+            // verificationStatus stays the same as current
+          });
+          setStep(nextStep);
+        }
       }
     } catch (err: any) {
       setError(err.message || 'Failed to save progress');

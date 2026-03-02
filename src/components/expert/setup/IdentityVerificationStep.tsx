@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Upload, Camera, MapPin, Calendar, FileText, CheckCircle2 } from 'lucide-react';
+import { Upload, Camera, MapPin, Calendar, FileText, CheckCircle2, Loader2, Check, X, Contact } from 'lucide-react';
+import CustomDatePicker from '@/components/common/CustomDatePicker';
 import { BaseInput } from '@/components/common/BaseInput';
+import { userService } from '@/services/userService';
 
 interface IdentityVerificationStepProps {
   formData: any;
@@ -17,6 +19,24 @@ export default function IdentityVerificationStep({ formData, handleUpdate, valid
     selfie: !!formData.kyc?.selfieUrl,
     passportPhoto: !!formData.kyc?.passportPhotoUrl,
   });
+  const [idStatus, setIdStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+
+  useEffect(() => {
+    if (!formData.kyc?.idNumber || formData.kyc.idNumber.length < 5) {
+      setIdStatus('idle');
+      return;
+    }
+    setIdStatus('checking');
+    const tid = setTimeout(async () => {
+      try {
+        const available = await userService.checkAvailability('idNumber', formData.kyc.idNumber.trim());
+        setIdStatus(available ? 'available' : 'taken');
+      } catch (e) {
+        setIdStatus('idle');
+      }
+    }, 500);
+    return () => clearTimeout(tid);
+  }, [formData.kyc?.idNumber]);
 
   const handleFileUpload = (field: string) => {
     // Mock file upload - in reality, this would use firebase storage
@@ -29,6 +49,25 @@ export default function IdentityVerificationStep({ formData, handleUpdate, valid
       <div>
         <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-2">Identity Verification (KYC)</h3>
         <p className="text-slate-500 dark:text-slate-400 font-medium text-sm">Please provide your identification documents for verification.</p>
+      </div>
+
+      {/* Profile Overview (Step 1 & 2 requirements) */}
+      <div className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-[32px] border border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="space-y-1">
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Legal Name</p>
+          <p className="text-lg font-black text-slate-900 dark:text-white capitalize">{formData.firstName} {formData.lastName}</p>
+          <p className="text-[10px] font-bold text-slate-400 italic">Matches your registration record</p>
+        </div>
+        <div className="space-y-1">
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Primary Contact</p>
+          <p className="text-lg font-black text-slate-900 dark:text-white">
+            {formData.phones?.[0]?.code} {formData.phones?.[0]?.number.replace(/\d(?=\d{4})/g, "*")}
+          </p>
+          <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+            <CheckCircle2 size={12} />
+            <span className="text-[10px] font-black uppercase tracking-tighter">Verified Device</span>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -109,22 +148,41 @@ export default function IdentityVerificationStep({ formData, handleUpdate, valid
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <BaseInput
-          id="dob"
+        <div className="relative group">
+          <BaseInput
+            id="idNumber"
+            label="ID / Passport Number"
+            required
+            value={formData.kyc?.idNumber || ''}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleUpdate('kyc', { ...formData.kyc, idNumber: e.target.value })}
+            placeholder="National ID or Passport number"
+            prefixIcon={<Contact className="w-4 h-4 text-slate-400" />}
+            className={idStatus === 'taken' ? 'border-red-500 ring-2 ring-red-100' : ''}
+          />
+          <div className="absolute right-4 top-[52px] flex items-center gap-2">
+            {idStatus === 'checking' && <Loader2 className="w-4 h-4 animate-spin text-blue-500" />}
+            {idStatus === 'available' && <Check className="w-4 h-4 text-emerald-500" />}
+            {idStatus === 'taken' && <X className="w-4 h-4 text-red-500" />}
+          </div>
+          {idStatus === 'taken' && (
+            <p className="text-[10px] font-black text-red-500 uppercase mt-2 ml-2 tracking-widest">Already registered!</p>
+          )}
+        </div>
+        <CustomDatePicker
           label="Date of Birth"
-          type="date"
           required
           value={formData.kyc?.dob || ''}
-          onChange={(e) => handleUpdate('kyc', { ...formData.kyc, dob: e.target.value })}
-          prefixIcon={<Calendar className="w-4 h-4 text-slate-400" />}
+          onChange={(val) => handleUpdate('kyc', { ...formData.kyc, dob: val })}
           error={validationErrors.dob}
         />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
         <BaseInput
           id="address"
           label="Residential Address"
           required
           value={formData.kyc?.address || ''}
-          onChange={(e) => handleUpdate('kyc', { ...formData.kyc, address: e.target.value })}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleUpdate('kyc', { ...formData.kyc, address: e.target.value })}
           placeholder="Full residential address"
           prefixIcon={<MapPin className="w-4 h-4 text-slate-400" />}
           error={validationErrors.address}

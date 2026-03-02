@@ -43,23 +43,25 @@ function sanitizeInput(input: string): string {
 
 export async function POST(req: NextRequest) {
   try {
-    // 1. Authenticate Request
+    // 1. Authenticate Request (Optional)
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    let uid: string | null = null;
+    
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.split("Bearer ")[1];
+      try {
+        const decodedToken = await adminAuth.verifyIdToken(token);
+        uid = decodedToken.uid;
+      } catch (error) {
+        console.warn("[API Search] Invalid token provided, proceeding as guest");
+      }
     }
 
-    const token = authHeader.split("Bearer ")[1];
-    let uid: string;
-    try {
-      const decodedToken = await adminAuth.verifyIdToken(token);
-      uid = decodedToken.uid;
-    } catch (error) {
-      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
-    }
+    // 2. Rate Limiting (Using UID or IP)
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    const identifier = uid || `guest_${ip}`;
 
-    // 2. Rate Limiting
-    if (isRateLimited(uid)) {
+    if (isRateLimited(identifier)) {
       return NextResponse.json({ error: "Too many requests. Please wait a minute." }, { status: 429 });
     }
 
@@ -75,7 +77,7 @@ export async function POST(req: NextRequest) {
       : 'both';
 
     // Log access without revealing sensitive health query content
-    console.log(`[API Search] User: ${uid}, Mode: "${mode}"`);
+    console.log(`[API Search] Identifier: ${identifier}, Mode: "${mode}"`);
 
     if (!query) {
       return NextResponse.json({ error: "Query is required" }, { status: 400 });
@@ -130,20 +132,24 @@ export async function POST(req: NextRequest) {
 
     aiText = aiText.replace(/\[\d+(?:,\s*\d+)*\]/g, "").replace(/\[\d+-\d+\]/g, "");
     
-    // 6. Log to Global History
-    const reviewRef = await adminDb.collection("global_history").add({
-      query,
-      mode,
-      answer: aiText,
-      uid,
-      timestamp: new Date().toISOString(),
-      status: 'pending'
-    });
+    // 6. Log to Global History (Only for authenticated users)
+    let reviewId = "";
+    if (uid) {
+      const reviewRef = await adminDb.collection("global_history").add({
+        query,
+        mode,
+        answer: aiText,
+        uid,
+        timestamp: new Date().toISOString(),
+        status: 'pending'
+      });
+      reviewId = reviewRef.id;
+    }
 
     return NextResponse.json({
       answer: aiText,
       evidence: evidence,
-      reviewId: reviewRef.id,
+      reviewId,
       regionalContext: country ? { region: country, insight: regionalInsight } : undefined,
       disclaimer: "This information is for educational purposes only and does not constitute medical advice."
     });

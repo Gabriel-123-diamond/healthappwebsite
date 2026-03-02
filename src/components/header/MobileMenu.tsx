@@ -2,9 +2,10 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Moon, Sun, LogIn, UserPlus, FileText, ChevronRight, User, Sparkles, Activity } from 'lucide-react';
-import { Link } from '@/i18n/routing';
-import { User as AuthUser } from 'firebase/auth';
+import { X, Moon, Sun, LogIn, UserPlus, FileText, ChevronRight, User, Sparkles, Activity, LogOut, Globe, Check } from 'lucide-react';
+import { Link, useRouter, usePathname } from '@/i18n/routing';
+import { User as AuthUser, signOut } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 import { NAVIGATION_LINKS } from '@/config/navigation';
 import { Variants } from 'framer-motion';
 
@@ -59,6 +60,36 @@ export default function MobileMenu({
   onToggleTheme,
   mounted
 }: MobileMenuProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [showLanguages, setShowLanguages] = React.useState(false);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      onClose();
+      router.push('/');
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
+  const handleLocaleChange = (newLocale: string) => {
+    localStorage.setItem('language', newLocale);
+    router.push(pathname, { locale: newLocale });
+    setShowLanguages(false);
+    onClose();
+  };
+
+  const languages = [
+    { code: 'en', label: 'English', flag: '🇺🇸' },
+    { code: 'es', label: 'Español', flag: '🇪🇸' },
+    { code: 'fr', label: 'Français', flag: '🇫🇷' },
+    { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
+    { code: 'zh', label: '中文', flag: '🇨🇳' },
+    { code: 'ar', label: 'العربية', flag: '🇸🇦' },
+  ];
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -67,7 +98,7 @@ export default function MobileMenu({
           initial="closed"
           animate="open"
           exit="closed"
-          className="lg:hidden fixed inset-0 z-[100] bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl flex flex-col"
+          className="xl:hidden fixed inset-0 z-[100] bg-white dark:bg-slate-950 flex flex-col"
         >
           {/* Top Bar inside Fullscreen Menu */}
           <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800/50">
@@ -85,36 +116,83 @@ export default function MobileMenu({
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-10 custom-scrollbar">
             {/* User Profile Section if Logged In */}
             {user && (
-              <motion.div variants={itemVariants} className="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-[32px] border border-blue-100 dark:border-blue-800/50 flex items-center gap-4">
-                <div className="w-14 h-14 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center shadow-lg">
-                  <User className="text-blue-600" size={24} />
+              <motion.div variants={itemVariants} className="p-6 bg-slate-50 dark:bg-white/[0.03] rounded-[32px] border border-slate-100 dark:border-white/5 flex items-center gap-4">
+                <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg text-white font-black text-xl">
+                  {user.email?.[0].toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Active Session</p>
-                  <p className="font-bold text-slate-900 dark:text-white truncate">{user.email}</p>
+                  <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Active Identity</p>
+                  <p className="font-bold text-slate-900 dark:text-white truncate text-sm">{user.email}</p>
                 </div>
-                <Link href="/profile" onClick={onClose} className="p-2 bg-blue-600 rounded-xl text-white">
+                <Link href="/profile" onClick={onClose} className="p-3 bg-white dark:bg-slate-800 rounded-xl text-slate-400 border border-slate-100 dark:border-white/10 shadow-sm active:scale-95 transition-all">
                   <ChevronRight size={18} />
                 </Link>
               </motion.div>
             )}
 
+            {/* Language Toggle Toggle */}
+            <motion.div variants={itemVariants} className="space-y-4">
+               <button 
+                onClick={() => setShowLanguages(!showLanguages)}
+                className="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-white/[0.02] rounded-2xl border border-slate-100 dark:border-white/5 transition-all"
+               >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm">
+                      <Globe size={16} className="text-blue-500" />
+                    </div>
+                    <span className="font-bold text-slate-900 dark:text-white text-sm">Language</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{languages.find(l => l.code === locale)?.label}</span>
+                    <ChevronRight size={16} className={`text-slate-300 transition-transform duration-300 ${showLanguages ? 'rotate-90' : ''}`} />
+                  </div>
+               </button>
+
+               <AnimatePresence>
+                 {showLanguages && (
+                   <motion.div 
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden grid grid-cols-2 gap-2"
+                   >
+                     {languages.map((lang) => (
+                       <button
+                        key={lang.code}
+                        onClick={() => handleLocaleChange(lang.code)}
+                        className={`flex items-center justify-between p-3 rounded-xl border text-xs font-bold transition-all ${
+                          locale === lang.code 
+                            ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-600/20' 
+                            : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-white/5 text-slate-600 dark:text-slate-400'
+                        }`}
+                       >
+                         <span>{lang.flag} {lang.label}</span>
+                         {locale === lang.code && <Check size={12} />}
+                       </button>
+                     ))}
+                   </motion.div>
+                 )}
+               </AnimatePresence>
+            </motion.div>
+
             {/* Main Links */}
             <div className="space-y-6">
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Intelligence Grid</p>
-              <nav className="flex flex-col gap-2">
+              <nav className="flex flex-col gap-1">
                 {NAVIGATION_LINKS.map((link) => (
                   <motion.div key={link.href} variants={itemVariants}>
                     <Link 
                       href={link.href} 
-                      className="flex items-center justify-between p-4 text-2xl font-black text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors tracking-tighter" 
+                      className="flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 group transition-all" 
                       onClick={onClose}
                     >
-                      {t(link.labelKey) || link.defaultLabel}
-                      <ChevronRight size={20} className="text-slate-300" />
+                      <span className="text-xl font-black text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight">
+                        {t(link.labelKey) || link.defaultLabel}
+                      </span>
+                      <ChevronRight size={20} className="text-slate-200 group-hover:text-blue-500 transition-colors" />
                     </Link>
                   </motion.div>
                 ))}
@@ -126,16 +204,16 @@ export default function MobileMenu({
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Core Tools</p>
               <div className="grid grid-cols-2 gap-4">
                 <motion.div variants={itemVariants}>
-                  <Link href="/saved" onClick={onClose} className="flex flex-col gap-3 p-5 bg-slate-50 dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 transition-all hover:border-blue-500/30">
-                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-blue-600 shadow-sm">
+                  <Link href="/saved" onClick={onClose} className="flex flex-col gap-3 p-5 bg-slate-50 dark:bg-white/[0.02] rounded-[32px] border border-slate-100 dark:border-white/5 transition-all hover:border-blue-500/30 group">
+                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-blue-600 shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-all">
                       <FileText size={20} />
                     </div>
                     <span className="font-bold text-slate-900 dark:text-white text-sm">Saved</span>
                   </Link>
                 </motion.div>
                 <motion.div variants={itemVariants}>
-                  <Link href="/about" onClick={onClose} className="flex flex-col gap-3 p-5 bg-slate-50 dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 transition-all hover:border-blue-500/30">
-                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-indigo-600 shadow-sm">
+                  <Link href="/about" onClick={onClose} className="flex flex-col gap-3 p-5 bg-slate-50 dark:bg-white/[0.02] rounded-[32px] border border-slate-100 dark:border-white/5 transition-all hover:border-blue-500/30 group">
+                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-indigo-600 shadow-sm group-hover:bg-indigo-600 group-hover:text-white transition-all">
                       <Sparkles size={20} />
                     </div>
                     <span className="font-bold text-slate-900 dark:text-white text-sm">About</span>
@@ -146,44 +224,53 @@ export default function MobileMenu({
           </div>
 
           {/* Footer Controls */}
-          <div className="p-8 border-t border-slate-100 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/50">
+          <div className="p-6 sm:p-8 border-t border-slate-100 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/50">
             <div className="flex flex-col gap-6">
-              {!loading && !user && (
+              {!loading && !user ? (
                 <div className="flex gap-4">
                   <Link 
                     href="/auth/signin" 
-                    className="flex-1 flex items-center justify-center gap-2 py-4 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-black uppercase tracking-widest text-[10px] border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm"
+                    className="flex-1 flex items-center justify-center gap-2 py-4 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-black uppercase tracking-widest text-[10px] border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm active:scale-95 transition-all"
                     onClick={onClose}
                   >
-                    <LogIn size={14} /> {t('auth.signIn')}
+                    <LogIn size={14} /> {t('common.signIn')}
                   </Link>
                   <Link 
                     href="/auth/signup" 
-                    className="flex-1 flex items-center justify-center gap-2 py-4 bg-blue-600 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl shadow-xl shadow-blue-500/20"
+                    className="flex-1 flex items-center justify-center gap-2 py-4 bg-blue-600 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl shadow-xl shadow-blue-500/20 active:scale-95 transition-all"
                     onClick={onClose}
                   >
-                    <UserPlus size={14} /> {t('auth.signUp')}
+                    <UserPlus size={14} /> {t('common.getStarted')}
                   </Link>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  <button 
+                    onClick={handleSignOut}
+                    className="w-full flex items-center justify-center gap-2 py-4 bg-red-50 dark:bg-red-900/10 text-red-600 dark:text-red-400 font-black uppercase tracking-widest text-[10px] border border-red-100 dark:border-red-900/20 rounded-2xl active:scale-95 transition-all"
+                  >
+                    <LogOut size={14} /> {t('common.signOut')}
+                  </button>
                 </div>
               )}
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-white/5">
+                <div className="flex items-center gap-3">
                   <div className={`w-2 h-2 rounded-full ${mounted && resolvedTheme === 'dark' ? 'bg-indigo-500' : 'bg-amber-500'} animate-pulse`} />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">System Theme</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">System Appearance</span>
                 </div>
                 <button 
                   onClick={onToggleTheme}
-                  className="flex items-center gap-3 px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full shadow-sm"
+                  className="p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl transition-all active:scale-90"
                 >
                   {mounted ? (
                     resolvedTheme === 'dark' ? (
-                      <><Moon size={14} className="text-indigo-400" /> <span className="text-xs font-bold text-slate-300">Dark Mode</span></>
+                      <Moon size={18} className="text-indigo-400" />
                     ) : (
-                      <><Sun size={14} className="text-amber-500" /> <span className="text-xs font-bold text-slate-600">Light Mode</span></>
+                      <Sun size={18} className="text-amber-500" />
                     )
                   ) : (
-                    <div className="w-24 h-4" />
+                    <div className="w-5 h-5" />
                   )}
                 </button>
               </div>

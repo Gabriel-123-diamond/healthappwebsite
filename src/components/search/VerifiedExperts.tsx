@@ -1,9 +1,9 @@
 import React from 'react';
-import { Users, ChevronRight, BadgeCheck, MapPin } from 'lucide-react';
+import { Users, ChevronRight, BadgeCheck, MapPin, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from '@/i18n/routing';
 
-export const VerifiedExperts = ({ experts, total, query }: { experts: any[], total: number, query?: string }) => {
+export const VerifiedExperts = ({ experts, total, query, isLoggedOut = false }: { experts: any[], total: number, query?: string, isLoggedOut?: boolean }) => {
   if (!experts || experts.length === 0) return null;
 
   return (
@@ -13,31 +13,23 @@ export const VerifiedExperts = ({ experts, total, query }: { experts: any[], tot
           Top Professional Matches ({total})
         </h3>
         {query && total > 3 && (
-          <Link href={`/directory?query=${encodeURIComponent(query)}`} className="text-[10px] font-black text-blue-600 hover:text-blue-700 uppercase tracking-widest transition-colors flex items-center gap-1">
-            View Directory <ChevronRight size={12} />
+          <Link href={isLoggedOut ? "/auth/signup" : `/directory?query=${encodeURIComponent(query)}`} className="text-[10px] font-black text-blue-600 hover:text-blue-700 uppercase tracking-widest transition-colors flex items-center gap-1">
+            {isLoggedOut ? "Unlock All Experts" : "View Directory"} <ChevronRight size={12} />
           </Link>
         )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {experts.slice(0, 4).map((expert, idx) => (
-          <motion.div 
-            key={expert.id}
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: false }}
-            transition={{ duration: 0.4, delay: idx * 0.05 }}
-            whileHover={{ y: -4 }}
-            className="group relative p-5 bg-slate-50/50 dark:bg-slate-800/30 rounded-3xl border border-slate-100 dark:border-slate-800 hover:border-blue-500/30 transition-all duration-300"
-          >
-            <Link href={`/directory/${expert.id}`} className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-sm group-hover:shadow-md transition-all">
+        {experts.slice(0, 4).map((expert, idx) => {
+          const content = (
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-sm group-hover:shadow-md transition-all relative">
                 <Users className="w-6 h-6 text-blue-600" />
               </div>
               
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 mb-1">
-                  <h4 className="font-black text-slate-900 dark:text-white text-sm sm:text-base truncate group-hover:text-blue-600 transition-colors capitalize">
+                  <h4 className="font-black text-slate-900 dark:text-white text-sm sm:text-base truncate transition-all capitalize group-hover:text-blue-600">
                     {expert.name}
                   </h4>
                   <BadgeCheck size={14} className="text-emerald-500 shrink-0" />
@@ -52,9 +44,25 @@ export const VerifiedExperts = ({ experts, total, query }: { experts: any[], tot
                   <span className="text-[10px] font-bold truncate capitalize">{expert.location}</span>
                 </div>
               </div>
-            </Link>
-          </motion.div>
-        ))}
+            </div>
+          );
+
+          return (
+            <motion.div 
+              key={expert.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.4, delay: idx * 0.05 }}
+              whileHover={{ y: -4 }}
+              className="group relative p-5 bg-slate-50/50 dark:bg-slate-800/30 rounded-3xl border border-slate-100 dark:border-slate-800 transition-all duration-300 hover:border-blue-500/30"
+            >
+              <Link href={`/directory/${expert.id}`}>
+                {content}
+              </Link>
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );

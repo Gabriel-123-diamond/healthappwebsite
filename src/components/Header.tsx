@@ -96,11 +96,11 @@ export default function Header() {
           </Link>
         </div>
 
-        <div className="hidden lg:block">
+        <div className="hidden xl:block">
           <DesktopNav user={user} t={t} />
         </div>
 
-        <div className="hidden lg:block">
+        <div className="hidden xl:block">
           <AuthActions 
             user={user} 
             loading={loading} 
@@ -114,7 +114,7 @@ export default function Header() {
         </div>
 
         {/* Mobile Controls */}
-        <div className="lg:hidden flex items-center gap-2">
+        <div className="xl:hidden flex items-center gap-2">
            <button 
               onClick={toggleTheme}
               className="p-2.5 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl transition-all active:scale-90 shadow-sm"

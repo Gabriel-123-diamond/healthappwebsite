@@ -13,20 +13,20 @@ export const searchHealthTopic = async (query: string, mode: 'medical' | 'herbal
   if (cached) return cached;
 
   const user = auth.currentUser;
-  if (!user) throw new Error("User must be authenticated");
-
-  const token = await user.getIdToken();
+  const token = user ? await user.getIdToken() : "";
   const locale = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] || 'en' : 'en';
 
-  // Fetch User Country for Cultural Context
+  // Fetch User Country for Cultural Context (if authenticated)
   let country = "";
-  try {
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
-    if (userDoc.exists()) {
-      country = userDoc.data().country || "";
+  if (user) {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (userDoc.exists()) {
+        country = userDoc.data().country || "";
+      }
+    } catch (e) {
+      console.warn("Could not fetch user country for cultural context:", e);
     }
-  } catch (e) {
-    console.warn("Could not fetch user country for cultural context:", e);
   }
 
   const [response, experts, reviews] = await Promise.all([
@@ -46,18 +46,25 @@ export const searchHealthTopic = async (query: string, mode: 'medical' | 'herbal
   const aiResponse = aiResponseMapper.map(data, query, experts, mode);
   aiResponse.reviews = reviews;
 
-  saveSearch(query, mode, aiResponse);
+  if (user) {
+    saveSearch(query, mode, aiResponse);
+  }
 
   return aiResponse;
 };
 
-async function _fetchAIResponse(query: string, mode: string, locale: string, token: string, country?: string) {
+async function _fetchAIResponse(query: string, mode: string, locale: string, token?: string, country?: string) {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json'
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
   return fetch('/api/search', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
+    headers,
     body: JSON.stringify({ query, mode, locale, country })
   });
 }

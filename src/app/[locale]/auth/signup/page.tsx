@@ -1,88 +1,45 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import React, { useState } from 'react';
+import { Link, useRouter } from '@/i18n/routing';
 import { auth, db } from '@/lib/firebase';
-import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Loader2, Chrome, Ticket, Check, Mail } from 'lucide-react';
-import { useLanguage } from '@/context/LanguageContext';
+import { 
+  createUserWithEmailAndPassword, 
+  GoogleAuthProvider, 
+  signInWithPopup,
+  sendEmailVerification
+} from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { Loader2, Check, Mail, ShieldCheck, ArrowRight, Cpu, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { PasswordField } from '@/components/common/PasswordField';
 import { BaseInput } from '@/components/common/BaseInput';
 import { getRedirectPath } from '@/lib/authUtils';
+import { useTranslations } from 'next-intl';
 
 export default function SignUpPage() {
+  const t = useTranslations('auth');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [referralCode, setReferralCode] = useState('');
-  const [loading, setLoading] = useState(true); // Start as loading to check auth
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const { t } = useLanguage();
-  const refFromUrl = searchParams.get('ref');
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        const path = await getRedirectPath(user.uid);
-        router.push(path);
-      } else {
-        setLoading(false);
-      }
-    });
-    return () => unsubscribe();
-  }, [router]);
-
-  useEffect(() => {
-    if (refFromUrl) {
-      setReferralCode(refFromUrl.toUpperCase());
-    }
-  }, [refFromUrl]);
-
-  const handleAuthSuccess = async (user: any) => {
-    if (!user) return;
-    
-    // Check for referral code and return destination
-    const finalRefCode = referralCode || refFromUrl;
-    
-    const path = await getRedirectPath(user.uid);
-    if (path === '/onboarding' && finalRefCode) {
-      router.push(`/onboarding?ref=${finalRefCode}`);
-    } else {
-      router.push(path);
-    }
-  };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-
-    if (!email || !password || !confirmPassword) {
-      setError("Please fill in all fields.");
-      return;
-    }
-
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters long.");
-      return;
-    }
-
     if (password !== confirmPassword) {
-      setError(t.auth.passwordsNoMatch);
+      setError('Passwords do not match');
       return;
     }
     setLoading(true);
     setError('');
-
     try {
-      const result = await createUserWithEmailAndPassword(auth, email, password);
-      await handleAuthSuccess(result.user);
-    } catch (err: any) {
-      setError(err.message || t.auth.failedCreate);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await sendEmailVerification(userCredential.user);
+      router.push('/onboarding');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
       setLoading(false);
     }
   };
@@ -90,163 +47,183 @@ export default function SignUpPage() {
   const handleGoogleSignUp = async () => {
     setLoading(true);
     setError('');
-    const provider = new GoogleAuthProvider();
     try {
+      const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
-      await handleAuthSuccess(result.user);
-    } catch (err: any) {
-      console.error("Google Sign Up Error:", err);
-      if (err.message && (err.message.includes('AppCheck') || err.message.includes('403'))) {
-        setError(t.auth.appCheckError);
+      
+      const userDoc = await getDoc(doc(db, 'users', result.user.uid));
+      if (!userDoc.exists()) {
+        router.push('/onboarding');
       } else {
-        setError(err.message || t.auth.failedCreate);
+        const path = await getRedirectPath(result.user.uid);
+        router.push(path);
       }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
       setLoading(false);
     }
   };
 
-  if (loading && !email) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
-        <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center py-12 pt-24 sm:pt-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Immersive Background */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/10 blur-[120px] rounded-full animate-pulse delay-1000" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:40px_40px]" />
-      </div>
+    <div className="min-h-screen bg-slate-50 dark:bg-[#020617] flex items-center justify-center p-4 pt-32 sm:pt-40 relative overflow-hidden transition-colors">
+      {/* High-Tech Background Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+      
+      {/* Dynamic Background Elements */}
+      <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/10 blur-[140px] rounded-full pointer-events-none animate-pulse" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-600/10 blur-[140px] rounded-full pointer-events-none" />
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.98, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="max-w-md w-full space-y-8 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl p-8 sm:p-12 rounded-[48px] shadow-3xl shadow-blue-900/10 border border-white dark:border-slate-800 relative z-10"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-lg relative z-10"
       >
-        <div className="text-center">
-          <motion.div 
-            whileHover={{ scale: 1.05, rotate: -5 }}
-            className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center mb-8 shadow-xl shadow-blue-500/20"
-          >
-            <span className="text-white font-black text-2xl">I</span>
-          </motion.div>
-          <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter mb-2">{t.auth.createAccount}</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed opacity-80">
-            {t.auth.joinToAccess}
-          </p>
+        {/* Technical Metadata Tags */}
+        <div className="flex justify-between items-center mb-4 px-6">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-blue-500/10 border border-blue-500/20 text-[8px] font-black text-blue-600 dark:text-blue-400 tracking-tighter uppercase">
+              <Cpu size={10} /> Registry v1.0
+            </div>
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20 text-[8px] font-black text-amber-600 dark:text-amber-400 tracking-tighter uppercase">
+              <Zap size={10} /> New Identity
+            </div>
+          </div>
+          <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest text-right">Node-Genesis-Protocol</span>
         </div>
 
-        <form className="mt-10 space-y-6" onSubmit={handleSignUp}>
-          <div className="space-y-5">
+        <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-3xl p-8 sm:p-14 rounded-[56px] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] dark:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.4)] border border-slate-200/50 dark:border-white/10 relative overflow-hidden group">
+          {/* Subtle Scanline Effect */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.05)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[size:100%_4px,3px_100%] pointer-events-none opacity-20 dark:opacity-40" />
+          
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.03] to-transparent pointer-events-none" />
+
+          <div className="text-center mb-12 relative">
+            <motion.div 
+              whileHover={{ scale: 1.05, rotate: -5, boxShadow: '0 0 30px rgba(79, 70, 229, 0.3)' }}
+              className="w-24 h-24 bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-indigo-500/30 border-4 border-white dark:border-slate-900 relative group/icon"
+            >
+              <ShieldCheck size={44} className="text-white relative z-10" strokeWidth={2.5} />
+              <div className="absolute inset-0 bg-white/20 rounded-[28px] opacity-0 group-hover/icon:opacity-100 transition-opacity" />
+            </motion.div>
+            <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight uppercase mb-2">
+              Initialize Node
+            </h1>
+            <p className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.4em] ml-1">
+              Registry Entry Initiated
+            </p>
+          </div>
+
+          <form onSubmit={handleSignUp} className="space-y-7 relative">
             <BaseInput
               id="email"
-              name="email"
+              label={t('emailLabel')}
               type="email"
-              label={t.auth.email}
-              autoComplete="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder={t.auth.email}
-              prefixIcon={<Mail className="h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />}
-              className="py-4 !rounded-2xl"
-            />
-            <PasswordField
-              id="password"
-              name="password"
-              label={t.auth.password}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder={t.auth.password}
-              required
-              autoComplete="new-password"
-              className="py-4 !rounded-2xl"
-            />
-            <PasswordField
-              id="confirmPassword"
-              name="confirmPassword"
-              label={t.auth.confirmPassword}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder={t.auth.confirmPassword}
-              required
-              autoComplete="new-password"
-              className="py-4 !rounded-2xl"
+              placeholder={t('emailPlaceholder')}
+              autoComplete="email"
+              prefixIcon={<Mail className="w-4 h-4 text-slate-400" />}
+              className="dark:bg-black/20"
             />
 
             <BaseInput
-              id="referralCode"
-              name="referralCode"
-              type="text"
-              value={referralCode}
-              onChange={(e) => setReferralCode(e.target.value.toUpperCase().trim())}
-              placeholder="REFERRAL CODE (OPTIONAL)"
-              prefixIcon={<Ticket className="h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />}
-              suffixIcon={refFromUrl ? (
-                <div className="p-1 bg-blue-100 dark:bg-blue-900/40 rounded-full">
-                  <Check className="w-3 h-3 text-blue-600 dark:text-blue-400" />
-                </div>
-              ) : null}
-              className="font-mono tracking-wider !rounded-2xl py-4"
-              containerClassName="group"
+              id="password"
+              label={t('passwordLabel')}
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={t('passwordPlaceholder')}
+              autoComplete="new-password"
+              prefixIcon={<div className="w-4 h-4 rounded-sm border-2 border-slate-400 opacity-50" />}
+              className="dark:bg-black/20"
             />
-          </div>
 
-          {error && (
-            <motion.div 
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="text-red-600 dark:text-red-400 text-[10px] font-black uppercase tracking-widest text-center bg-red-50 dark:bg-red-900/20 p-4 rounded-2xl border border-red-100 dark:border-red-900/30"
-            >
-              {error}
-            </motion.div>
-          )}
+            <BaseInput
+              id="confirmPassword"
+              label={t('confirmPasswordLabel')}
+              type="password"
+              required
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder={t('passwordPlaceholder')}
+              autoComplete="new-password"
+              prefixIcon={<Check className="w-4 h-4 text-slate-400" />}
+              className="dark:bg-black/20"
+            />
 
-          <div>
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="p-4 bg-red-500/10 border-l-4 border-red-500 rounded-r-2xl flex items-center gap-3"
+              >
+                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                <p className="text-red-500 text-[10px] font-black uppercase tracking-widest leading-tight">{error}</p>
+              </motion.div>
+            )}
+
             <motion.button
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.01, boxShadow: '0 0 25px rgba(37, 99, 235, 0.4)' }}
               whileTap={{ scale: 0.98 }}
-              type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-xs font-black uppercase tracking-[0.2em] rounded-[20px] text-white bg-slate-900 dark:bg-white dark:text-slate-900 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-slate-200 dark:shadow-none disabled:opacity-50"
+              className="w-full py-6 bg-slate-900 dark:bg-blue-600 text-white rounded-[28px] font-black uppercase tracking-[0.3em] text-[11px] flex items-center justify-center gap-4 hover:bg-blue-600 dark:hover:bg-blue-500 transition-all shadow-xl shadow-slate-900/10 dark:shadow-blue-500/20 disabled:opacity-50 relative group/btn overflow-hidden"
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : t.auth.signUp}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_1.5s_infinite] pointer-events-none" />
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <span className="relative z-10 flex items-center gap-4">
+                  Generate Node <ArrowRight size={18} strokeWidth={3} className="group-hover:translate-x-1.5 transition-transform" />
+                </span>
+              )}
             </motion.button>
-          </div>
-        </form>
+          </form>
 
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-100 dark:border-slate-800"></div>
+          <div className="mt-12 relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-100 dark:border-white/5"></div>
+            </div>
+            <div className="relative flex justify-center text-[9px] font-black uppercase tracking-[0.4em]">
+              <span className="bg-white dark:bg-[#0B1221] px-8 text-slate-400 transition-colors">Federated Auth</span>
+            </div>
           </div>
-          <div className="relative flex justify-center text-[10px] font-black uppercase tracking-widest">
-            <span className="px-4 bg-white dark:bg-slate-900 text-slate-400">{t.auth.orContinue}</span>
-          </div>
-        </div>
 
-        <motion.button
-          whileHover={{ scale: 1.02, backgroundColor: 'rgba(248, 250, 252, 1)' }}
-          whileTap={{ scale: 0.98 }}
-          onClick={handleGoogleSignUp}
-          disabled={loading}
-          className="w-full flex justify-center items-center gap-3 py-4 px-4 border border-slate-100 dark:border-slate-800 rounded-[20px] text-xs font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm"
-        >
-          <Chrome className="w-5 h-5 text-blue-500" />
-          Google Identity
-        </motion.button>
+          <motion.button
+            whileHover={{ y: -3, boxShadow: '0 15px 30px -10px rgba(0,0,0,0.1)' }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleGoogleSignUp}
+            className="mt-10 w-full py-5 bg-white dark:bg-slate-800/50 border-2 border-slate-100 dark:border-white/5 text-slate-700 dark:text-slate-200 rounded-[32px] font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-5 hover:border-blue-500/30 hover:bg-blue-50/30 dark:hover:bg-blue-500/5 transition-all shadow-sm group/google"
+          >
+            <div className="w-10 h-10 bg-white rounded-2xl shadow-md border border-slate-100 flex items-center justify-center group-hover/google:scale-110 transition-transform duration-500">
+              <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.18 1-.78 1.85-1.63 2.42v2.01h2.64c1.55-1.42 2.43-3.52 2.43-5.44z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-2.64-2.01c-.73.48-1.66.76-2.64.76-2.85 0-5.27-1.92-6.13-4.51H2.18v2.09C3.99 20.24 7.75 23 12 23z" fill="#34A853"/>
+                <path d="M5.87 14.58c-.22-.66-.35-1.36-.35-2.08s.13-1.42.35-2.08V8.33H2.18C1.43 9.81 1 11.46 1 13s.43 3.19 1.18 4.67l3.69-3.09z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.75 1 3.99 3.76 2.18 7.66l3.69 3.09c.86-2.59 3.28-4.51 6.13-4.51z" fill="#EA4335"/>
+              </svg>
+            </div>
+            Sign up with Google
+          </motion.button>
 
-        <div className="text-center pt-4">
-          <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
-            {t.auth.alreadyHaveAccount}{' '}
-            <Link href="/auth/signin" className="text-blue-600 hover:text-blue-500 dark:text-blue-400 font-black uppercase tracking-widest ml-1">
-              {t.auth.signIn}
+          <div className="mt-14 text-center">
+            <p className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] mb-5">Existing Node?</p>
+            <Link 
+              href="/auth/signin" 
+              className="inline-flex items-center gap-3 text-blue-600 dark:text-blue-400 hover:text-blue-500 font-black uppercase tracking-[0.25em] text-[11px] group transition-all"
+            >
+              <span className="border-b-2 border-transparent group-hover:border-blue-500/50 transition-all pb-1">Initialize Session</span>
+              <motion.div
+                animate={{ x: [0, -6, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <ArrowRight size={14} strokeWidth={3} className="rotate-180" />
+              </motion.div>
             </Link>
-          </p>
+          </div>
         </div>
       </motion.div>
     </div>

@@ -8,8 +8,10 @@ import JournalEntryForm from '@/components/journal/JournalEntryForm';
 import JournalHistoryList from '@/components/journal/JournalHistoryList';
 import JournalTrendsChart from '@/components/journal/JournalTrendsChart';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 export default function JournalPage() {
+  const t = useTranslations('journalPage');
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'list' | 'trends'>('list');
@@ -39,10 +41,10 @@ export default function JournalPage() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest border border-blue-100 dark:border-blue-800">
-              Personalized Log
+              {t('badge')}
             </div>
-            <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">Clinical Journal</h1>
-            <p className="text-slate-500 dark:text-slate-400 font-medium">Quantify your well-being through secure data logging.</p>
+            <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{t('title')}</h1>
+            <p className="text-slate-50 dark:text-slate-400 font-medium">{t('subtitle')}</p>
           </div>
           
           <div className="flex bg-white dark:bg-slate-900 rounded-2xl p-1.5 border border-slate-100 dark:border-slate-800 shadow-sm">
@@ -55,7 +57,7 @@ export default function JournalPage() {
               }`}
             >
               <List className="w-4 h-4" />
-              History
+              {t('history')}
             </button>
             <button
               onClick={() => setViewMode('trends')}
@@ -66,7 +68,7 @@ export default function JournalPage() {
               }`}
             >
               <BarChart2 className="w-4 h-4" />
-              Trends
+              {t('trends')}
             </button>
           </div>
         </div>
@@ -84,7 +86,7 @@ export default function JournalPage() {
             {loading ? (
               <div className="flex flex-col items-center justify-center py-32 bg-white dark:bg-slate-900 rounded-[48px] border border-slate-100 dark:border-slate-800 shadow-sm">
                 <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
-                <p className="mt-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Decrypting Records</p>
+                <p className="mt-4 text-[10px] font-black uppercase tracking-widest text-slate-400">{t('decrypting')}</p>
               </div>
             ) : (
               <AnimatePresence mode="wait">

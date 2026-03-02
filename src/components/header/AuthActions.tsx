@@ -41,45 +41,45 @@ export default function AuthActions({ user, loading, locale, t, setTheme, resolv
   };
 
   return (
-    <div className="hidden lg:flex items-center gap-4">
-      <div className="flex items-center gap-2 mr-2">
+    <div className="hidden xl:flex items-center gap-2 xl:gap-4">
+      <div className="flex items-center gap-1.5 xl:gap-2 mr-1 xl:mr-2">
         <LanguageSelector currentLocale={locale} onLocaleChange={handleLocaleChange} />
         
         <button 
           onClick={toggleTheme}
-          className="p-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors h-8 w-8 flex items-center justify-center"
+          className="p-1.5 xl:p-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors h-7 w-7 xl:h-8 xl:w-8 flex items-center justify-center"
         >
-          {mounted ? (resolvedTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />) : <div className="w-4 h-4" />}
+          {mounted ? (resolvedTheme === 'dark' ? <Sun className="w-3.5 h-3.5 xl:w-4 xl:h-4" /> : <Moon className="w-3.5 h-3.5 xl:w-4 xl:h-4" />) : <div className="w-3.5 h-3.5 xl:w-4 xl:h-4" />}
         </button>
       </div>
 
       {loading ? (
-        <Loader2 className="w-5 h-5 animate-spin text-slate-400" />
+        <Loader2 className="w-4 h-4 xl:w-5 xl:h-5 animate-spin text-slate-400" />
       ) : user ? (
-        <div className="flex items-center gap-4">
-          <Link href="/profile" className="flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400">
-            <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center text-blue-700 dark:text-blue-400 font-bold">
-              {user.email?.[0].toUpperCase() || <UserIcon className="w-4 h-4" />}
+        <div className="flex items-center gap-2 xl:gap-4">
+          <Link href="/profile" className="flex items-center gap-1.5 xl:gap-2 text-xs xl:text-sm font-medium text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400">
+            <div className="w-7 h-7 xl:w-8 xl:h-8 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center text-blue-700 dark:text-blue-400 font-bold">
+              {user.email?.[0].toUpperCase() || <UserIcon className="w-3.5 h-3.5 xl:w-4 xl:h-4" />}
             </div>
-            <span>{t('common.profile')}</span>
+            <span className="hidden 2xl:inline">{t('common.profile')}</span>
           </Link>
           <button 
             onClick={handleSignOut}
             className="text-slate-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400 transition-colors"
             title={t('common.signOut')}
           >
-            <LogOut className="w-5 h-5" />
+            <LogOut className="w-4 h-4 xl:w-5 xl:h-5" />
           </button>
         </div>
       ) : (
-        <>
-          <Link href="/auth/signin" className="text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">
+        <div className="flex items-center gap-2 xl:gap-3">
+          <Link href="/auth/signin" className="text-xs xl:text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">
             {t('common.signIn')}
           </Link>
-          <Link href="/auth/signup" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+          <Link href="/auth/signup" className="bg-blue-600 text-white px-3 xl:px-4 py-1.5 xl:py-2 rounded-lg text-xs xl:text-sm font-medium hover:bg-blue-700 transition-colors">
             {t('common.getStarted')}
           </Link>
-        </>
+        </div>
       )}
     </div>
   );

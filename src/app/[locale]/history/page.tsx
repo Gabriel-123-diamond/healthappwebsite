@@ -8,6 +8,7 @@ import { SearchHistoryItem } from '@/types/history';
 import { History, Calendar, Loader2, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
+import DateRangePicker from '@/components/common/DateRangePicker';
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<SearchHistoryItem[]>([]);
@@ -75,20 +76,15 @@ export default function HistoryPage() {
               Clear All
             </button>
 
-            <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-              <Calendar size={16} className="text-slate-400 ml-2" />
-              <input 
-                type="date" 
-                className="text-xs bg-transparent outline-none text-slate-900 dark:text-white font-bold"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-              <span className="text-slate-300">-</span>
-              <input 
-                type="date" 
-                className="text-xs bg-transparent outline-none text-slate-900 dark:text-white font-bold"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+            <div className="min-w-[240px]">
+              <DateRangePicker 
+                startDate={startDate}
+                endDate={endDate}
+                onRangeChange={(start, end) => {
+                  setStartDate(start);
+                  setEndDate(end);
+                }}
+                placeholder="Filter by Date"
               />
             </div>
           </div>

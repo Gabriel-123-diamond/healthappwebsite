@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing field or value" }, { status: 400 });
     }
 
-    const allowedFields = ['username', 'phone', 'fullName'];
+    const allowedFields = ['username', 'phone', 'fullName', 'licenseNumber', 'email', 'idNumber'];
     if (!allowedFields.includes(field)) {
       return NextResponse.json({ error: "Invalid field" }, { status: 400 });
     }

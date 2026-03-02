@@ -15,6 +15,7 @@ export default function FeedSection() {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLoggedOut, setIsLoggedOut] = useState(true);
   const { t, locale } = useLanguage();
 
   const loadFeed = useCallback(async () => {
@@ -33,7 +34,7 @@ export default function FeedSection() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      // Only load feed if we have a user or if the feed service allows public access
+      setIsLoggedOut(!user);
       loadFeed();
     });
     return () => unsubscribe();
@@ -61,16 +62,16 @@ export default function FeedSection() {
       <div className="w-20 h-20 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center mx-auto mb-8">
         <AlertCircle className="w-10 h-10" />
       </div>
-      <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">Sync Interrupted</h3>
+      <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">{t.common.syncInterrupted}</h3>
       <p className="text-slate-500 dark:text-slate-400 mb-10 text-lg font-medium leading-relaxed">
-        We're having trouble connecting to the global health intelligence grid.
+        {t.common.syncInterruptedSubtitle}
       </p>
       <button 
         onClick={loadFeed}
         className="inline-flex items-center gap-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-xs transition-all hover:scale-[1.02] active:scale-95 shadow-xl shadow-slate-200 dark:shadow-none"
       >
         <RefreshCcw className="w-4 h-4" />
-        Retry Connection
+        {t.common.retryConnection}
       </button>
     </div>
   );
@@ -91,7 +92,7 @@ export default function FeedSection() {
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-blue-50/50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.3em] border border-blue-100/50 dark:border-blue-800/50 shadow-sm"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              Intelligence discovery
+              {t.common.intelligenceDiscovery}
             </motion.div>
             <h2 className="text-5xl sm:text-6xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">{t.feed.recommended}</h2>
             <p className="text-xl text-slate-500 dark:text-slate-400 font-medium max-w-xl leading-relaxed opacity-80">{t.feed.subtitle}</p>
@@ -112,7 +113,7 @@ export default function FeedSection() {
         {items.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 sm:gap-10">
             {items.map((item, index) => (
-              <FeedCard key={item.id} item={item} index={index} t={t} />
+              <FeedCard key={item.id} item={item} index={index} t={t} isBlurred={isLoggedOut} />
             ))}
           </div>
         ) : (
@@ -120,8 +121,8 @@ export default function FeedSection() {
              <div className="w-20 h-20 bg-white dark:bg-slate-800 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-sm">
                <RefreshCcw className="w-8 h-8 text-slate-200 animate-spin-slow" />
              </div>
-             <p className="text-slate-400 font-black uppercase tracking-[0.2em] text-xs">No active insights found</p>
-             <button onClick={loadFeed} className="mt-8 text-blue-600 font-black uppercase tracking-widest text-[10px] hover:underline decoration-2 underline-offset-8">Re-Sync Feed</button>
+             <p className="text-slate-400 font-black uppercase tracking-[0.2em] text-xs">{t.common.noActiveInsights}</p>
+             <button onClick={loadFeed} className="mt-8 text-blue-600 font-black uppercase tracking-widest text-[10px] hover:underline decoration-2 underline-offset-8">{t.common.reSyncFeed}</button>
           </div>
         )}
       </div>

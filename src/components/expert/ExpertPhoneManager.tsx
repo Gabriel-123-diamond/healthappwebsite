@@ -73,14 +73,14 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
       // 1. Check uniqueness in DB
       const isTaken = await userService.isPhoneTaken(fullNumber);
       if (isTaken) {
-        setError('This phone number is already verified by another account.');
+        setError('number in use already');
         setIsVerifying(false);
         return;
       }
 
       // 2. Check locally if already in the expert's list
       if (phones.some(p => p.code === newPhone.code && p.number.replace(/\s/g, '') === rawNumber)) {
-        setError('This number is already in your list.');
+        setError('number in use already');
         setIsVerifying(false);
         return;
       }
@@ -112,7 +112,10 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
   };
 
   const removePhone = (index: number) => {
-    if (index === 0 && primaryPhoneDisabled) return;
+    if (phones.length <= 1) {
+      setError('You must have at least one verified phone number.');
+      return;
+    }
     onChange(phones.filter((_, i) => i !== index));
   };
 
@@ -198,7 +201,7 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
                 />
                 
                 <div className="absolute right-2 md:right-4 flex items-center gap-2 sm:gap-3 shrink-0">
-                  {index === 0 && (
+                  {phone.isVerified && (
                     <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 bg-blue-600 rounded-full shadow-lg shadow-blue-200/50">
                        <Shield size={10} className="text-white" />
                        <span className="text-[7px] sm:text-[8px] font-black text-white uppercase tracking-tighter">Verified</span>

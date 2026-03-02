@@ -71,19 +71,19 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
         >
           <FormatChip 
             icon={<LayoutGrid className="w-3.5 h-3.5" />}
-            label="All Formats"
+            label={t('common.allFormats')}
             isActive={filterFormat === 'all'}
             onClick={() => setFilterFormat('all')}
           />
           <FormatChip 
             icon={<FileText className="w-3.5 h-3.5" />}
-            label="Articles"
+            label={t('common.articles')}
             isActive={filterFormat === 'article'}
             onClick={() => setFilterFormat('article')}
           />
           <FormatChip 
             icon={<Video className="w-3.5 h-3.5" />}
-            label="Videos"
+            label={t('common.videos')}
             isActive={filterFormat === 'video'}
             onClick={() => setFilterFormat('video')}
           />

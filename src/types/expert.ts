@@ -8,6 +8,9 @@ export interface Expert {
   specialty: string;
   verificationStatus: 'unverified' | 'pending' | 'verified' | 'rejected';
   
+  facilityAddress?: string;
+  facilityType?: string;
+
   // 1. Account Creation (Basic Info)
   country: string;
   state: string;

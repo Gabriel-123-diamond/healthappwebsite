@@ -7,6 +7,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useSavedContent } from '@/hooks/useSavedContent';
 import { EmptyState } from '@/components/common/EmptyState';
 import { SavedItemCard, SavedSearchCard } from '@/components/profile/SavedCards';
+import DateRangePicker from '@/components/common/DateRangePicker';
 
 export default function SavedPage() {
   const { t } = useLanguage();
@@ -81,20 +82,15 @@ export default function SavedPage() {
               <span className="text-xs font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">Sync</span>
             </button>
 
-            <div className="flex items-center gap-2 bg-white dark:bg-slate-950 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm h-[42px]">
-              <Calendar size={14} className="text-slate-400 ml-2" />
-              <input 
-                type="date" 
-                className="text-xs bg-transparent outline-none dark:text-white font-bold"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-              <span className="text-slate-300">-</span>
-              <input 
-                type="date" 
-                className="text-xs bg-transparent outline-none dark:text-white font-bold"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+            <div className="min-w-[240px]">
+              <DateRangePicker 
+                startDate={startDate}
+                endDate={endDate}
+                onRangeChange={(start, end) => {
+                  setStartDate(start);
+                  setEndDate(end);
+                }}
+                placeholder="Filter by Date"
               />
             </div>
           </div>

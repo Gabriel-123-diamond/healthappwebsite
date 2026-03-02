@@ -1,52 +1,35 @@
 import { db, auth } from '@/lib/firebase';
 import { 
-  collection, query, where, getDocs, addDoc, doc, setDoc, 
-  serverTimestamp, updateDoc, writeBatch, getDoc, orderBy, 
-  onSnapshot, QuerySnapshot, DocumentData, increment 
+  collection, query, where, doc, 
+  getDoc, onSnapshot, QuerySnapshot, DocumentData, getDocs 
 } from 'firebase/firestore';
 
-export const REWARD_POINTS = parseInt(process.env.NEXT_PUBLIC_REWARD_POINTS || '50', 10);
+// This constant is for UI display only. The actual point awarding happens securely on the server.
+export const REWARD_POINTS = parseInt(process.env.NEXT_PUBLIC_REWARD_POINTS || '150', 10);
 
 export const referralService = {
-  generateReferralCode: async (uid: string, username: string): Promise<string> => {
-    // Strip everything except letters and numbers for the code prefix
-    const cleanUsername = username.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    
-    const generateCode = () => {
-      let suffix = '';
-      for (let i = 0; i < 4; i++) {
-        suffix += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      return `${cleanUsername || 'REF'}-${suffix}`;
-    };
+  generateReferralCode: async (_uid: string, username: string): Promise<string> => {
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("Unauthorized");
 
-    let isUnique = false;
-    let code = '';
+      const token = await user.getIdToken();
+      const response = await fetch('/api/referral/generate', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username })
+      });
 
-    // Try up to 5 times to generate a unique code
-    for (let i = 0; i < 5; i++) {
-      code = generateCode();
-      const q = query(collection(db, 'referral_codes'), where('code', '==', code));
-      const snapshot = await getDocs(q);
-      if (snapshot.empty) {
-        isUnique = true;
-        break;
-      }
+      if (!response.ok) throw new Error('Failed to generate code');
+      const data = await response.json();
+      return data.code;
+    } catch (e) {
+      console.error('Error generating referral code:', e);
+      throw e;
     }
-
-    if (!isUnique) {
-      code = `REF-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
-    }
-
-    await setDoc(doc(db, 'referral_codes', uid), {
-      code,
-      ownerUid: uid,
-      ownerUsername: username,
-      createdAt: serverTimestamp(),
-    });
-    
-    return code;
   },
 
   getReferralLink: (code: string): string => {
@@ -67,6 +50,8 @@ export const referralService = {
     const normalizedCode = code.trim().toUpperCase();
     if (!normalizedCode) return null;
 
+    // Validation still happens via public query for performance, 
+    // but creation and modification are restricted.
     const q = query(collection(db, 'referral_codes'), where('code', '==', normalizedCode));
     const snapshot = await getDocs(q);
     
@@ -76,68 +61,50 @@ export const referralService = {
     return null;
   },
 
-  applyReferralCode: async (code: string, referrerUid: string, inviteeUid: string, inviteeEmail: string | null): Promise<void> => {
+  applyReferralCode: async (code: string, referrerUid: string, _inviteeUid: string, _inviteeEmail: string | null): Promise<void> => {
     try {
-      // Check if a referral already exists for this user
-      const q = query(collection(db, 'referrals'), where('inviteeUid', '==', inviteeUid));
-      const snapshot = await getDocs(q);
-      
-      if (!snapshot.empty) {
-        console.log('Referral already exists for this user, skipping.');
-        return;
-      }
+      const user = auth.currentUser;
+      if (!user) return;
 
-      await addDoc(collection(db, 'referrals'), {
-        referrerUid,
-        inviteeUid,
-        inviteeEmail,
-        code: code.trim().toUpperCase(),
-        status: 'pending',
-        createdAt: serverTimestamp(),
+      const token = await user.getIdToken();
+      const response = await fetch('/api/referral/apply', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code, referrerUid })
       });
+
+      if (!response.ok) throw new Error('Failed to apply referral');
     } catch (e) {
       console.error('Error applying referral code:', e);
     }
   },
 
-  completeReferral: async (inviteeUid: string): Promise<void> => {
+  completeReferral: async (_inviteeUid: string): Promise<void> => {
     try {
-      const q = query(
-        collection(db, 'referrals'), 
-        where('inviteeUid', '==', inviteeUid),
-        where('status', '==', 'pending')
-      );
-      const snapshot = await getDocs(q);
+      const currentUser = auth.currentUser;
+      if (!currentUser) return;
 
-      if (!snapshot.empty) {
-        const referralDoc = snapshot.docs[0];
-        const referrerUid = referralDoc.data().referrerUid;
+      const token = await currentUser.getIdToken();
+      const response = await fetch('/api/referral/complete', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
-        const batch = writeBatch(db);
-        
-        // Update referral status
-        batch.update(referralDoc.ref, {
-          status: 'completed',
-          completedAt: serverTimestamp(),
-        });
-
-        // Award points to referrer and invitee
-        // In a real app, these increments should happen via a transaction or Cloud Function
-        // to avoid concurrency issues, but for this prototype we use batch.
-        const referrerRef = doc(db, 'users', referrerUid);
-        const inviteeRef = doc(db, 'users', inviteeUid);
-
-        batch.set(referrerRef, { points: increment(REWARD_POINTS) }, { merge: true });
-        batch.set(inviteeRef, { points: increment(REWARD_POINTS) }, { merge: true });
-
-        await batch.commit();
+      if (!response.ok) {
+        throw new Error('Failed to complete referral securely');
       }
     } catch (e) {
       console.error('Error completing referral:', e);
     }
   },
 
-  getReferralTracker: (uid: string, callback: (snapshot: QuerySnapshot<DocumentData>) => void, onError?: (error: any) => void) => {
+  getReferralTracker: (uid: string, callback: (snapshot: QuerySnapshot<DocumentData>) => void, onError?: (error: unknown) => void) => {
     try {
       const q = query(
         collection(db, 'referrals'),
@@ -157,7 +124,7 @@ export const referralService = {
     }
   },
 
-  calculateReferralPoints: (referrals: any[]): number => {
+  calculateReferralPoints: (referrals: { status: string }[]): number => {
     return referrals.filter(r => r.status === 'completed').length * REWARD_POINTS;
   }
 };

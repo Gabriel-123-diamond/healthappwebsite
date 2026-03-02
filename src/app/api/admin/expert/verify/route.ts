@@ -47,11 +47,18 @@ export async function POST(req: NextRequest) {
 
     // 2. Update via Admin SDK
     const userRef = adminDb.collection("users").doc(expertId);
-    await userRef.update({
+    const updateData: any = {
       verificationStatus: status,
       verificationNotes: notes || "",
       updatedAt: new Date().toISOString(),
-    });
+    };
+
+    if (status === 'verified') {
+      updateData.tier = 'basic';
+      updateData.profileComplete = true;
+    }
+
+    await userRef.update(updateData);
 
     console.log(`[Admin Action] Expert ${expertId} set to ${status}`);
 

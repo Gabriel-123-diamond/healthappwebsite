@@ -103,8 +103,8 @@ const SearchSection: React.FC = () => {
                   ))}
                 </div>
               </div>
-              <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4 tracking-tighter leading-none">Synthesizing Intelligence</h2>
-              <p className="text-xl text-slate-500 dark:text-slate-400 font-medium">Analyzing peer-reviewed archives & traditional wisdom...</p>
+              <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4 tracking-tighter leading-none">{t('common.synthesizingIntelligence')}</h2>
+              <p className="text-xl text-slate-500 dark:text-slate-400 font-medium">{t('common.synthesizingSubtitle')}</p>
             </motion.div>
           ) : !hasResults ? (
             <motion.div
@@ -160,7 +160,7 @@ const SearchSection: React.FC = () => {
             
             {!hasResults && !isSearching && (
               <div className="flex flex-wrap justify-center gap-3 opacity-60">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2 py-2">Try searching:</span>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2 py-2">{t('common.trySearching')}</span>
                 {['Diabetes Management', 'Ashwagandha Benefits', 'Mental Wellness'].map(term => (
                   <button 
                     key={term}
@@ -185,7 +185,7 @@ const SearchSection: React.FC = () => {
             >
               <AlertCircle className="w-6 h-6 flex-shrink-0 mt-0.5" />
               <div className="space-y-1">
-                <p className="text-sm font-black uppercase tracking-widest leading-none">Security Intercepted</p>
+                <p className="text-sm font-black uppercase tracking-widest leading-none">{t('common.securityIntercepted')}</p>
                 <p className="text-sm font-medium leading-relaxed opacity-80">{error}</p>
               </div>
             </motion.div>

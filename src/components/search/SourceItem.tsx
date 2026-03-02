@@ -4,11 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, PlayCircle, FileText, ShieldCheck, Bookmark, BookmarkCheck } from 'lucide-react';
 import { bookmarkService, SavedItem } from '@/services/bookmarkService';
+import { RestrictedAccessModal } from '../RestrictedAccessModal';
 
 interface SourceItemProps {
   result: any;
   index: number;
   filterFormat?: string;
+  isBlurred?: boolean;
 }
 
 const getGradeColor = (grade?: string) => {
@@ -21,14 +23,21 @@ const getGradeColor = (grade?: string) => {
   }
 };
 
-export const SourceItem: React.FC<SourceItemProps> = ({ result, index, filterFormat }) => {
+export const SourceItem: React.FC<SourceItemProps> = ({ result, index, filterFormat, isBlurred = false }) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    bookmarkService.isBookmarked(result.id).then(setIsBookmarked);
-  }, [result.id]);
+    if (!isBlurred) {
+      bookmarkService.isBookmarked(result.id).then(setIsBookmarked);
+    }
+  }, [result.id, isBlurred]);
 
   const toggleBookmark = async (e: React.MouseEvent) => {
+    if (isBlurred) {
+      setShowModal(true);
+      return;
+    }
     e.preventDefault();
     e.stopPropagation();
     const savedItem: SavedItem = {
@@ -46,63 +55,79 @@ export const SourceItem: React.FC<SourceItemProps> = ({ result, index, filterFor
     setIsBookmarked(!isBookmarked);
   };
 
-  return (
-    <motion.a 
-      href={result.link}
-      target="_blank"
-      rel="noopener noreferrer"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: false }}
-      transition={{ duration: 0.4, delay: index * 0.05 }}
-      whileHover={{ y: -4 }}
-      className="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-[24px] border border-slate-100 dark:border-slate-800 hover:border-blue-500/30 transition-all group shadow-sm hover:shadow-xl hover:shadow-blue-500/5 no-underline flex items-start gap-5"
-    >
-      <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex-shrink-0 flex items-center justify-center transition-all duration-500 ${
-        result.format === 'video' 
-          ? 'bg-red-50 dark:bg-red-900/20 text-red-600 group-hover:bg-red-600 group-hover:text-white' 
-          : 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 group-hover:bg-blue-600 group-hover:text-white'
-      }`}>
-        {result.format === 'video' ? <PlayCircle size={24} /> : <FileText size={24} />}
-      </div>
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (isBlurred) {
+      e.preventDefault();
+      setShowModal(true);
+    }
+  };
 
-      <div className="flex-1 min-w-0">
-        <div className="flex justify-between items-start gap-4 mb-2">
-          <h4 className="font-black text-slate-900 dark:text-white text-base sm:text-lg leading-tight group-hover:text-blue-600 transition-colors truncate sm:whitespace-normal">
-            {result.title}
-          </h4>
-          <button 
-            onClick={toggleBookmark}
-            className={`p-2 rounded-xl transition-all active:scale-90 ${
-              isBookmarked 
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' 
-                : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-blue-600 hover:bg-white dark:hover:bg-slate-700 shadow-inner'
-            }`}
-          >
-            {isBookmarked ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
-          </button>
+  return (
+    <>
+      <motion.a 
+        href={isBlurred ? '#' : result.link}
+        target={isBlurred ? undefined : "_blank"}
+        rel={isBlurred ? undefined : "noopener noreferrer"}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false }}
+        transition={{ duration: 0.4, delay: index * 0.05 }}
+        whileHover={isBlurred ? {} : { y: -4 }}
+        onClick={handleCardClick}
+        className={`bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-[24px] border border-slate-100 dark:border-slate-800 transition-all group shadow-sm no-underline flex items-start gap-5 cursor-pointer ${
+          isBlurred ? 'blur-[8px] select-none opacity-50' : 'hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/5'
+        }`}
+      >
+        <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex-shrink-0 flex items-center justify-center transition-all duration-500 ${
+          result.format === 'video' 
+            ? 'bg-red-50 dark:bg-red-900/20 text-red-600 group-hover:bg-red-600 group-hover:text-white' 
+            : 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 group-hover:bg-blue-600 group-hover:text-white'
+        }`}>
+          {result.format === 'video' ? <PlayCircle size={24} /> : <FileText size={24} />}
         </div>
 
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2 font-medium leading-relaxed">
-          {result.summary}
-        </p>
+        <div className="flex-1 min-w-0">
+          <div className="flex justify-between items-start gap-4 mb-2">
+            <h4 className="font-black text-slate-900 dark:text-white text-base sm:text-lg leading-tight group-hover:text-blue-600 transition-colors truncate sm:whitespace-normal">
+              {result.title}
+            </h4>
+            {!isBlurred && (
+              <button 
+                onClick={toggleBookmark}
+                className={`p-2 rounded-xl transition-all active:scale-90 ${
+                  isBookmarked 
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' 
+                    : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-blue-600 hover:bg-white dark:hover:bg-slate-700 shadow-inner'
+                }`}
+              >
+                {isBookmarked ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
+              </button>
+            )}
+          </div>
 
-        <div className="flex items-center gap-3 flex-wrap">
-          {result.evidenceGrade && (
-            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 text-[9px] font-black uppercase tracking-[0.1em] ${getGradeColor(result.evidenceGrade)}`}>
-              <ShieldCheck size={12} strokeWidth={3} />
-              Verified Grade {result.evidenceGrade}
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2 font-medium leading-relaxed">
+            {result.summary}
+          </p>
+
+          <div className="flex items-center gap-3 flex-wrap">
+            {result.evidenceGrade && (
+              <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 text-[9px] font-black uppercase tracking-[0.1em] ${getGradeColor(result.evidenceGrade)}`}>
+                <ShieldCheck size={12} strokeWidth={3} />
+                Verified Grade {result.evidenceGrade}
+              </div>
+            )}
+            
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-slate-800 rounded-full border border-slate-100 dark:border-slate-700">
+              <span className={`w-1.5 h-1.5 rounded-full ${result.type === 'medical' ? 'bg-blue-500' : 'bg-emerald-500'}`} />
+              <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                {result.source}
+              </span>
             </div>
-          )}
-          
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-slate-800 rounded-full border border-slate-100 dark:border-slate-700">
-            <span className={`w-1.5 h-1.5 rounded-full ${result.type === 'medical' ? 'bg-blue-500' : 'bg-emerald-500'}`} />
-            <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-              {result.source}
-            </span>
           </div>
         </div>
-      </div>
-    </motion.a>
+      </motion.a>
+      
+      <RestrictedAccessModal isOpen={showModal} onClose={() => setShowModal(false)} />
+    </>
   );
 };

@@ -16,16 +16,16 @@ export default function ReferralCodeCard({ code, generating, onGenerate, onCopy,
   const isSpecialState = code === 'LOADING...' || code === 'NO CODE' || code === 'LOGIN REQUIRED' || code === 'ERROR' || code === '...';
 
   return (
-    <div className="bg-slate-50 p-8 rounded-[32px] border border-slate-200/60 mb-8 max-w-md mx-auto">
+    <div className="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-[32px] border border-slate-200/60 dark:border-slate-700/60 mb-8 max-w-md mx-auto transition-colors">
       <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-black mb-4">Your Unique Referral Code</p>
       <div className="flex items-center justify-center gap-6">
-        <span className="text-4xl font-mono font-black text-slate-900 tracking-widest">
+        <span className="text-4xl font-mono font-black text-slate-900 dark:text-white tracking-widest">
           {code}
         </span>
         {!isSpecialState && (
           <button 
             onClick={onCopy}
-            className="p-3 bg-white hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-2xl transition-all border border-slate-200 hover:border-blue-200 shadow-sm"
+            className="p-3 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-2xl transition-all border border-slate-200 dark:border-slate-700 hover:border-blue-200 dark:hover:border-blue-800 shadow-sm"
             title="Copy Code Only"
           >
             <Copy className="w-6 h-6" />
@@ -37,7 +37,7 @@ export default function ReferralCodeCard({ code, generating, onGenerate, onCopy,
         <div className="grid grid-cols-2 gap-3 mt-6">
           <button
             onClick={onCopyLink}
-            className="flex items-center justify-center gap-2 py-3 px-4 bg-white border border-slate-200 rounded-2xl text-xs font-bold text-slate-600 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all shadow-sm"
+            className="flex items-center justify-center gap-2 py-3 px-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all shadow-sm"
           >
             <LinkIcon className="w-4 h-4" />
             Copy Link
