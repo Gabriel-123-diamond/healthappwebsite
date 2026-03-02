@@ -7,6 +7,7 @@ import { ArrowLeft, Calendar, Clock, CheckCircle, AlertCircle } from 'lucide-rea
 import { Link } from '@/i18n/routing';
 import CustomDatePicker from '@/components/common/CustomDatePicker';
 import CustomAnalogTimePicker from '@/components/common/CustomAnalogTimePicker';
+import NiceModal from '@/components/common/NiceModal';
 
 export default function BookingPage({ params }: { params: Promise<{ expertId: string }> }) {
   const resolvedParams = React.use(params);
@@ -17,50 +18,90 @@ export default function BookingPage({ params }: { params: Promise<{ expertId: st
 
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    type: 'success' | 'warning' | 'info' | 'payment';
+    onConfirm?: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    type: 'info'
+  });
+
   const router = useRouter();
   
   const { bookAppointment, isLoading } = useBooking(expertId, expertName);
   const consultationFee = 2500; // Example fee in Naira or local currency
 
+  const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' | 'payment' = 'info', onConfirm?: () => void) => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      description,
+      type,
+      onConfirm
+    });
+  };
+
   const handleTimeClick = () => {
     if (!selectedDate) {
-      alert('Please select a date first.');
+      showAlert('Date Required', 'Please select an appointment date before choosing a time slot.', 'warning');
       return false;
     }
     return true;
   };
 
-  const handleBook = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedDate) {
-      alert('Please select an appointment date.');
-      return;
-    }
-    if (!selectedTime) {
-      alert('Please select an appointment time.');
-      return;
-    }
-
-    if (!confirm(`Confirm Booking: ₦${consultationFee.toLocaleString()} will be charged for your consultation with ${expertName}. Proceed?`)) {
-      return;
-    }
-
+  const executeBooking = async () => {
+    setModalConfig(prev => ({ ...prev, isOpen: false }));
     try {
       await bookAppointment(selectedDate, selectedTime);
-      alert(`Payment successful! Appointment requested with ${expertName} for ${selectedDate} at ${selectedTime}!`);
-      router.push('/appointments');
+      showAlert('Booking Successful', `Your appointment with ${expertName} has been requested for ${selectedDate} at ${selectedTime}.`, 'success');
+      setTimeout(() => router.push('/appointments'), 2000);
     } catch (error) {
       if (error instanceof Error && error.message === 'User not authenticated') {
-         alert('You must be logged in to book an appointment.');
-         router.push('/auth/signin');
+         showAlert('Authentication Required', 'You must be logged in to book an appointment.', 'info');
+         setTimeout(() => router.push('/auth/signin'), 2000);
       } else {
-         alert('Failed to book appointment. Please try again.');
+         showAlert('Booking Failed', 'We could not process your request. Please try again.', 'warning');
       }
     }
   };
 
+  const handleBook = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedDate) {
+      showAlert('Date Missing', 'Please select a valid date for your consultation.', 'warning');
+      return;
+    }
+    if (!selectedTime) {
+      showAlert('Time Missing', 'Please select a preferred time slot.', 'warning');
+      return;
+    }
+
+    showAlert(
+      'Confirm Consultation', 
+      `You are about to book a consultation with ${expertName}. A fee of ₦${consultationFee.toLocaleString()} will be charged to your account.`,
+      'payment',
+      executeBooking
+    );
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pt-32 sm:pt-40 pb-12 px-4 transition-colors duration-200">
+      <NiceModal 
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={modalConfig.onConfirm}
+        title={modalConfig.title}
+        description={modalConfig.description}
+        type={modalConfig.type}
+        confirmText={modalConfig.type === 'payment' ? "Pay & Confirm" : "Got it"}
+        isLoading={isLoading}
+      />
+
       <div className="max-w-xl mx-auto">
         <button 
           onClick={() => router.back()} 
