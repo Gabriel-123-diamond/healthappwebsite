@@ -16,11 +16,11 @@ export const SourceList: React.FC<SourceListProps> = ({ results, filterFormat, i
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-2">
         <div className="space-y-1">
-          <h3 className={`text-xl font-black text-slate-900 dark:text-white tracking-tight ${isLoggedOut ? 'blur-[4px] select-none' : ''}`}>
+          <h3 className={`text-xl font-black text-slate-900 dark:text-white tracking-tight ${isLoggedOut ? 'blur-[8px] select-none' : ''}`}>
             Evidence Documentation
           </h3>
           <div className="flex items-center gap-2">
-            <span className={`text-[10px] font-black uppercase tracking-widest text-slate-400 ${isLoggedOut ? 'blur-[2px] select-none' : ''}`}>
+            <span className={`text-[10px] font-black uppercase tracking-widest text-slate-400 ${isLoggedOut ? 'blur-[4px] select-none' : ''}`}>
               Verified Source Records ({results.length})
             </span>
           </div>

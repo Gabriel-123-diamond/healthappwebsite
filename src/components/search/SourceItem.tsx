@@ -30,11 +30,27 @@ export const SourceItem: React.FC<SourceItemProps> = ({ result, index, filterFor
 
   useEffect(() => {
     // Re-check bookmark status when auth state might have changed or result changes
-    if (auth.currentUser) {
-      bookmarkService.isBookmarked(result.id).then(setIsBookmarked);
-    } else {
-      setIsBookmarked(false);
-    }
+    const checkStatus = async () => {
+      if (auth.currentUser) {
+        const bookmarked = await bookmarkService.isBookmarked(result.id);
+        setIsBookmarked(bookmarked);
+      } else {
+        setIsBookmarked(false);
+      }
+    };
+    
+    checkStatus();
+    
+    // Also listen for auth changes to update state immediately
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        bookmarkService.isBookmarked(result.id).then(setIsBookmarked);
+      } else {
+        setIsBookmarked(false);
+      }
+    });
+    
+    return () => unsubscribe();
   }, [result.id]);
 
   const toggleBookmark = async (e: React.MouseEvent) => {

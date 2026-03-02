@@ -20,11 +20,26 @@ export const FeedCard: React.FC<FeedCardProps> = ({ item, index, t, isBlurred = 
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    if (auth.currentUser) {
-      bookmarkService.isBookmarked(item.id).then(setIsBookmarked);
-    } else {
-      setIsBookmarked(false);
-    }
+    const checkStatus = async () => {
+      if (auth.currentUser) {
+        const bookmarked = await bookmarkService.isBookmarked(item.id);
+        setIsBookmarked(bookmarked);
+      } else {
+        setIsBookmarked(false);
+      }
+    };
+    
+    checkStatus();
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        bookmarkService.isBookmarked(item.id).then(setIsBookmarked);
+      } else {
+        setIsBookmarked(false);
+      }
+    });
+    
+    return () => unsubscribe();
   }, [item.id]);
 
   const toggleBookmark = async (e: React.MouseEvent) => {
