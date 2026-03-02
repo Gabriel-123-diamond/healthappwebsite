@@ -86,7 +86,7 @@ export default function ProfileHeader({ user, userProfile, onEdit }: ProfileHead
               <button 
                 type="button"
                 onClick={onEdit}
-                className="px-6 py-3.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-slate-200 dark:shadow-none border border-transparent flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest"
+                className="px-6 py-3.5 bg-blue-600 text-white rounded-2xl hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-blue-500/25 dark:shadow-blue-900/40 border border-blue-500/20 flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest"
               >
                 <Settings className="w-4 h-4" />
                 {t('settings')}
