@@ -3,20 +3,12 @@
 import React, { useState } from 'react';
 import { useBooking } from '@/hooks/useBooking';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeft, Calendar, Clock, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import CustomDatePicker from '@/components/common/CustomDatePicker';
 import CustomAnalogTimePicker from '@/components/common/CustomAnalogTimePicker';
 
 export default function BookingPage({ params }: { params: Promise<{ expertId: string }> }) {
-  // Unwrap params using React.use() or await in async component
-  // Since this is a client component, we need to handle the promise or just expect the prop if it was server component.
-  // Actually, in Next.js 15 client components receive params directly as props? 
-  // Wait, params is a Promise in the latest Next.js versions for server components.
-  // For client components, we use `useParams` hook or `React.use(params)`.
-  // Let's use `use` for safety as per modern Next.js patterns if params is a promise.
-  
-  // However, simpler pattern for client component:
   const resolvedParams = React.use(params);
   const { expertId } = resolvedParams;
   
@@ -30,14 +22,26 @@ export default function BookingPage({ params }: { params: Promise<{ expertId: st
   const { bookAppointment, isLoading } = useBooking(expertId, expertName);
   const consultationFee = 2500; // Example fee in Naira or local currency
 
+  const handleTimeClick = () => {
+    if (!selectedDate) {
+      alert('Please select a date first.');
+      return false;
+    }
+    return true;
+  };
+
   const handleBook = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedDate || !selectedTime) {
-      alert('Please select both date and time.');
+    if (!selectedDate) {
+      alert('Please select an appointment date.');
+      return;
+    }
+    if (!selectedTime) {
+      alert('Please select an appointment time.');
       return;
     }
 
-    if (!confirm(`You will be charged ₦${consultationFee.toLocaleString()} for this consultation. Proceed to payment?`)) {
+    if (!confirm(`Confirm Booking: ₦${consultationFee.toLocaleString()} will be charged for your consultation with ${expertName}. Proceed?`)) {
       return;
     }
 
@@ -60,7 +64,7 @@ export default function BookingPage({ params }: { params: Promise<{ expertId: st
       <div className="max-w-xl mx-auto">
         <button 
           onClick={() => router.back()} 
-          className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 mb-6 transition-colors"
+          className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 mb-6 transition-colors font-bold"
         >
           <ArrowLeft className="w-5 h-5" /> Back
         </button>
@@ -68,11 +72,16 @@ export default function BookingPage({ params }: { params: Promise<{ expertId: st
         <div className="bg-white dark:bg-slate-800 rounded-[32px] shadow-xl overflow-hidden transition-colors duration-200 border border-slate-100 dark:border-slate-700">
           <div className="bg-blue-600 p-10 text-white relative overflow-hidden">
             <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
+                <CheckCircle size={12} />
+                Secure Booking
+              </div>
               <h1 className="text-3xl font-black mb-2 tracking-tight">Book Appointment</h1>
-              <p className="text-blue-100 font-medium">Schedule a consultation with {expertName}</p>
+              <p className="text-blue-100 font-medium opacity-90">Schedule a consultation with {expertName}</p>
             </div>
             {/* Background Decor */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-400/20 rounded-full blur-2xl -ml-8 -mb-8" />
           </div>
 
           <form onSubmit={handleBook} className="p-10 space-y-8">
@@ -86,28 +95,48 @@ export default function BookingPage({ params }: { params: Promise<{ expertId: st
                 </label>
                 <CustomDatePicker 
                   value={selectedDate}
-                  onChange={(val) => setSelectedDate(val)}
+                  onChange={(val) => {
+                    setSelectedDate(val);
+                    if (selectedTime) setSelectedTime(''); // Reset time when date changes
+                  }}
                   placeholder="Select Appointment Date"
                   minDate={new Date()}
                 />
               </div>
 
-              <div>
+              <div 
+                onClickCapture={(e) => {
+                  if (!handleTimeClick()) {
+                    e.stopPropagation();
+                  }
+                }}
+              >
                 <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-3">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-blue-600" />
                     Select Time
                   </div>
                 </label>
-                <CustomAnalogTimePicker 
-                  value={selectedTime}
-                  onChange={(val) => setSelectedTime(val)}
-                  placeholder="Select Appointment Time"
-                />
+                <div className={!selectedDate ? 'opacity-50 grayscale' : ''}>
+                  <CustomAnalogTimePicker 
+                    value={selectedTime}
+                    onChange={(val) => {
+                      if (handleTimeClick()) {
+                        setSelectedTime(val);
+                      }
+                    }}
+                    placeholder={selectedDate ? "Select Appointment Time" : "Select Date First"}
+                  />
+                </div>
+                {!selectedDate && (
+                  <p className="mt-2 text-[9px] font-bold text-slate-400 flex items-center gap-1 uppercase tracking-wider">
+                    <AlertCircle size={10} /> Date selection required to unlock time slots
+                  </p>
+                )}
               </div>
             </div>
 
-            <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-4">
+            <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 space-y-4 shadow-inner">
                <div className="flex justify-between items-center text-sm">
                  <span className="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Consultation Fee</span>
                  <span className="text-slate-900 dark:text-white font-black">₦{consultationFee.toLocaleString()}</span>
