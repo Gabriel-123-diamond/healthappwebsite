@@ -5,7 +5,7 @@ import { useBooking } from '@/hooks/useBooking';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Calendar, Clock, CheckCircle, AlertCircle, ShieldAlert, Loader2 } from 'lucide-react';
 import CustomDatePicker from '@/components/common/CustomDatePicker';
-import CustomAnalogTimePicker from '@/components/common/CustomAnalogTimePicker';
+import CustomTimePicker from '@/components/common/CustomTimePicker';
 import NiceModal from '@/components/common/NiceModal';
 import { bookingSessionService, BookingSession } from '@/services/bookingSessionService';
 
@@ -206,7 +206,7 @@ export default function BookingPage({ params }: { params: Promise<{ expertId: st
                   </div>
                 </label>
                 <div className={!selectedDate ? 'opacity-50 grayscale' : ''}>
-                  <CustomAnalogTimePicker 
+                  <CustomTimePicker 
                     value={selectedTime}
                     onChange={(val) => {
                       if (handleTimeClick()) {
