@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Shield, HelpCircle, Trash2, LogOut, Users as UsersIcon, Download, Loader2, Code, LayoutDashboard, Sparkles, ChevronRight } from 'lucide-react';
+import { Shield, HelpCircle, Trash2, LogOut, Users as UsersIcon, Download, Loader2, Code, LayoutDashboard, Sparkles, ChevronRight, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from '@/i18n/routing';
 import { deleteAccount } from '@/services/dataService';
@@ -127,6 +127,17 @@ export default function ProfileMenu({ userProfile }: ProfileMenuProps) {
             <ChevronRight size={14} className="opacity-30" />
           </Link>
         )}
+
+        <Link 
+          href={isExpert ? "/expert/appointments" : "/appointments"} 
+          className="flex items-center gap-3 p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-all text-slate-700 dark:text-slate-300"
+        >
+          <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl text-indigo-600 dark:text-indigo-400">
+            <Calendar size={16} />
+          </div>
+          <span className="font-bold text-xs uppercase tracking-widest flex-1">Appointments</span>
+          <ChevronRight size={14} className="opacity-30" />
+        </Link>
         
         <div className="h-px bg-slate-50 dark:bg-white/5 my-2 mx-2" />
 

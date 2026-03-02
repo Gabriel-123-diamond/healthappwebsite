@@ -6,6 +6,9 @@ import { LogOut, User as UserIcon, Loader2, Sun, Moon, Globe, Check } from 'luci
 import { User, signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { Theme } from '@/context/ThemeContext';
+import { userService } from '@/services/userService';
+import { isExpertRole, UserProfile } from '@/types/user';
+import { Calendar } from 'lucide-react';
 
 interface AuthActionsProps {
   user: User | null;
@@ -21,6 +24,15 @@ interface AuthActionsProps {
 export default function AuthActions({ user, loading, locale, t, setTheme, resolvedTheme, mounted }: AuthActionsProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const [userProfile, setUserProfile] = React.useState<UserProfile | null>(null);
+
+  React.useEffect(() => {
+    if (user && user.uid) {
+      userService.getUserProfile(user.uid).then(setUserProfile);
+    } else {
+      setUserProfile(null);
+    }
+  }, [user]);
 
   const handleLocaleChange = (newLocale: string) => {
     localStorage.setItem('language', newLocale);
@@ -57,6 +69,16 @@ export default function AuthActions({ user, loading, locale, t, setTheme, resolv
         <Loader2 className="w-4 h-4 xl:w-5 xl:h-5 animate-spin text-slate-400" />
       ) : user ? (
         <div className="flex items-center gap-2 xl:gap-4">
+          <Link 
+            href={userProfile && isExpertRole(userProfile.role) ? "/expert/appointments" : "/appointments"} 
+            className="flex items-center gap-1.5 xl:gap-2 text-xs xl:text-sm font-bold text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-all"
+          >
+            <Calendar className="w-4 h-4" />
+            <span className="hidden 2xl:inline">Appointments</span>
+          </Link>
+
+          <div className="h-4 w-px bg-slate-200 dark:bg-slate-800 mx-1" />
+
           <Link href="/profile" className="flex items-center gap-1.5 xl:gap-2 text-xs xl:text-sm font-medium text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400">
             <div className="w-7 h-7 xl:w-8 xl:h-8 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center text-blue-700 dark:text-blue-400 font-bold">
               {user.email?.[0].toUpperCase() || <UserIcon className="w-3.5 h-3.5 xl:w-4 xl:h-4" />}

@@ -2,12 +2,14 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Moon, Sun, LogIn, UserPlus, FileText, ChevronRight, User, Sparkles, Activity, LogOut, Globe, Check } from 'lucide-react';
+import { X, Moon, Sun, LogIn, UserPlus, FileText, ChevronRight, User, Sparkles, Activity, LogOut, Globe, Check, Calendar } from 'lucide-react';
 import { Link, useRouter, usePathname } from '@/i18n/routing';
 import { User as AuthUser, signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { NAVIGATION_LINKS } from '@/config/navigation';
 import { Variants } from 'framer-motion';
+import { userService } from '@/services/userService';
+import { isExpertRole, UserProfile } from '@/types/user';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -63,6 +65,15 @@ export default function MobileMenu({
   const router = useRouter();
   const pathname = usePathname();
   const [showLanguages, setShowLanguages] = React.useState(false);
+  const [userProfile, setUserProfile] = React.useState<UserProfile | null>(null);
+
+  React.useEffect(() => {
+    if (user && user.uid) {
+      userService.getUserProfile(user.uid).then(setUserProfile);
+    } else {
+      setUserProfile(null);
+    }
+  }, [user]);
 
   const handleSignOut = async () => {
     try {
@@ -212,11 +223,15 @@ export default function MobileMenu({
                   </Link>
                 </motion.div>
                 <motion.div variants={itemVariants}>
-                  <Link href="/about" onClick={onClose} className="flex flex-col gap-3 p-5 bg-slate-50 dark:bg-white/[0.02] rounded-[32px] border border-slate-100 dark:border-white/5 transition-all hover:border-blue-500/30 group">
+                  <Link 
+                    href={userProfile && isExpertRole(userProfile.role) ? "/expert/appointments" : "/appointments"} 
+                    onClick={onClose} 
+                    className="flex flex-col gap-3 p-5 bg-slate-50 dark:bg-white/[0.02] rounded-[32px] border border-slate-100 dark:border-white/5 transition-all hover:border-blue-500/30 group"
+                  >
                     <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-indigo-600 shadow-sm group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                      <Sparkles size={20} />
+                      <Calendar size={20} />
                     </div>
-                    <span className="font-bold text-slate-900 dark:text-white text-sm">About</span>
+                    <span className="font-bold text-slate-900 dark:text-white text-sm">Appointments</span>
                   </Link>
                 </motion.div>
               </div>
