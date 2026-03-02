@@ -116,14 +116,12 @@ export const FeedCard: React.FC<FeedCardProps> = ({ item, index, t, isBlurred = 
                 )}
               </div>
 
-              {!isBlurred && (
-                <button 
-                  onClick={toggleBookmark}
-                  className={`w-12 h-12 rounded-2xl ${isBookmarked ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/30' : 'bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 hover:bg-white'} backdrop-blur-md flex items-center justify-center shadow-lg transition-all active:scale-90`}
-                >
-                  {isBookmarked ? <BookmarkCheck className="w-6 h-6" /> : <Bookmark className="w-6 h-6" />}
-                </button>
-              )}
+              <button 
+                onClick={toggleBookmark}
+                className={`w-12 h-12 rounded-2xl relative z-20 ${isBookmarked ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/30' : 'bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 hover:bg-white'} backdrop-blur-md flex items-center justify-center shadow-lg transition-all active:scale-90`}
+              >
+                {isBookmarked ? <BookmarkCheck className="w-6 h-6" /> : <Bookmark className="w-6 h-6" />}
+              </button>
             </div>
 
             {/* Content Type Badge */}

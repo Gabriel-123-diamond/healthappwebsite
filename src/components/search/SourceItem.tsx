@@ -91,18 +91,16 @@ export const SourceItem: React.FC<SourceItemProps> = ({ result, index, filterFor
             <h4 className="font-black text-slate-900 dark:text-white text-base sm:text-lg leading-tight group-hover:text-blue-600 transition-colors truncate sm:whitespace-normal">
               {result.title}
             </h4>
-            {!isBlurred && (
-              <button 
-                onClick={toggleBookmark}
-                className={`p-2 rounded-xl transition-all active:scale-90 ${
-                  isBookmarked 
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' 
-                    : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-blue-600 hover:bg-white dark:hover:bg-slate-700 shadow-inner'
-                }`}
-              >
-                {isBookmarked ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
-              </button>
-            )}
+            <button 
+              onClick={toggleBookmark}
+              className={`p-2 rounded-xl transition-all active:scale-90 relative z-30 ${
+                isBookmarked 
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' 
+                  : 'bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-blue-600 hover:bg-white dark:hover:bg-slate-700 shadow-inner'
+              }`}
+            >
+              {isBookmarked ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
+            </button>
           </div>
 
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2 font-medium leading-relaxed">
