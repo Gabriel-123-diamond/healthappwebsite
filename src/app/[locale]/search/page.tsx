@@ -61,7 +61,7 @@ function SearchContent() {
       };
       if (!checkCache()) handleSearch(initialQuery);
     }
-  }, [initialQuery, initialMode]);
+  }, [initialQuery, initialMode, isLoggedOut]);
 
   const handleSearch = async (searchQuery: string) => {
     setLoading(true);
@@ -132,7 +132,7 @@ function SearchContent() {
             <div className="space-y-12">
               <div className="bg-white dark:bg-slate-900 rounded-[48px] shadow-3xl shadow-blue-900/5 border border-slate-100 dark:border-slate-800 overflow-hidden">
                 <SearchMetadata response={results} />
-                <AiSummarySection answer={results.answer} />
+                <AiSummarySection answer={results.answer} isBlurred={false} />
               </div>
 
               {isLoggedOut && (
@@ -169,7 +169,7 @@ function SearchContent() {
 
               {(activeTab === 'all' || activeTab === 'experts') && (
                 <div className="space-y-8">
-                  <VerifiedExperts experts={filteredExperts} total={filteredExperts.length} query={query} isLoggedOut={isLoggedOut} />
+                  <VerifiedExperts experts={filteredExperts} total={filteredExperts.length} query={query} isLoggedOut={false} />
                 </div>
               )}
 

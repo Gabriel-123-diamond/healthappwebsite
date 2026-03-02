@@ -41,6 +41,14 @@ const containerVariants: Variants = {
 const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching, filterFormat = 'all', query, mode = 'both' }) => {
   const [isSaved, setIsSaved] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsLoggedOut(!user);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (query && mode && auth.currentUser) {
@@ -110,7 +118,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching, fi
 
               {response.reviews && <ExpertReviewBanner reviews={response.reviews} />}
 
-              <AiSummarySection answer={response.answer} />
+              <AiSummarySection answer={response.answer} isBlurred={false} />
 
               {response.directoryMatches && response.directoryMatches.length > 0 && (
                 <div className="pt-4">
@@ -118,13 +126,14 @@ const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching, fi
                     experts={response.directoryMatches} 
                     total={response.totalDirectoryMatches || response.directoryMatches.length} 
                     query={query} 
+                    isLoggedOut={false}
                   />
                 </div>
               )}
 
-              <SourceList results={filteredResults} filterFormat={filterFormat} />
+              <SourceList results={filteredResults} filterFormat={filterFormat} isLoggedOut={isLoggedOut} />
 
-              {query && (
+              {!isLoggedOut && query && (
                 <div className="pt-8 border-t border-slate-50 dark:border-slate-800">
                   <SearchFeedback query={query} />
                 </div>

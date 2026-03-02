@@ -34,7 +34,7 @@ export const VerifiedExperts = ({ experts, total, query, isLoggedOut = false }: 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {experts.slice(0, 4).map((expert, idx) => {
             const content = (
-              <div className="flex items-start gap-4">
+              <div className={`flex items-start gap-4 ${isLoggedOut ? 'blur-[8px] select-none pointer-events-none' : ''}`}>
                 <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-sm group-hover:shadow-md transition-all relative">
                   <Users className="w-6 h-6 text-blue-600" />
                 </div>

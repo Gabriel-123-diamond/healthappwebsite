@@ -40,9 +40,8 @@ const SearchSection: React.FC = () => {
   };
 
   useEffect(() => {
-    if (error === "User must be authenticated") {
-      router.push('/auth/signin');
-    }
+    // We now allow unauthenticated searches (showing blurred results)
+    // so we don't redirect to sign-in here anymore.
   }, [error, router]);
 
   const hasResults = !!aiResponse;
