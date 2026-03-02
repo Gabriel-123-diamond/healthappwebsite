@@ -17,6 +17,12 @@ export const de: typeof en = {
     learn: 'Lernen',
     about: 'Über uns',
     viewAll: 'Alle anzeigen',
+    syncInterrupted: 'Sync Interrupted',
+    syncInterruptedSubtitle: "We're having trouble connecting to the global health intelligence grid.",
+    retryConnection: 'Retry Connection',
+    intelligenceDiscovery: 'Intelligence discovery',
+    noActiveInsights: 'No active insights found',
+    reSyncFeed: 'Re-Sync Feed',
   },
   search: {
     medical: 'Medizinische Wissenschaft',

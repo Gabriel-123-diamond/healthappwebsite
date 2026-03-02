@@ -17,6 +17,12 @@ export const ar: typeof en = {
     learn: "تعلم",
     about: "حول",
     viewAll: "عرض الكل",
+    syncInterrupted: 'Sync Interrupted',
+    syncInterruptedSubtitle: "We're having trouble connecting to the global health intelligence grid.",
+    retryConnection: 'Retry Connection',
+    intelligenceDiscovery: 'Intelligence discovery',
+    noActiveInsights: 'No active insights found',
+    reSyncFeed: 'Re-Sync Feed',
   },
   search: {
     medical: 'العلوم الطبية',

@@ -1,4 +1,6 @@
-export const es = {
+import { en } from './en';
+
+export const es: typeof en = {
   common: {
     searchPlaceholder: 'Síntomas, hierbas o enfermedades...',
     search: 'Buscar',
@@ -15,6 +17,12 @@ export const es = {
     learn: 'Aprender',
     about: 'Acerca de',
     viewAll: 'Ver Todo',
+    syncInterrupted: 'Sincronización Interrumpida',
+    syncInterruptedSubtitle: "Estamos teniendo problemas para conectarnos a la red global de inteligencia de salud.",
+    retryConnection: 'Reintentar Conexión',
+    intelligenceDiscovery: 'Descubrimiento de inteligencia',
+    noActiveInsights: 'No se encontraron ideas activas',
+    reSyncFeed: 'Resincronizar Feed',
   },
   search: {
     medical: 'Ciencia Médica',
