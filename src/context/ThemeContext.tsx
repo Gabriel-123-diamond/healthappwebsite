@@ -13,33 +13,47 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('system');
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('theme') as Theme;
+      return saved || 'system';
+    }
+    return 'system';
+  });
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    // Load from local storage
-    const saved = localStorage.getItem('theme') as Theme;
-    if (saved) setTheme(saved);
-  }, []);
-
-  useEffect(() => {
     const root = window.document.documentElement;
-    let targetTheme = theme;
+    
+    const applyTheme = (currentTheme: Theme) => {
+      let targetTheme: 'light' | 'dark';
+      
+      if (currentTheme === 'system') {
+        targetTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      } else {
+        targetTheme = currentTheme as 'light' | 'dark';
+      }
 
+      if (targetTheme === 'dark') {
+        root.classList.add('dark');
+        setResolvedTheme('dark');
+      } else {
+        root.classList.remove('dark');
+        setResolvedTheme('light');
+      }
+      
+      localStorage.setItem('theme', currentTheme);
+    };
+
+    applyTheme(theme);
+
+    // Listen for system theme changes if in system mode
     if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      targetTheme = systemTheme;
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = () => applyTheme('system');
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
     }
-
-    if (targetTheme === 'dark') {
-      root.classList.add('dark');
-      setResolvedTheme('dark');
-    } else {
-      root.classList.remove('dark');
-      setResolvedTheme('light');
-    }
-
-    localStorage.setItem('theme', theme);
   }, [theme]);
 
   return (
