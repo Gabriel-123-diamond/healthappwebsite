@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, PlayCircle, FileText, ShieldCheck, Bookmark, BookmarkCheck } from 'lucide-react';
 import { bookmarkService, SavedItem } from '@/services/bookmarkService';
 import { RestrictedAccessModal } from '../RestrictedAccessModal';
+import { auth } from '@/lib/firebase';
 
 interface SourceItemProps {
   result: any;
@@ -28,18 +29,23 @@ export const SourceItem: React.FC<SourceItemProps> = ({ result, index, filterFor
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    if (!isBlurred) {
+    // Re-check bookmark status when auth state might have changed or result changes
+    if (auth.currentUser) {
       bookmarkService.isBookmarked(result.id).then(setIsBookmarked);
+    } else {
+      setIsBookmarked(false);
     }
-  }, [result.id, isBlurred]);
+  }, [result.id]);
 
   const toggleBookmark = async (e: React.MouseEvent) => {
-    if (isBlurred) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!auth.currentUser) {
       setShowModal(true);
       return;
     }
-    e.preventDefault();
-    e.stopPropagation();
+
     const savedItem: SavedItem = {
       id: result.id,
       title: result.title,
@@ -56,7 +62,7 @@ export const SourceItem: React.FC<SourceItemProps> = ({ result, index, filterFor
   };
 
   const handleCardClick = (e: React.MouseEvent) => {
-    if (isBlurred) {
+    if (!auth.currentUser) {
       e.preventDefault();
       setShowModal(true);
     }
@@ -65,14 +71,14 @@ export const SourceItem: React.FC<SourceItemProps> = ({ result, index, filterFor
   return (
     <>
       <motion.a 
-        href={isBlurred ? '#' : result.link}
-        target={isBlurred ? undefined : "_blank"}
-        rel={isBlurred ? undefined : "noopener noreferrer"}
+        href={!auth.currentUser ? '#' : result.link}
+        target={!auth.currentUser ? undefined : "_blank"}
+        rel={!auth.currentUser ? undefined : "noopener noreferrer"}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false }}
         transition={{ duration: 0.4, delay: index * 0.05 }}
-        whileHover={isBlurred ? {} : { y: -4 }}
+        whileHover={!auth.currentUser ? {} : { y: -4 }}
         onClick={handleCardClick}
         className={`bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-[24px] border border-slate-100 dark:border-slate-800 transition-all group shadow-sm no-underline flex items-start gap-5 cursor-pointer ${
           isBlurred ? 'blur-[8px] select-none opacity-50' : 'hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/5'

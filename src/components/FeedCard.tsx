@@ -6,6 +6,7 @@ import { PlayCircle, FileText, CheckCircle, ExternalLink, ShieldCheck, Bookmark,
 import { FeedItem } from '@/services/feedService';
 import { bookmarkService, SavedItem } from '@/services/bookmarkService';
 import { RestrictedAccessModal } from './RestrictedAccessModal';
+import { auth } from '@/lib/firebase';
 
 interface FeedCardProps {
   item: FeedItem;
@@ -19,18 +20,22 @@ export const FeedCard: React.FC<FeedCardProps> = ({ item, index, t, isBlurred = 
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    if (!isBlurred) {
+    if (auth.currentUser) {
       bookmarkService.isBookmarked(item.id).then(setIsBookmarked);
+    } else {
+      setIsBookmarked(false);
     }
-  }, [item.id, isBlurred]);
+  }, [item.id]);
 
   const toggleBookmark = async (e: React.MouseEvent) => {
-    if (isBlurred) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!auth.currentUser) {
       setShowModal(true);
       return;
     }
-    e.preventDefault();
-    e.stopPropagation();
+
     const savedItem: SavedItem = {
       id: item.id,
       title: item.title,
@@ -48,7 +53,7 @@ export const FeedCard: React.FC<FeedCardProps> = ({ item, index, t, isBlurred = 
   };
 
   const handleCardClick = () => {
-    if (isBlurred) {
+    if (!auth.currentUser) {
       setShowModal(true);
     }
   };
@@ -135,7 +140,7 @@ export const FeedCard: React.FC<FeedCardProps> = ({ item, index, t, isBlurred = 
 
           <div className="p-8 flex-1 flex flex-col">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 flex items-center justify-center text-xs font-black text-blue-600 shadow-inner">
+              <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-xs font-black text-blue-600 shadow-inner">
                 {item.source.charAt(0)}
               </div>
               <div className="flex flex-col">
@@ -170,22 +175,22 @@ export const FeedCard: React.FC<FeedCardProps> = ({ item, index, t, isBlurred = 
               <div className="flex gap-2">
                 <button 
                   onClick={(e) => {
-                    if (isBlurred) {
-                      e.stopPropagation();
+                    e.stopPropagation();
+                    if (!auth.currentUser) {
                       setShowModal(true);
                     }
                   }}
-                  className={`p-3 text-slate-400 rounded-2xl transition-all active:scale-90 ${!isBlurred ? 'hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20' : ''}`}
+                  className={`p-3 text-slate-400 rounded-2xl transition-all active:scale-90 relative z-20 ${!isBlurred ? 'hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20' : ''}`}
                 >
                   <Share2 className="w-5 h-5" />
                 </button>
                 <a 
-                  href={isBlurred ? '#' : item.link} 
-                  target={isBlurred ? undefined : "_blank"} 
-                  rel={isBlurred ? undefined : "noopener noreferrer"} 
-                  className={`p-3 text-slate-400 rounded-2xl transition-all active:scale-90 ${!isBlurred ? 'hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20' : ''}`}
+                  href={!auth.currentUser ? '#' : item.link} 
+                  target={!auth.currentUser ? undefined : "_blank"} 
+                  rel={!auth.currentUser ? undefined : "noopener noreferrer"} 
+                  className={`p-3 text-slate-400 rounded-2xl transition-all active:scale-90 relative z-20 ${!isBlurred ? 'hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20' : ''}`}
                   onClick={(e) => {
-                    if (isBlurred) {
+                    if (!auth.currentUser) {
                       e.preventDefault();
                       e.stopPropagation();
                       setShowModal(true);

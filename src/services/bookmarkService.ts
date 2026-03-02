@@ -8,6 +8,7 @@ import {
   writeBatch,
   doc
 } from "firebase/firestore";
+import { auth } from "@/lib/firebase";
 import { getUserSubcollection, getUserSubdoc } from "@/lib/firestoreUtils";
 import { storageUtils } from "@/lib/storageUtils";
 import { FIRESTORE_COLLECTIONS, STORAGE_KEYS } from "@/lib/constants";
@@ -34,7 +35,12 @@ export interface SavedSearch {
 }
 
 export const bookmarkService = {
+  isSignedIn(): boolean {
+    return !!auth.currentUser;
+  },
+
   async clearAllBookmarks(): Promise<void> {
+    if (!this.isSignedIn()) return;
     storageUtils.set(STORAGE_KEYS.BOOKMARKS, []);
     const ref = getUserSubcollection(FIRESTORE_COLLECTIONS.BOOKMARKS);
     if (!ref) return;
@@ -45,6 +51,7 @@ export const bookmarkService = {
   },
 
   async clearAllSavedSearches(): Promise<void> {
+    if (!this.isSignedIn()) return;
     storageUtils.set(STORAGE_KEYS.SAVED_SEARCHES, []);
     const ref = getUserSubcollection(FIRESTORE_COLLECTIONS.SAVED_SEARCHES);
     if (!ref) return;
@@ -55,6 +62,7 @@ export const bookmarkService = {
   },
 
   async saveSearchResponse(queryText: string, mode: string, response: any): Promise<void> {
+    if (!this.isSignedIn()) return;
     const searchId = `${queryText.toLowerCase()}_${mode}`;
     const searchData: SavedSearch = {
       id: searchId,
@@ -71,47 +79,56 @@ export const bookmarkService = {
   },
 
   async removeSavedSearch(searchId: string): Promise<void> {
+    if (!this.isSignedIn()) return;
     storageUtils.removeFromList(STORAGE_KEYS.SAVED_SEARCHES, searchId);
     const searchRef = getUserSubdoc(FIRESTORE_COLLECTIONS.SAVED_SEARCHES, searchId);
     if (searchRef) await deleteDoc(searchRef);
   },
 
   async isSearchSaved(queryText: string, mode: string): Promise<boolean> {
+    if (!this.isSignedIn()) return false;
     const searchId = `${queryText.toLowerCase()}_${mode}`;
     return !!storageUtils.get<SavedSearch[]>(STORAGE_KEYS.SAVED_SEARCHES)?.find(s => s.id === searchId);
   },
 
   async getSavedSearches(): Promise<SavedSearch[]> {
+    if (!this.isSignedIn()) return [];
     return storageUtils.get<SavedSearch[]>(STORAGE_KEYS.SAVED_SEARCHES) || [];
   },
 
   async toggleBookmark(item: SavedItem): Promise<void> {
+    if (!this.isSignedIn()) return;
     const isBookmarked = await this.isBookmarked(item.id);
     if (isBookmarked) await this.removeBookmark(item.id);
     else await this.addBookmark(item);
   },
 
   async addBookmark(item: SavedItem): Promise<void> {
+    if (!this.isSignedIn()) return;
     storageUtils.updateList(STORAGE_KEYS.BOOKMARKS, item);
     const bookmarkRef = getUserSubdoc(FIRESTORE_COLLECTIONS.BOOKMARKS, item.id);
     if (bookmarkRef) await setDoc(bookmarkRef, { ...item, timestamp: serverTimestamp() });
   },
 
   async removeBookmark(id: string): Promise<void> {
+    if (!this.isSignedIn()) return;
     storageUtils.removeFromList(STORAGE_KEYS.BOOKMARKS, id);
     const bookmarkRef = getUserSubdoc(FIRESTORE_COLLECTIONS.BOOKMARKS, id);
     if (bookmarkRef) await deleteDoc(bookmarkRef);
   },
 
   async isBookmarked(id: string): Promise<boolean> {
+    if (!this.isSignedIn()) return false;
     return !!storageUtils.get<SavedItem[]>(STORAGE_KEYS.BOOKMARKS)?.find(b => b.id === id);
   },
 
   async getBookmarkedItems(): Promise<SavedItem[]> {
+    if (!this.isSignedIn()) return [];
     return storageUtils.get<SavedItem[]>(STORAGE_KEYS.BOOKMARKS) || [];
   },
 
   async syncBookmarks(): Promise<void> {
+    if (!this.isSignedIn()) return;
     const bookmarksRef = getUserSubcollection(FIRESTORE_COLLECTIONS.BOOKMARKS);
     const searchesRef = getUserSubcollection(FIRESTORE_COLLECTIONS.SAVED_SEARCHES);
     if (!bookmarksRef || !searchesRef) return;
