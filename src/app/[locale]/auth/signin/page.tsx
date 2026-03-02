@@ -113,7 +113,7 @@ export default function SignInPage() {
             <div className="space-y-2">
               <div className="flex justify-between items-center px-1">
                 <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">{t('passwordLabel')}</label>
-                <Link href="/auth/forgot-password" size="sm" className="text-[9px] font-black uppercase text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors tracking-widest">
+                <Link href="/auth/forgot-password" className="text-[9px] font-black uppercase text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors tracking-widest">
                   Recover Credentials
                 </Link>
               </div>
