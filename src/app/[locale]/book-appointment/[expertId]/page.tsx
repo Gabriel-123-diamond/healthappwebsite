@@ -87,6 +87,7 @@ export default function BookingPage({ params }: { params: Promise<{ expertId: st
                   value={selectedDate}
                   onChange={(val) => setSelectedDate(val)}
                   placeholder="Select Appointment Date"
+                  minDate={new Date()}
                 />
               </div>
 

@@ -73,7 +73,7 @@ export default function CustomDatePicker({
   ];
 
   const isDateDisabled = (day: Date) => {
-    if (minDate && day < startOfMonth(minDate)) return true;
+    if (minDate && day < minDate && !isSameDay(day, minDate)) return true;
     if (maxDate && day > maxDate) return true;
     return false;
   };
