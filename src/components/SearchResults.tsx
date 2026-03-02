@@ -118,7 +118,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ response, isSearching, fi
 
               {response.reviews && <ExpertReviewBanner reviews={response.reviews} />}
 
-              <AiSummarySection answer={response.answer} isBlurred={isLoggedOut} />
+              <AiSummarySection answer={response.answer} isBlurred={false} />
 
               {response.directoryMatches && response.directoryMatches.length > 0 && (
                 <div className="pt-4">
