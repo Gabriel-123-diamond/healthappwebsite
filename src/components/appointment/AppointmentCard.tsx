@@ -1,6 +1,7 @@
 import React from 'react';
 import { Appointment } from '@/types/appointment';
-import { Calendar, Clock, MessageSquare, ShieldCheck, ChevronRight } from 'lucide-react';
+import { Calendar, Clock, MessageSquare, ChevronRight } from 'lucide-react';
+import { Link } from '@/i18n/routing';
 
 interface AppointmentCardProps {
   appointment: Appointment;
@@ -55,9 +56,13 @@ export default function AppointmentCard({ appointment, onChatClick }: Appointmen
           Secure Chat
         </button>
         
-        <div className="hidden sm:flex w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-800 items-center justify-center text-slate-300 group-hover:text-blue-500 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-all duration-500 cursor-pointer">
+        <Link 
+          href={`/directory/${appointment.expertId}`}
+          title="View Expert Profile"
+          className="hidden sm:flex w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-800 items-center justify-center text-slate-300 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-500 active:scale-90 shadow-sm"
+        >
            <ChevronRight size={20} />
-        </div>
+        </Link>
       </div>
     </div>
   );
