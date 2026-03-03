@@ -49,3 +49,4 @@ firebase.json
 firestore.rules
 storage.rules
 .firestore.rules
+.env*.local
