@@ -2,15 +2,17 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bookmark, Calendar, RefreshCw, Search, Loader2, Trash2 } from 'lucide-react';
+import { Bookmark, Calendar, RefreshCw, Search, Loader2, Trash2, ChevronLeft } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSavedContent } from '@/hooks/useSavedContent';
 import { EmptyState } from '@/components/common/EmptyState';
 import { SavedItemCard, SavedSearchCard } from '@/components/profile/SavedCards';
 import DateRangePicker from '@/components/common/DateRangePicker';
+import { useRouter } from 'next/navigation';
 
 export default function SavedPage() {
   const { t } = useLanguage();
+  const router = useRouter();
   const [isClearing, setIsClearing] = useState(false);
   const {
     activeTab, setActiveTab,
@@ -50,8 +52,16 @@ export default function SavedPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-12 px-4 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pt-32 sm:pt-40 pb-12 px-4 transition-colors">
       <div className="max-w-4xl mx-auto">
+        <button 
+          onClick={() => router.back()} 
+          className="group inline-flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all font-black uppercase tracking-widest text-[10px] mb-8 bg-white dark:bg-slate-950 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
+        >
+          <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+          Back to Terminal
+        </button>
+
         <header className="mb-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
           <div>
             <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-2 flex items-center gap-3 tracking-tight">

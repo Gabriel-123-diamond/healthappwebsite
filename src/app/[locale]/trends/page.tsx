@@ -2,13 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { trendService, TrendItem } from '@/services/trendService';
-import { BarChart3, TrendingUp, Activity, Loader2, RefreshCw, Search } from 'lucide-react';
+import { BarChart3, TrendingUp, Activity, Loader2, RefreshCw, Search, ChevronLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Link } from '@/i18n/routing';
+import { Link, useRouter } from '@/i18n/routing';
 
 export default function TrendsPage() {
   const [trends, setTrends] = useState<TrendItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const loadTrends = async () => {
     setLoading(true);
@@ -22,8 +23,16 @@ export default function TrendsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-32 sm:pt-40 pb-12 px-4">
       <div className="max-w-5xl mx-auto">
+        <button 
+          onClick={() => router.back()} 
+          className="group inline-flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all font-black uppercase tracking-widest text-[10px] mb-8 bg-white dark:bg-slate-950 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
+        >
+          <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+          Back to Terminal
+        </button>
+
         <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 text-blue-600 font-black uppercase tracking-widest text-xs mb-3">

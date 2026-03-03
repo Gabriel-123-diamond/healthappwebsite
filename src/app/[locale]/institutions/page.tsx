@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { getInstitutions } from '@/services/institutionService';
 import { Institution } from '@/types/institution';
-import { Building2, MapPin, BadgeCheck, ArrowRight, Loader2, Search } from 'lucide-react';
+import { Building2, MapPin, BadgeCheck, ArrowRight, Loader2, Search, ChevronLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
@@ -13,6 +13,7 @@ export default function InstitutionsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const t = useTranslations();
+  const router = useRouter();
 
   useEffect(() => {
     getInstitutions().then(data => {
@@ -28,8 +29,16 @@ export default function InstitutionsPage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-32 sm:pt-40 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
+        <button 
+          onClick={() => router.back()} 
+          className="group inline-flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all font-black uppercase tracking-widest text-[10px] mb-8 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
+        >
+          <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+          Back to Terminal
+        </button>
+
         <header className="mb-12 text-center">
           <h1 className="text-4xl font-black text-slate-900 dark:text-white mb-4">Health Institutions</h1>
           <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">

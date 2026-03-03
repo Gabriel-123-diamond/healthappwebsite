@@ -5,7 +5,7 @@ import { auth } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { getSearchHistory, clearSearchHistory } from '@/services/historyService';
 import { SearchHistoryItem } from '@/types/history';
-import { History, Calendar, Loader2, Trash2 } from 'lucide-react';
+import { History, Calendar, Loader2, Trash2, ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import DateRangePicker from '@/components/common/DateRangePicker';
@@ -56,8 +56,16 @@ export default function HistoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4 sm:px-6 lg:px-8 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-32 sm:pt-40 pb-12 px-4 sm:px-6 lg:px-8 transition-colors">
       <div className="max-w-4xl mx-auto">
+        <button 
+          onClick={() => router.back()} 
+          className="group inline-flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all font-black uppercase tracking-widest text-[10px] mb-8 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
+        >
+          <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+          Back to Terminal
+        </button>
+
         <header className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3 tracking-tight">
