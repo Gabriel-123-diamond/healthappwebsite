@@ -4,9 +4,26 @@ import {
   getDoc, onSnapshot, QuerySnapshot, DocumentData, getDocs 
 } from 'firebase/firestore';
 
-// This constant is for UI display ONLY. 
-// The actual point awarding happens securely on the server via REWARD_POINTS (non-public).
-export const REWARD_POINTS = parseInt(process.env.NEXT_PUBLIC_REWARD_POINTS || '150', 10);
+// Default points, but this will be updated by fetching from the server config API.
+export let REWARD_POINTS = 150;
+
+// Internal function to sync configuration from server
+const syncConfig = async () => {
+  try {
+    const response = await fetch('/api/referral/points');
+    if (response.ok) {
+      const data = await response.json();
+      REWARD_POINTS = data.points;
+    }
+  } catch (e) {
+    console.error("Failed to sync reward configuration:", e);
+  }
+};
+
+// Start initial sync
+if (typeof window !== 'undefined') {
+  syncConfig();
+}
 
 export const referralService = {
   generateReferralCode: async (_uid: string, username: string): Promise<string> => {
