@@ -107,19 +107,19 @@ export default function InstitutionDetailPage({ params }: PageProps) {
             <ExpertStatCard 
               icon={<Users className="w-6 h-6 text-blue-600" />} 
               label="Verified Experts" 
-              value={inst.stats.experts.toString()} 
+              value={(inst.stats?.experts || 0).toString()} 
               color="bg-blue-50 dark:bg-blue-900/20" 
             />
             <ExpertStatCard 
               icon={<FileText className="w-6 h-6 text-purple-600" />} 
               label="Research Papers" 
-              value={inst.stats.publications.toString()} 
+              value={(inst.stats?.publications || 0).toString()} 
               color="bg-purple-50 dark:bg-purple-900/20" 
             />
             <ExpertStatCard 
               icon={<Users className="w-6 h-6 text-emerald-600" />} 
               label="Global Followers" 
-              value={(inst.stats.followers / 1000).toFixed(1) + 'k'} 
+              value={((inst.stats?.followers || 0) / 1000).toFixed(1) + 'k'} 
               color="bg-emerald-50 dark:bg-emerald-900/20" 
             />
           </div>
@@ -130,7 +130,7 @@ export default function InstitutionDetailPage({ params }: PageProps) {
             <section className="bg-white dark:bg-slate-900 rounded-[32px] p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
               <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">About the Institution</h2>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-lg whitespace-pre-line">
-                {inst.description}
+                {inst.description || "No description available."}
               </p>
             </section>
 
@@ -167,7 +167,7 @@ export default function InstitutionDetailPage({ params }: PageProps) {
             <section className="bg-white dark:bg-slate-900 rounded-[32px] p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Core Specialties</h2>
               <div className="flex flex-wrap gap-2">
-                {inst.specialties.map(specialty => (
+                {(inst.specialties || []).map(specialty => (
                   <span key={specialty} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-bold rounded-xl border border-slate-200 dark:border-slate-700">
                     {specialty}
                   </span>
