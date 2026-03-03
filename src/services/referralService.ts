@@ -4,8 +4,9 @@ import {
   getDoc, onSnapshot, QuerySnapshot, DocumentData, getDocs 
 } from 'firebase/firestore';
 
-// This constant is for UI display only. The actual point awarding happens securely on the server.
-export const REWARD_POINTS = parseInt(process.env.NEXT_PUBLIC_REWARD_POINTS || '150', 10);
+// This constant is for UI display ONLY. 
+// The actual point awarding happens securely on the server via REWARD_POINTS (non-public).
+export const REWARD_POINTS = 150;
 
 export const referralService = {
   generateReferralCode: async (_uid: string, username: string): Promise<string> => {
