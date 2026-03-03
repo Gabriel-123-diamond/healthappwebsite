@@ -3,15 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from '@/lib/firebase';
 import { getUserJournals, JournalEntry } from '@/services/journalService';
-import { Loader2, BarChart2, List } from 'lucide-react';
+import { Loader2, BarChart2, List, ChevronLeft } from 'lucide-react';
 import JournalEntryForm from '@/components/journal/JournalEntryForm';
 import JournalHistoryList from '@/components/journal/JournalHistoryList';
 import JournalTrendsChart from '@/components/journal/JournalTrendsChart';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/routing';
 
 export default function JournalPage() {
   const t = useTranslations('journalPage');
+  const router = useRouter();
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'list' | 'trends'>('list');
@@ -36,8 +38,16 @@ export default function JournalPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors pt-24 sm:pt-32 pb-24">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors pt-32 sm:pt-40 pb-24">
       <div className="max-w-6xl mx-auto px-4">
+        <button 
+          onClick={() => router.back()} 
+          className="group inline-flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all font-black uppercase tracking-widest text-[10px] mb-8 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
+        >
+          <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+          Back to Terminal
+        </button>
+
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest border border-blue-100 dark:border-blue-800">

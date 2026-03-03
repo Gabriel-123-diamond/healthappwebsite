@@ -1,14 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Code2, Key, Book, Shield, Zap, Send, Loader2, CheckCircle } from 'lucide-react';
+import { Code2, Key, Book, Shield, Zap, Send, Loader2, CheckCircle, ChevronLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { countries, Country } from '@/lib/countries';
 import { Dropdown } from '@/components/ui/Dropdown';
 import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/routing';
 
 export default function DeveloperPortalPage() {
   const t = useTranslations('developersPage');
+  const router = useRouter();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<Country>(countries.find(c => c.name === 'united_states') || countries[0]);
@@ -25,9 +27,19 @@ export default function DeveloperPortalPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors pt-32 sm:pt-40 pb-24">
+      <div className="max-w-7xl mx-auto px-4 mb-8">
+        <button 
+          onClick={() => router.back()} 
+          className="group inline-flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all font-black uppercase tracking-widest text-[10px] bg-white dark:bg-slate-900 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
+        >
+          <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+          Back to Terminal
+        </button>
+      </div>
+
       {/* Hero Section */}
-      <div className="bg-slate-900 dark:bg-black text-white py-24 px-4 overflow-hidden relative transition-colors border-b border-white/5">
+      <div className="bg-slate-900 dark:bg-black text-white py-24 px-4 overflow-hidden relative transition-colors border-b border-white/5 mx-4 sm:mx-6 lg:mx-8 rounded-[48px]">
         <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
           <div className="grid grid-cols-12 gap-4 h-full transform -skew-y-12 scale-150">
             {[...Array(48)].map((_, i) => (
