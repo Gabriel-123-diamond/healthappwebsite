@@ -5,19 +5,19 @@ import { Clock, ChevronDown, Keyboard, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useClickOutside } from '@/hooks/useClickOutside';
 
-interface CustomAnalogTimePickerProps {
+interface CustomTimePickerProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   label?: string;
 }
 
-export default function CustomAnalogTimePicker({
+export default function CustomTimePicker({
   value,
   onChange,
   placeholder = "Select Time",
   label
-}: CustomAnalogTimePickerProps) {
+}: CustomTimePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Appointment } from '@/types/appointment';
-import { Calendar, Clock, MessageSquare, ChevronRight } from 'lucide-react';
+import { Calendar, Clock, MessageSquare, ChevronRight, Video } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 
 interface AppointmentCardProps {
