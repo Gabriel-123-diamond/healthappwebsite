@@ -63,9 +63,20 @@ export const getExpertAppointments = (expertId: string, callback: (appointments:
   });
 };
 
+import { notificationTrigger } from './notificationTrigger';
+...
 export const updateAppointmentStatus = async (appointmentId: string, status: 'confirmed' | 'cancelled') => {
   const appointmentRef = doc(db, APPOINTMENTS_COLLECTION, appointmentId);
+  const snap = await getDocs(query(collection(db, APPOINTMENTS_COLLECTION))); 
+  // Normally you'd get the specific doc data first
+  const docSnap = await getDoc(appointmentRef);
+  const data = docSnap.data();
+
   await updateDoc(appointmentRef, { status });
+
+  if (data) {
+    notificationTrigger.notifyAppointmentUpdate(data.userId, status, data.expertName);
+  }
 };
 
 // Availability management

@@ -61,13 +61,26 @@ export default function SymptomWizard() {
     }
   };
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     setIsAnalyzing(true);
-    // Simulate AI Discovery
-    setTimeout(() => {
-      setResult("Based on your inputs, this may be related to common fatigue or minor inflammation. We recommend consulting a Natural Wellness Practitioner for a holistic review or a Medical Doctor if symptoms persist.");
+    try {
+      const response = await fetch('/api/discovery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers }),
+      });
+      const data = await response.json();
+      if (data.summary) {
+        setResult(data.summary);
+      } else {
+        throw new Error(data.error || "Failed to analyze");
+      }
+    } catch (err) {
+      console.error("Discovery Error:", err);
+      setResult("We encountered a technical connection error. Based on common patterns, we recommend consulting a specialist if your discomfort persists.");
+    } finally {
       setIsAnalyzing(false);
-    }, 3000);
+    }
   };
 
   const reset = () => {

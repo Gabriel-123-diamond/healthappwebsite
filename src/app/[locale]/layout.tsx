@@ -12,6 +12,7 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import PushNotificationManager from "@/components/PushNotificationManager";
 import AuthCheck from "@/components/AuthCheck";
+import AiChatbot from "@/components/chat/AiChatbot";
 import { Activity } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -43,6 +44,7 @@ export default async function LocaleLayout({
         <LanguageProvider initialLocale={locale as any}>
           <AuthCheck>
             <PushNotificationManager />
+            <AiChatbot />
             <GlobalDisclaimer />
             <Header />
             <main className="flex-grow dark:bg-slate-900">
