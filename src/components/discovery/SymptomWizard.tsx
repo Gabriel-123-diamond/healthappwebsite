@@ -1,94 +1,74 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Activity, ArrowRight, ChevronLeft, ChevronRight, 
-  Sparkles, AlertTriangle, ShieldCheck, Thermometer,
-  Brain, Heart, Wind, Zap, RefreshCcw
+  Sparkles, AlertTriangle, ShieldCheck, RefreshCcw,
+  Send, Bot, User, Loader2
 } from 'lucide-react';
 
-interface Question {
-  id: string;
+interface ChatMessage {
   text: string;
-  options: { label: string; value: any }[];
+  isAi: boolean;
 }
 
-const DISCOVERY_QUESTIONS: Question[] = [
-  {
-    id: 'primary',
-    text: "Where do you feel the most discomfort?",
-    options: [
-      { label: "Head & Neck", value: "head" },
-      { label: "Chest & Heart", value: "chest" },
-      { label: "Abdomen & Digestion", value: "abdomen" },
-      { label: "Limbs & Joints", value: "limbs" },
-      { label: "Skin & External", value: "skin" },
-    ]
-  },
-  {
-    id: 'severity',
-    text: "How would you describe the intensity?",
-    options: [
-      { label: "Mild (Manageable)", value: "mild" },
-      { label: "Moderate (Uncomfortable)", value: "moderate" },
-      { label: "Severe (Significant)", value: "severe" },
-    ]
-  },
-  {
-    id: 'duration',
-    text: "How long has this been occurring?",
-    options: [
-      { label: "Just started (Hours)", value: "recent" },
-      { label: "A few days", value: "days" },
-      { label: "Over a week", value: "chronic" },
-    ]
-  }
-];
-
 export default function SymptomWizard() {
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { text: "Hello! I'm the IKIKE Health Discovery Engine. How are you feeling today? Please describe any symptoms or discomfort you're experiencing.", isAi: true }
+  ]);
+  const [input, setInput] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [suggestion, setSuggestion] = useState<string | null>(null);
+  
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const handleAnswer = (questionId: string, value: any) => {
-    setAnswers(prev => ({ ...prev, [questionId]: value }));
-    if (step < DISCOVERY_QUESTIONS.length - 1) {
-      setStep(step + 1);
-    } else {
-      handleFinish();
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  };
+  }, [messages, isAnalyzing]);
 
-  const handleFinish = async () => {
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isAnalyzing || result) return;
+
+    const userText = input.trim();
+    const newMessages = [...messages, { text: userText, isAi: false }];
+    setMessages(newMessages);
+    setInput('');
     setIsAnalyzing(true);
+
     try {
       const response = await fetch('/api/discovery', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers }),
+        body: JSON.stringify({ 
+          message: userText,
+          history: messages.map(m => ({ role: m.isAi ? 'assistant' : 'user', content: m.text }))
+        }),
       });
+      
       const data = await response.json();
-      if (data.summary) {
+      
+      if (data.isFinal) {
         setResult(data.summary);
         setSuggestion(data.suggestedSpecialty);
       } else {
-        throw new Error(data.error || "Failed to analyze");
+        setMessages([...newMessages, { text: data.reply, isAi: true }]);
       }
     } catch (err) {
       console.error("Discovery Error:", err);
-      setResult("We encountered a technical connection error. Based on common patterns, we recommend consulting a specialist if your discomfort persists.");
-      setSuggestion("General Practitioner");
+      setMessages([...newMessages, { text: "I encountered a synchronization error. Could you repeat that?", isAi: true }]);
     } finally {
       setIsAnalyzing(false);
     }
   };
 
   const reset = () => {
-    setStep(0);
-    setAnswers({});
+    setMessages([{ text: "Hello! I'm the IKIKE Health Discovery Engine. How are you feeling today? Please describe any symptoms or discomfort you're experiencing.", isAi: true }]);
+    setInput('');
     setResult(null);
     setSuggestion(null);
   };
@@ -102,113 +82,134 @@ export default function SymptomWizard() {
   };
 
   return (
-    <div className="bg-white dark:bg-[#0B1221] rounded-[48px] border border-slate-100 dark:border-white/5 overflow-hidden shadow-3xl">
-      <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-8 sm:p-12 text-white relative">
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/20 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">
-            <Sparkles size={12} />
-            AI Discovery Wizard
+    <div className="bg-white dark:bg-[#0B1221] rounded-[48px] border border-slate-100 dark:border-white/5 overflow-hidden shadow-3xl max-w-4xl mx-auto w-full">
+      {/* Header */}
+      <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-8 sm:p-10 text-white relative">
+        <div className="relative z-10 flex items-center justify-between">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/20 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
+              <Sparkles size={12} />
+              AI Reasoning Engine
+            </div>
+            <h2 className="text-3xl font-black tracking-tight mb-1">Health Discovery</h2>
+            <p className="text-blue-100 text-sm font-medium opacity-80">Adaptive reasoning to guide your wellness path.</p>
           </div>
-          <h2 className="text-3xl font-black tracking-tight mb-2">Health Insight Engine</h2>
-          <p className="text-blue-100 text-sm font-medium opacity-80">Discover potential paths to wellness through guided discovery.</p>
+          <button onClick={reset} className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl transition-all">
+            <RefreshCcw size={20} />
+          </button>
         </div>
-        
         <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -mr-24 -mt-24" />
       </div>
 
-      <div className="p-8 sm:p-12 min-h-[400px] flex flex-col">
-        <AnimatePresence mode="wait">
-          {!result && !isAnalyzing && (
+      <div className="flex flex-col h-[500px]">
+        {/* Chat Area */}
+        <div 
+          ref={scrollRef}
+          className="flex-1 overflow-y-auto p-8 space-y-6 scroll-smooth bg-slate-50/30 dark:bg-black/10"
+        >
+          {messages.map((msg, i) => (
             <motion.div 
-              key="questions"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-8 flex-1"
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`flex ${msg.isAi ? 'justify-start' : 'justify-end'}`}
             >
-              <div className="space-y-2">
-                <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em]">Step {step + 1} of {DISCOVERY_QUESTIONS.length}</span>
-                <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-                  {DISCOVERY_QUESTIONS[step].text}
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 gap-3">
-                {DISCOVERY_QUESTIONS[step].options.map((opt) => (
-                  <button
-                    key={opt.value}
-                    onClick={() => handleAnswer(DISCOVERY_QUESTIONS[step].id, opt.value)}
-                    className="group flex items-center justify-between p-6 bg-slate-50 dark:bg-white/5 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-3xl border border-transparent hover:border-blue-200 dark:hover:border-blue-800 transition-all text-left active:scale-[0.98]"
-                  >
-                    <span className="font-bold text-slate-700 dark:text-slate-300 group-hover:text-blue-600 transition-colors">{opt.label}</span>
-                    <div className="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-all">
-                      <ChevronRight size={16} />
-                    </div>
-                  </button>
-                ))}
+              <div className={`flex gap-4 max-w-[85%] ${msg.isAi ? 'flex-row' : 'flex-row-reverse'}`}>
+                <div className={`w-10 h-10 rounded-xl shrink-0 flex items-center justify-center shadow-sm ${msg.isAi ? 'bg-blue-600 text-white' : 'bg-white dark:bg-slate-800 text-slate-600'}`}>
+                  {msg.isAi ? <Bot size={20} /> : <User size={20} />}
+                </div>
+                <div className={`p-5 rounded-[28px] text-sm leading-relaxed ${
+                  msg.isAi 
+                    ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 rounded-tl-sm border border-slate-100 dark:border-white/5 shadow-sm' 
+                    : 'bg-blue-600 text-white rounded-tr-sm shadow-lg shadow-blue-500/20 font-medium'
+                }`}>
+                  {msg.text}
+                </div>
               </div>
             </motion.div>
-          )}
+          ))}
 
           {isAnalyzing && (
-            <motion.div 
-              key="analyzing"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex-1 flex flex-col items-center justify-center text-center py-12"
-            >
-              <div className="relative mb-8">
-                <div className="w-24 h-24 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
-                <Activity className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-blue-600 animate-pulse" />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
+              <div className="flex gap-4 items-center bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-100 dark:border-white/5 shadow-sm">
+                <div className="flex gap-1">
+                  {[0, 1, 2].map(dot => (
+                    <motion.div
+                      key={dot}
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ repeat: Infinity, duration: 1, delay: dot * 0.2 }}
+                      className="w-1.5 h-1.5 bg-blue-600 rounded-full"
+                    />
+                  ))}
+                </div>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Reasoning...</span>
               </div>
-              <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">Processing Signals</h3>
-              <p className="text-slate-500 dark:text-slate-400 font-medium max-w-xs mx-auto">Our AI is cross-referencing your inputs with medical and herbal knowledge bases.</p>
             </motion.div>
           )}
 
           {result && (
             <motion.div 
-              key="result"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex-1 space-y-8"
+              className="space-y-6 pt-4"
             >
-              <div className="p-8 bg-emerald-50 dark:bg-emerald-900/10 rounded-[32px] border border-emerald-100 dark:border-emerald-900/20 relative overflow-hidden">
+              <div className="p-8 bg-emerald-50 dark:bg-emerald-900/10 rounded-[40px] border border-emerald-100 dark:border-emerald-900/20 relative overflow-hidden shadow-sm">
                 <div className="absolute top-0 right-0 p-4 opacity-10">
-                  <ShieldCheck size={80} className="text-emerald-600" />
+                  <ShieldCheck size={100} className="text-emerald-600" />
                 </div>
-                <h3 className="text-lg font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                  <ShieldCheck size={18} /> Discovery Summary
+                <h3 className="text-xs font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                  <Activity size={14} /> Intelligence Summary
                 </h3>
-                <p className="text-slate-700 dark:text-slate-300 font-medium leading-relaxed italic text-lg">
+                <p className="text-slate-700 dark:text-slate-200 font-bold leading-relaxed italic text-lg relative z-10">
                   "{result}"
                 </p>
               </div>
 
-              <div className="p-6 bg-amber-50 dark:bg-amber-900/10 rounded-2xl border border-amber-100 dark:border-amber-900/20 flex gap-4">
+              <div className="p-6 bg-amber-50 dark:bg-amber-900/10 rounded-3xl border border-amber-100 dark:border-amber-900/20 flex gap-4">
                 <AlertTriangle className="w-6 h-6 text-amber-600 shrink-0" />
-                <p className="text-xs font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider leading-relaxed">
+                <p className="text-[10px] font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider leading-relaxed">
                   Important: This is not a medical diagnosis. It is an educational discovery tool. Always seek professional advice for health concerns.
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <button 
                   onClick={handleConsultSpecialist}
-                  className="flex-1 py-5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-blue-500/20 active:scale-95 transition-all"
+                  className="flex-1 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-[24px] font-black uppercase tracking-widest text-[10px] shadow-2xl active:scale-95 transition-all flex items-center justify-center gap-3"
                 >
-                  Consult {suggestion || "a Specialist"}
+                  Consult {suggestion || "a Specialist"} <ArrowRight size={16} />
                 </button>
                 <button 
                   onClick={reset}
-                  className="flex-1 py-5 bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 rounded-2xl font-black uppercase tracking-widest text-[10px] active:scale-95 transition-all flex items-center justify-center gap-2"
+                  className="flex-1 py-5 bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 rounded-[24px] font-black uppercase tracking-widest text-[10px] active:scale-95 transition-all"
                 >
-                  <RefreshCcw size={14} /> Start Over
+                  Start New Discovery
                 </button>
               </div>
             </motion.div>
           )}
-        </AnimatePresence>
+        </div>
+
+        {/* Input Area */}
+        <form onSubmit={handleSend} className="p-8 border-t border-slate-100 dark:border-white/5 bg-white dark:bg-[#0B1221]">
+          <div className="relative">
+            <input 
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              disabled={!!result || isAnalyzing}
+              placeholder={result ? "Discovery Complete" : "Describe your symptoms in detail..."}
+              className="w-full pl-8 pr-16 py-5 bg-slate-50 dark:bg-white/5 rounded-[24px] border-none outline-none text-slate-900 dark:text-white placeholder:text-slate-400 font-medium focus:ring-4 focus:ring-blue-500/10 transition-all shadow-inner"
+            />
+            <button 
+              type="submit"
+              disabled={isAnalyzing || !input.trim() || !!result}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center hover:bg-blue-700 transition-all disabled:opacity-50 disabled:grayscale shadow-lg shadow-blue-500/20"
+            >
+              {isAnalyzing ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
