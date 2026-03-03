@@ -1,5 +1,5 @@
 import { db } from '@/lib/firebase'; // Assuming initialized db export
-import { collection, addDoc, query, where, orderBy, onSnapshot, getDocs, doc, updateDoc, setDoc } from 'firebase/firestore';
+import { collection, addDoc, query, where, orderBy, onSnapshot, getDocs, doc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
 import { Appointment } from '@/types/appointment';
 
 const APPOINTMENTS_COLLECTION = 'appointments';
@@ -64,7 +64,7 @@ export const getExpertAppointments = (expertId: string, callback: (appointments:
 };
 
 import { notificationTrigger } from './notificationTrigger';
-...
+
 export const updateAppointmentStatus = async (appointmentId: string, status: 'confirmed' | 'cancelled') => {
   const appointmentRef = doc(db, APPOINTMENTS_COLLECTION, appointmentId);
   const snap = await getDocs(query(collection(db, APPOINTMENTS_COLLECTION))); 

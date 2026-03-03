@@ -26,7 +26,8 @@ Please provide a helpful, concise response. Do not provide medical diagnoses. Al
 `;
 
     const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
+    const response = await result.response;
+    const responseText = (response as any).text();
 
     return NextResponse.json({ reply: responseText });
   } catch (error) {
