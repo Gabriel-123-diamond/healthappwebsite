@@ -51,6 +51,7 @@ export default function SymptomWizard() {
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  const [suggestion, setSuggestion] = useState<string | null>(null);
 
   const handleAnswer = (questionId: string, value: any) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
@@ -72,12 +73,14 @@ export default function SymptomWizard() {
       const data = await response.json();
       if (data.summary) {
         setResult(data.summary);
+        setSuggestion(data.suggestedSpecialty);
       } else {
         throw new Error(data.error || "Failed to analyze");
       }
     } catch (err) {
       console.error("Discovery Error:", err);
       setResult("We encountered a technical connection error. Based on common patterns, we recommend consulting a specialist if your discomfort persists.");
+      setSuggestion("General Practitioner");
     } finally {
       setIsAnalyzing(false);
     }
@@ -87,6 +90,15 @@ export default function SymptomWizard() {
     setStep(0);
     setAnswers({});
     setResult(null);
+    setSuggestion(null);
+  };
+
+  const handleConsultSpecialist = () => {
+    if (suggestion) {
+      window.location.href = `/directory?filter=${encodeURIComponent(suggestion)}`;
+    } else {
+      window.location.href = '/directory';
+    }
   };
 
   return (
@@ -182,10 +194,10 @@ export default function SymptomWizard() {
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <button 
-                  onClick={() => window.location.href = '/directory'}
+                  onClick={handleConsultSpecialist}
                   className="flex-1 py-5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-blue-500/20 active:scale-95 transition-all"
                 >
-                  Consult a Specialist
+                  Consult {suggestion || "a Specialist"}
                 </button>
                 <button 
                   onClick={reset}

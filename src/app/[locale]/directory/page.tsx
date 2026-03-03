@@ -20,22 +20,32 @@ export default function DirectoryPage() {
   const { user, loading: authLoading } = useUserAuth();
   const t = useTranslations('directoryPage');
   const searchParams = useSearchParams();
-  const initialQuery = searchParams.get('query') || '';
+  
+  // Suggested filter from Symptom Checker
+  const urlFilter = searchParams.get('filter') || '';
   
   const [allExperts, setAllExperts] = useState<PublicExpert[]>([]);
   const [loading, setLoading] = useState(true);
   
   // Filter States
   const [filterType, setFilterType] = useState('all');
-  const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const [searchQuery, setSearchQuery] = useState(urlFilter); // Initialize with URL filter
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedState, setSelectedState] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(!!urlFilter); // Show filters if we have an active one
   const [nearbyOnly, setNearbyOnly] = useState(false);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Sync searchQuery with URL filter if it changes
+  useEffect(() => {
+    if (urlFilter) {
+      setSearchQuery(urlFilter);
+      setShowFilters(true);
+    }
+  }, [urlFilter]);
 
   useEffect(() => {
     const fetchExperts = async () => {
@@ -269,7 +279,7 @@ export default function DirectoryPage() {
           <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">
             {t('showing')} <span className="text-slate-900 dark:text-white">{filteredExperts.length}</span> {t('professionals')}
           </p>
-          {activeFiltersCount > 0 && (
+          {(activeFiltersCount > 0 || searchQuery !== '') && (
             <button 
               onClick={() => {
                 setFilterType('all');

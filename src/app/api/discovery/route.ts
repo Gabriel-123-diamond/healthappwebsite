@@ -1,13 +1,11 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+import { getGeminiModel } from "@/lib/gemini";
 
 export async function POST(req: Request) {
   try {
     const { answers } = await req.json();
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = getGeminiModel("gemini-1.5-flash");
 
     const prompt = `
       You are an advanced AI health discovery assistant for IKIKE HEALTH AI.
@@ -19,21 +17,31 @@ export async function POST(req: Request) {
       - Duration: ${answers.duration}
       
       Requirements:
-      1. Keep the response concise (max 3 sentences).
-      2. MAINTAIN A STRICT EDUCATIONAL TONE. Do not provide a medical diagnosis.
-      3. Suggest whether they should see a Natural Wellness Practitioner (herbal/holistic) or a Medical Doctor based on the severity.
-      4. If severity is "severe", emphasize immediate medical consultation.
+      1. Provide a concise summary (max 3 sentences).
+      2. Suggest EXACTLY ONE professional specialty from this list: "Cardiologist", "Dermatologist", "Neurologist", "Psychiatrist", "Orthopedist", "Pediatrician", "Dentist", "Ophthalmologist", "General Practitioner", "Nutritionist", "Natural Wellness Practitioner".
+      3. Format the output as JSON:
+      {
+        "summary": "The educational summary text...",
+        "suggestedSpecialty": "The Exact Specialty Name"
+      }
       
-      Output only the summary text.
+      MAINTAIN A STRICT EDUCATIONAL TONE. Do not provide a medical diagnosis.
     `;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
+    
+    // Clean JSON from response (sometimes Gemini adds ```json ... ```)
+    const jsonStr = text.replace(/```json/g, '').replace(/```/g, '').trim();
+    const data = JSON.parse(jsonStr);
 
-    return NextResponse.json({ summary: text });
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Discovery API Error:", error);
-    return NextResponse.json({ error: "Failed to generate health insight" }, { status: 500 });
+    return NextResponse.json({ 
+      summary: "We encountered a technical connection error. Based on common patterns, we recommend consulting a specialist if your discomfort persists.",
+      suggestedSpecialty: "General Practitioner"
+    }, { status: 200 });
   }
 }
