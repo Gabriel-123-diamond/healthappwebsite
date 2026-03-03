@@ -1,22 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { adminAuth } from '@/lib/firebaseAdmin';
+import { verifyAuth } from '@/lib/serverUtils';
 
-const API_KEY = process.env.NEXT_PUBLIC_CSC_API_KEY;
+const API_KEY = process.env.CSC_API_KEY;
 const BASE_URL = 'https://api.countrystatecity.in/v1';
 
 export async function GET(req: NextRequest) {
-  // Authentication Check
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const token = authHeader.split("Bearer ")[1];
-  try {
-    await adminAuth.verifyIdToken(token);
-  } catch (e) {
-    return NextResponse.json({ error: "Invalid session" }, { status: 401 });
-  }
+  const { error } = await verifyAuth(req);
+  if (error) return error;
 
   const { searchParams } = new URL(req.url);
   const type = searchParams.get('type');

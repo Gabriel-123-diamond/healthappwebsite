@@ -1,11 +1,15 @@
-import { NextResponse } from 'next/server';
-import { getGeminiModel } from "@/lib/gemini";
+import { NextRequest, NextResponse } from 'next/server';
+import { getAIModel } from "@/lib/gemini";
+import { verifyAuth, handleAIError } from "@/lib/serverUtils";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    const { error } = await verifyAuth(req);
+    if (error) return error;
+
     const { message, history = [] } = await req.json();
 
-    const model = getGeminiModel("gemini-1.5-flash");
+    const model = getAIModel("discovery", "gemini-1.5-flash");
 
     const prompt = `
       You are the "Health Discovery Engine" for IKIKE HEALTH AI. 
@@ -45,8 +49,8 @@ export async function POST(req: Request) {
     const data = JSON.parse(jsonStr);
 
     return NextResponse.json(data);
-  } catch (error) {
-    console.error("Discovery API Error:", error);
+  } catch (err) {
+    console.error("Discovery API Error:", err);
     return NextResponse.json({ 
       reply: "I'm having trouble connecting to my knowledge base. Would you like to try again?",
       isFinal: false,

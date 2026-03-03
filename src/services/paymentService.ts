@@ -13,7 +13,7 @@ export const paymentService = {
   }) => {
     // @ts-ignore
     const handler = window.PaystackPop.setup({
-      key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || 'pk_test_placeholder',
+      key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
       email: config.email,
       amount: config.amount * 100, // Paystack expects kobo/cents
       currency: 'NGN',

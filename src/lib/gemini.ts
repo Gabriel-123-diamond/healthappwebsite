@@ -5,18 +5,20 @@ if (typeof window !== 'undefined') {
   throw new Error('gemini.ts can only be imported on the server.');
 }
 
-const provider = process.env.AI_PROVIDER || 'vertex'; // 'vertex' or 'gemini'
+// Config Types
+type Provider = 'vertex' | 'gemini';
+type Feature = 'search' | 'discovery' | 'chat';
 
-// --- Vertex AI Configuration ---
+// Vertex Config
 const project = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
 const location = 'us-central1';
 const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
 
 let vertexAI: VertexAI | null = null;
 
-if (provider === 'vertex') {
-  if (!project) throw new Error("NEXT_PUBLIC_FIREBASE_PROJECT_ID is not defined");
-  if (!serviceAccountJson) throw new Error("FIREBASE_SERVICE_ACCOUNT_JSON is not defined");
+function initVertex() {
+  if (vertexAI) return vertexAI;
+  if (!project || !serviceAccountJson) return null;
 
   try {
     const cleanedJson = serviceAccountJson.trim().replace(/^['"]|['"]$/g, '');
@@ -29,31 +31,48 @@ if (provider === 'vertex') {
       location: location,
       googleAuthOptions: { credentials }
     });
+    return vertexAI;
   } catch (e) {
-    throw new Error(`Failed to initialize Vertex AI: ${e instanceof Error ? e.message : 'Unknown error'}`);
+    console.error("Vertex AI Init Failed:", e);
+    return null;
   }
 }
 
-// --- Gemini API Key Configuration ---
+// Gemini SDK Config
 const apiKey = process.env.GEMINI_API_KEY;
 let genAI: GoogleGenerativeAI | null = null;
 
-if (provider === 'gemini') {
-  if (!apiKey) throw new Error("GEMINI_API_KEY is not defined (required for 'gemini' provider)");
-  // Use stable v1 API version to avoid 404 errors seen on v1beta
+function initGemini() {
+  if (genAI) return genAI;
+  if (!apiKey) return null;
   genAI = new GoogleGenerativeAI(apiKey);
+  return genAI;
 }
 
-export const getGeminiModel = (modelName?: string) => {
-  // Use strictly assigned defaults based on provider if no modelName is passed
-  const effectiveModel = modelName || (provider === 'gemini' ? "gemini-flash-latest" : "gemini-2.5-flash-lite");
+/**
+ * Core model factory that respects independent provider switches
+ */
+export const getAIModel = (feature: Feature, modelName?: string) => {
+  // Determine provider based on feature
+  let provider: Provider = 'gemini';
+  if (feature === 'search') provider = (process.env.AI_PROVIDER_SEARCH as Provider) || 'gemini';
+  if (feature === 'discovery') provider = (process.env.AI_PROVIDER_DISCOVERY as Provider) || 'gemini';
+  if (feature === 'chat') provider = (process.env.AI_PROVIDER_CHAT as Provider) || 'gemini';
 
-  console.log(`[Gemini Config] Provider: ${provider}, Effective Model: ${effectiveModel}`);
-  
-  if (provider === 'gemini' && genAI) {
-    return genAI.getGenerativeModel({ model: effectiveModel });
-  } else if (provider === 'vertex' && vertexAI) {
-    return vertexAI.getGenerativeModel({ model: effectiveModel });
+  const effectiveModel = modelName || "gemini-1.5-flash";
+
+  console.log(`[AI Factory] Feature: ${feature}, Provider: ${provider}, Model: ${effectiveModel}`);
+
+  if (provider === 'gemini') {
+    const sdk = initGemini();
+    if (!sdk) throw new Error("GEMINI_API_KEY is not defined");
+    return sdk.getGenerativeModel({ model: effectiveModel });
+  } else {
+    const sdk = initVertex();
+    if (!sdk) throw new Error("Vertex AI configuration is missing or invalid");
+    return sdk.getGenerativeModel({ model: effectiveModel });
   }
-  throw new Error(`Invalid AI Provider configuration. Provider: ${provider}`);
 };
+
+// Legacy support for older code if any
+export const getGeminiModel = (modelName?: string) => getAIModel('search', modelName);
