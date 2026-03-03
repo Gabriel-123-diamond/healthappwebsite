@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 
     // SIMULATION: In a real app, this would be a Stripe Session URL
     // We'll return a simulated success path
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const appUrl = process.env.APP_URL || "http://localhost:3000";
     
     // We add a mock session ID to simulate verification
     const mockSessionId = `mock_stripe_${Math.random().toString(36).substring(2, 15)}`;

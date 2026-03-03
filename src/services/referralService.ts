@@ -52,7 +52,7 @@ export const referralService = {
 
   getReferralLink: (code: string): string => {
     if (typeof window === 'undefined') return '';
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+    const baseUrl = window.location.origin;
     return `${baseUrl}/onboarding?ref=${code}`;
   },
 
