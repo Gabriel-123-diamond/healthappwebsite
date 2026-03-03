@@ -117,7 +117,7 @@ function InstitutionCard({ inst, index }: { inst: Institution, index: number }) 
         <span className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-bold rounded uppercase tracking-tighter">
           {inst.type}
         </span>
-        {inst.specialties.slice(0, 2).map(s => (
+        {(inst.specialties || []).slice(0, 2).map(s => (
           <span key={s} className="px-2 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-bold rounded uppercase tracking-tighter">
             {s}
           </span>
