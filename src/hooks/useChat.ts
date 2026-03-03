@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { subscribeToMessages, sendMessage as sendMsgService } from '@/services/chatService';
+import { subscribeToMessages, sendMessage as sendMsgService, markMessagesAsRead } from '@/services/chatService';
 import { ChatMessage } from '@/types/chat';
 
 export function useChat(chatId: string, currentUserId: string) {
@@ -12,14 +12,19 @@ export function useChat(chatId: string, currentUserId: string) {
   useEffect(() => {
     setLoading(true);
     const unsubscribe = subscribeToMessages(chatId, (msgs) => {
-      // Reverse to show oldest first (if that's the desired UI behavior)
-      // or keep as is depending on UI. ChatWindow expected reversed.
+      // Reverse to show oldest first
       setMessages([...msgs].reverse());
       setLoading(false);
+      
+      // Check for unread messages sent by the other user and mark them as read
+      const hasUnread = msgs.some(m => m.senderId !== currentUserId && m.status !== 'read');
+      if (hasUnread) {
+        markMessagesAsRead(chatId, currentUserId).catch(console.error);
+      }
     });
 
     return () => unsubscribe();
-  }, [chatId]);
+  }, [chatId, currentUserId]);
 
   const sendMessage = async (text: string) => {
     if (!text.trim()) return;

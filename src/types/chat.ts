@@ -3,6 +3,7 @@ export interface ChatMessage {
   senderId: string;
   text: string;
   timestamp: any; // Firestore timestamp
+  status?: 'sent' | 'delivered' | 'read';
 }
 
 export interface Chat {

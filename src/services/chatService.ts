@@ -46,12 +46,30 @@ export const sendMessage = async (chatId: string, senderId: string, text: string
     senderId,
     text,
     timestamp: serverTimestamp(),
+    status: 'sent',
   });
 
   await updateDoc(doc(db, CHATS_COLLECTION, chatId), {
     lastMessage: text,
     lastMessageTime: serverTimestamp(),
   });
+};
+
+export const markMessagesAsRead = async (chatId: string, currentUserId: string) => {
+  const q = query(
+    collection(db, CHATS_COLLECTION, chatId, MESSAGES_COLLECTION),
+    where('senderId', '!=', currentUserId),
+    where('status', 'in', ['sent', 'delivered'])
+  );
+  
+  const snapshot = await getDocs(q);
+  const batchUpdates = snapshot.docs.map(messageDoc => 
+    updateDoc(doc(db, CHATS_COLLECTION, chatId, MESSAGES_COLLECTION, messageDoc.id), {
+      status: 'read'
+    })
+  );
+  
+  await Promise.all(batchUpdates);
 };
 
 export const subscribeToMessages = (chatId: string, callback: (messages: ChatMessage[]) => void) => {
