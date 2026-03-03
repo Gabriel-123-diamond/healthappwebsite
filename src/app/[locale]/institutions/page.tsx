@@ -126,15 +126,15 @@ function InstitutionCard({ inst, index }: { inst: Institution, index: number }) 
 
       <div className="grid grid-cols-3 gap-2 py-4 border-t border-slate-50 dark:border-slate-800 mt-auto">
         <div className="text-center">
-          <div className="text-sm font-bold text-slate-900 dark:text-white">{inst.stats.experts}</div>
+          <div className="text-sm font-bold text-slate-900 dark:text-white">{inst.stats?.experts || 0}</div>
           <div className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Experts</div>
         </div>
         <div className="text-center border-x border-slate-50 dark:border-slate-800">
-          <div className="text-sm font-bold text-slate-900 dark:text-white">{inst.stats.publications}</div>
+          <div className="text-sm font-bold text-slate-900 dark:text-white">{inst.stats?.publications || 0}</div>
           <div className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Research</div>
         </div>
         <div className="text-center">
-          <div className="text-sm font-bold text-slate-900 dark:text-white">{inst.stats.followers}</div>
+          <div className="text-sm font-bold text-slate-900 dark:text-white">{inst.stats?.followers || 0}</div>
           <div className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Followers</div>
         </div>
       </div>
