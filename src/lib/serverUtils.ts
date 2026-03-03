@@ -22,6 +22,24 @@ export async function verifyAuth(req: NextRequest) {
 }
 
 /**
+ * Automatically detects the environment and returns the correct base URL.
+ */
+export function getBaseUrl() {
+  // 1. Local Development
+  if (process.env.NODE_ENV === 'development') {
+    return "http://localhost:3000";
+  }
+
+  // 2. Vercel Preview/Branch Deploys
+  if (process.env.VERCEL_URL && process.env.VERCEL_ENV === 'preview') {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+
+  // 3. Production (Custom Domain)
+  return "https://www.ikikehealth.com";
+}
+
+/**
  * Standardized error response for AI operations.
  */
 export function handleAIError(error: any, feature: string) {

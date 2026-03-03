@@ -1,29 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminAuth } from "@/lib/firebaseAdmin";
+import { verifyAuth, getBaseUrl } from "@/lib/serverUtils";
 
 /**
  * STRIPE INTEGRATION HUB (Simulation Mode)
- * To enable real payments:
- * 1. npm install stripe
- * 2. Add STRIPE_SECRET_KEY to .env
- * 3. Swap simulation logic with stripe.checkout.sessions.create
  */
 
 export async function POST(req: NextRequest) {
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const token = authHeader.split("Bearer ")[1];
-    let uid: string;
-    try {
-      const decoded = await adminAuth.verifyIdToken(token);
-      uid = decoded.uid;
-    } catch (e) {
-      return NextResponse.json({ error: "Invalid session" }, { status: 401 });
-    }
+    const { decodedToken, error } = await verifyAuth(req);
+    if (error) return error;
+    const uid = decodedToken.uid;
 
     const { tier } = await req.json();
     if (!tier) {
@@ -35,9 +22,8 @@ export async function POST(req: NextRequest) {
 
     console.log(`Initializing payment session for ${email} (${uid}) - Tier: ${tier}`);
 
-    // SIMULATION: In a real app, this would be a Stripe Session URL
-    // We'll return a simulated success path
-    const appUrl = process.env.APP_URL || "http://localhost:3000";
+    // Automatically detect the correct URL based on environment
+    const appUrl = getBaseUrl();
     
     // We add a mock session ID to simulate verification
     const mockSessionId = `mock_stripe_${Math.random().toString(36).substring(2, 15)}`;
