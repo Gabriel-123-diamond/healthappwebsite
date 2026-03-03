@@ -561,6 +561,7 @@
     ]
   },
   "directoryPage": {
+    "badge": "Expert Registry",
     "title": "Expert Directory",
     "subtitle": "Connect with verified medical and herbal practitioners.",
     "searchPlaceholder": "Search by specialty or name...",

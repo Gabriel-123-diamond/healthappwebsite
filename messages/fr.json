@@ -557,7 +557,8 @@
     ]
   },
   "directoryPage": {
-    "title": "Annuaire des Experts",
+    "badge": "Registre d'experts",
+    "title": "Annuaire des experts",
     "subtitle": "Connectez-vous avec des praticiens médicaux et herboristes vérifiés.",
     "searchPlaceholder": "Rechercher par spécialité ou nom...",
     "specialists": "Spécialistes",

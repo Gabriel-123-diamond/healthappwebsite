@@ -114,7 +114,7 @@ function SearchContent() {
         distanceRange={distanceRange} setDistanceRange={setDistanceRange} 
       />
 
-      <div className="max-w-5xl mx-auto px-4 py-12">
+      <div className="max-w-5xl mx-auto px-4 pt-24 pb-12">
         <AnimatePresence mode="wait">
           {loading ? (
             <SearchLoading query={query} t={t} />

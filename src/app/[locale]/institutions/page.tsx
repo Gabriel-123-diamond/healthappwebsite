@@ -5,7 +5,7 @@ import { getInstitutions } from '@/services/institutionService';
 import { Institution } from '@/types/institution';
 import { Building2, MapPin, BadgeCheck, ArrowRight, Loader2, Search, ChevronLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Link } from '@/i18n/routing';
+import { Link, useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 
 export default function InstitutionsPage() {

@@ -9,7 +9,7 @@ export default function AboutPage() {
   const t = useTranslations('aboutPage');
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors pt-24 sm:pt-32 pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors pt-32 sm:pt-40 pb-24 relative overflow-hidden">
       {/* Background Decor */}
       <div className="fixed inset-0 pointer-events-none opacity-30">
         <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:60px_60px]" />

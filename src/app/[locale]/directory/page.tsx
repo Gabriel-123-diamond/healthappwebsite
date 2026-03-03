@@ -119,11 +119,19 @@ export default function DirectoryPage() {
   if (!user) return <RestrictedPage />;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors py-12 pt-24 sm:pt-32 px-4 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors pt-32 sm:pt-40 pb-12 px-4 relative overflow-hidden">
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-blue-50/50 to-transparent dark:from-blue-900/5 pointer-events-none" />
       
       <div className="max-w-7xl mx-auto relative z-10">
+        <button 
+          onClick={() => window.history.back()} 
+          className="group inline-flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all font-black uppercase tracking-widest text-[10px] mb-8 bg-white dark:bg-slate-950 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
+        >
+          <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+          Back to Terminal
+        </button>
+
         <div className="text-center mb-16 space-y-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}

@@ -519,6 +519,7 @@
     ]
   },
   "directoryPage": {
+    "badge": "专家注册",
     "title": "专家名录",
     "subtitle": "与经过验证的医学和草药从业者联系。",
     "searchPlaceholder": "按专业或姓名搜索...",

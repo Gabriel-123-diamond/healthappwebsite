@@ -557,6 +557,7 @@
     ]
   },
   "directoryPage": {
+    "badge": "Registro de Expertos",
     "title": "Directorio de Expertos",
     "subtitle": "Conéctese con profesionales médicos y herbolarios verificados.",
     "searchPlaceholder": "Buscar por especialidad o nombre...",

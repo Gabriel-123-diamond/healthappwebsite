@@ -507,6 +507,7 @@
     ]
   },
   "directoryPage": {
+    "badge": "Expertenregister",
     "title": "Expertenverzeichnis",
     "subtitle": "Verbinden Sie sich mit verifizierten medizinischen und pflanzlichen Praktikern.",
     "searchPlaceholder": "Suche nach Fachgebiet oder Name...",
