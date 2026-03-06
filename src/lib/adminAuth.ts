@@ -4,6 +4,11 @@ import { NextRequest } from 'next/server';
 const SUPER_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const SESSION_SECRET = process.env.ADMIN_PASSWORD || 'fallback-secret-for-signing';
 
+// Simple in-memory rate limiter for server instances
+// Note: In serverless environments like Vercel, this will reset on cold starts
+// For high-traffic production, use Redis/Upstash.
+const loginAttempts = new Map<string, { count: number; lastAttempt: number }>();
+
 export const adminAuth = {
   /**
    * Hashes a password using PBKDF2.
@@ -74,5 +79,35 @@ export const adminAuth = {
    */
   isSuperAdminPassword: (password: string): boolean => {
     return !!SUPER_ADMIN_PASSWORD && password === SUPER_ADMIN_PASSWORD;
+  },
+
+  /**
+   * Basic Rate Limiting check
+   */
+  checkRateLimit: (ip: string): { allowed: boolean; remaining: number } => {
+    const limit = 5; // max 5 attempts
+    const window = 15 * 60 * 1000; // 15 minutes
+    const now = Date.now();
+    
+    const record = loginAttempts.get(ip);
+    
+    if (!record) {
+      loginAttempts.set(ip, { count: 1, lastAttempt: now });
+      return { allowed: true, remaining: limit - 1 };
+    }
+
+    if (now - record.lastAttempt > window) {
+      // Reset window
+      loginAttempts.set(ip, { count: 1, lastAttempt: now });
+      return { allowed: true, remaining: limit - 1 };
+    }
+
+    if (record.count >= limit) {
+      return { allowed: false, remaining: 0 };
+    }
+
+    record.count += 1;
+    record.lastAttempt = now;
+    return { allowed: true, remaining: limit - record.count };
   }
 };

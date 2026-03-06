@@ -4,18 +4,28 @@ import { adminAuth } from "@/lib/adminAuth";
 
 export async function POST(req: NextRequest) {
   try {
+    // 1. Rate Limiting based on IP
+    const forwarded = req.headers.get("x-forwarded-for");
+    const ip = forwarded ? forwarded.split(',')[0] : "unknown";
+    
+    const rateCheck = adminAuth.checkRateLimit(ip);
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ 
+        error: "Too many login attempts. Access locked for 15 minutes." 
+      }, { status: 429 });
+    }
+
     const { password } = await req.json();
 
     let isAuthenticated = false;
     let isAdminSuper = false;
 
-    // 1. Check if it's the Super Admin
+    // 2. Check if it's the Super Admin
     if (adminAuth.isSuperAdminPassword(password)) {
       isAuthenticated = true;
       isAdminSuper = true;
     } else {
-      // 2. Check if it's a secondary admin created via dashboard
-      // Note: We search by role 'admin' and then verify the hashed password
+      // 3. Check if it's a secondary admin created via dashboard
       const adminQuery = await adminDb.collection('users')
         .where('role', '==', 'admin')
         .get();
@@ -57,7 +67,10 @@ export async function POST(req: NextRequest) {
       return response;
     }
 
-    return NextResponse.json({ error: "Invalid security key" }, { status: 401 });
+    return NextResponse.json({ 
+      error: `Invalid security key. ${rateCheck.remaining} attempts remaining.` 
+    }, { status: 401 });
+
   } catch (error) {
     console.error("[Admin Login Error]", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
