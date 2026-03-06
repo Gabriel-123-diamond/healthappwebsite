@@ -9,6 +9,7 @@ import InstitutionHeader from '@/components/institution/InstitutionHeader';
 import AboutSection from '@/components/institution/AboutSection';
 import LibrarySection from '@/components/institution/LibrarySection';
 import { useLanguage } from '@/context/LanguageContext';
+import ScrollToTop from '@/components/common/ScrollToTop';
 
 export default function InstitutionPage() {
   const { id } = useParams();
@@ -25,11 +26,11 @@ export default function InstitutionPage() {
     }
   }, [id]);
 
-  if (loading) return <div className="p-20 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-600"/></div>;
-  if (!institution) return <div className="p-20 text-center">Institution not found</div>;
+  if (loading) return <div className="p-20 text-center pt-32 sm:pt-40"><Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-600"/></div>;
+  if (!institution) return <div className="p-20 text-center pt-32 sm:pt-40">Institution not found</div>;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors pt-16">
       <InstitutionHeader institution={institution} />
 
       {/* Content */}

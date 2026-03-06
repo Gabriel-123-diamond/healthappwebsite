@@ -10,6 +10,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { RestrictedAccessModal } from '@/components/RestrictedAccessModal';
+import ScrollToTop from '@/components/common/ScrollToTop';
 
 export default function ArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);

@@ -33,7 +33,7 @@ export default function VideoCallPage({ params }: { params: Promise<{ id: string
 
   if (!isJoined && !isConnecting) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 pt-32 sm:pt-40">
         <div className="max-w-4xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-black uppercase tracking-widest">
@@ -70,15 +70,16 @@ export default function VideoCallPage({ params }: { params: Promise<{ id: string
 
   if (isConnecting) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center">
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center pt-32 sm:pt-40">
         <Loader2 className="w-12 h-12 animate-spin text-blue-600 mb-6" />
+
         <p className="text-white font-black uppercase tracking-[0.3em] text-xs">Securing Connection...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 relative overflow-hidden flex flex-col">
+    <div className="min-h-screen bg-slate-950 relative overflow-hidden flex flex-col pt-16">
       {/* Main Call Area */}
       <div className="flex-1 relative p-4 sm:p-8 flex items-center justify-center">
         {/* Peer Video (Specialist) */}

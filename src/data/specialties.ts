@@ -189,7 +189,8 @@ export const MEDICAL_SPECIALTIES = [
   "Urologic Oncology",
   "Urology",
   "Vascular Neurology (Stroke)",
-  "Vascular Surgery"
+  "Vascular Surgery",
+  "Other"
 ];
 
 export const TRADITIONAL_SPECIALTIES = [

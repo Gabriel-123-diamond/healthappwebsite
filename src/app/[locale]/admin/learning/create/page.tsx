@@ -103,9 +103,9 @@ export default function CreateLearningPathPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 transition-colors pt-16">
       {/* Header */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/5 sticky top-0 z-10 transition-colors">
+      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-white/5 sticky top-16 z-10 transition-colors">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/admin/dashboard" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors text-slate-600 dark:text-slate-400">

@@ -108,10 +108,10 @@
   },
   "directory": {
     "title": "Find Trusted Health Experts",
-    "subtitle": "Connect with verified doctors, certified natural wellness practitioners, and accredited medical institutions.",
+    "subtitle": "Connect with verified doctors, certified Herbal Practitioners, and accredited medical institutions.",
     "allExperts": "All Experts",
     "doctors": "Doctors",
-    "herbalists": "Natural Wellness Practitioners",
+    "herbalists": "Herbal Practitioners",
     "hospitals": "Hospitals",
     "verified": "VERIFIED"
   },
@@ -570,7 +570,7 @@
     "nearby": "NEARBY",
     "allTypes": "All Types",
     "doctors": "Doctors",
-    "herbalists": "Natural Wellness Practitioners",
+    "herbalists": "Herbal Practitioners",
     "clinics": "Clinics",
     "noExperts": "No experts found matching filters",
     "viewProfile": "View Profile",
@@ -648,7 +648,9 @@
       "dob": "Date of Birth",
       "ageRange": "Age Range",
       "placeholderUsername": "unique_id",
-      "placeholderPhone": "800 000 0000"
+      "placeholderPhone": "800 000 0000",
+      "nameError": "No spaces allowed, only hyphens (-)",
+      "usernameError": "No spaces, only alphanumeric and hyphens (-)"
     },
     "security": {
       "title": "Verify Identity.",
@@ -673,7 +675,7 @@
       "userDesc": "Access intelligence and verified experts.",
       "doctor": "Medical Doctor",
       "doctorDesc": "Provide verified clinical expertise.",
-      "herbal": "Natural Wellness Practitioner",
+      "herbal": "Herbal Practitioner",
       "herbalDesc": "Offer validated traditional wisdom.",
       "hospital": "Health Center",
       "hospitalDesc": "Register a clinical institution."

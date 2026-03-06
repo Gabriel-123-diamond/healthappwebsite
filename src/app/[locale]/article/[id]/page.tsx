@@ -8,6 +8,7 @@ import { ChevronLeft, Calendar, User, ShieldCheck, Tag, Loader2, BookOpen, Share
 import { Link } from '@/i18n/routing';
 import ReactMarkdown from 'react-markdown';
 import { motion } from 'framer-motion';
+import ScrollToTop from '@/components/common/ScrollToTop';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 
@@ -34,7 +35,7 @@ export default function ArticleDetailPage() {
   }, [id]);
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950">
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950 pt-32 sm:pt-40">
       <div className="flex flex-col items-center gap-4">
         <Loader2 className="w-12 h-12 animate-spin text-blue-600"/>
         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Loading Scientific Data</p>
@@ -43,7 +44,7 @@ export default function ArticleDetailPage() {
   );
 
   if (!article) return (
-    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950">
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950 pt-32 sm:pt-40">
       <div className="text-center space-y-4">
         <div className="w-20 h-20 bg-slate-100 dark:bg-slate-900 rounded-full flex items-center justify-center mx-auto text-slate-300">
           <BookOpen size={40} />
@@ -55,7 +56,7 @@ export default function ArticleDetailPage() {
   );
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors pt-24 sm:pt-32 pb-24">
+    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors pt-32 sm:pt-40 pb-24">
       {/* Dynamic Background Elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-[0.03] dark:opacity-[0.07]">
         <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:60px_60px]" />

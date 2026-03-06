@@ -46,7 +46,7 @@ export default function DeveloperPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-32 sm:pt-40 pb-12 px-4 transition-colors">
       <div className="max-w-5xl mx-auto">
         <header className="mb-12">
           <div className="flex items-center gap-2 text-blue-600 font-bold uppercase tracking-widest text-xs mb-3">

@@ -33,7 +33,7 @@ export default function AdminDashboardPage() {
 
   if (isLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 pt-32 sm:pt-40">
         <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
       </div>
     );
@@ -105,7 +105,7 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors pt-16">
       {/* Admin Header */}
       <div className="bg-slate-900 dark:bg-black text-white p-4 shadow-md">
         <div className="max-w-7xl mx-auto flex justify-between items-center">

@@ -4,12 +4,13 @@ import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { Search, HelpCircle, MessageCircle, Mail, Phone, ChevronRight, Sparkles, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
+import ScrollToTop from '@/components/common/ScrollToTop';
 
 export default function SupportPage() {
   const { t } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors pt-24 sm:pt-32 pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors pt-32 sm:pt-40 pb-24 relative overflow-hidden">
       {/* Background Decor */}
       <div className="fixed inset-0 pointer-events-none opacity-30">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-400/5 blur-[120px] rounded-full" />

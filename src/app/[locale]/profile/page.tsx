@@ -96,7 +96,7 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors pt-24 pb-32 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors pt-32 sm:pt-40 pb-32 relative overflow-hidden">
       {/* Background Ambience */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-blue-500/5 blur-[120px] rounded-full" />

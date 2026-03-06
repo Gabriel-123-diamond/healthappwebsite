@@ -10,10 +10,12 @@ import Script from "next/script";
 import Header from "@/components/Header";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { UiProvider } from "@/context/UiContext";
 import PushNotificationManager from "@/components/PushNotificationManager";
 import AuthCheck from "@/components/AuthCheck";
 import AiChatbot from "@/components/chat/AiChatbot";
 import { Activity } from "lucide-react";
+import ScrollToTop from "@/components/common/ScrollToTop";
 
 export const metadata: Metadata = {
   title: "Ikiké Health AI - Global Health Information Platform",
@@ -42,15 +44,17 @@ export default async function LocaleLayout({
     <NextIntlClientProvider locale={locale} messages={messages}>
       <ThemeProvider>
         <LanguageProvider initialLocale={locale as any}>
-          <AuthCheck>
-            <PushNotificationManager />
-            <AiChatbot />
-            <GlobalDisclaimer />
-            <Header />
-            <main className="flex-grow dark:bg-slate-900">
-              {children}
-            </main>
-            <footer className="relative bg-slate-50 dark:bg-slate-950 border-t border-slate-200/50 dark:border-slate-800/50 pt-24 pb-12 px-4 overflow-hidden">
+          <UiProvider>
+            <AuthCheck>
+              <PushNotificationManager />
+              <AiChatbot />
+              <GlobalDisclaimer />
+              <Header />
+              <main className="flex-grow dark:bg-slate-900">
+                {children}
+              </main>
+              <ScrollToTop />
+              <footer className="relative bg-slate-50 dark:bg-slate-950 border-t border-slate-200/50 dark:border-slate-800/50 pt-24 pb-12 px-4 overflow-hidden">
               {/* Background Accents */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none opacity-30">
                 <div className="absolute top-[-20%] left-[-10%] w-[400px] h-[400px] bg-blue-400/10 blur-[100px] rounded-full" />
@@ -118,6 +122,7 @@ export default async function LocaleLayout({
               </div>
             </footer>
               </AuthCheck>
+            </UiProvider>
             </LanguageProvider>
           </ThemeProvider>
         </NextIntlClientProvider>

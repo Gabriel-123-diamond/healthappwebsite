@@ -43,7 +43,7 @@ export default function SeedPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
+    <div className="max-w-3xl mx-auto px-4 pt-32 sm:pt-40 pb-12">
       <h1 className="text-3xl font-bold text-slate-900 mb-6 dark:text-white">Database Seeding</h1>
       <p className="text-slate-600 mb-8 dark:text-slate-400">
         This tool populates the database with initial mock data, including experts and articles. 

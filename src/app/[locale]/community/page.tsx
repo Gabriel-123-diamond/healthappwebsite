@@ -8,6 +8,7 @@ import { CommunityPostCard } from '@/components/community/CommunityPostCard';
 import { useLanguage } from '@/context/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from '@/i18n/routing';
+import ScrollToTop from '@/components/common/ScrollToTop';
 
 export default function CommunityPage() {
   const { t } = useLanguage();

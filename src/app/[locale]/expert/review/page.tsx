@@ -70,9 +70,9 @@ export default function ExpertReviewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-slate-50 flex pt-16">
       {/* Sidebar - List of Reviews */}
-      <div className="w-1/3 border-r border-slate-200 bg-white h-screen overflow-y-auto">
+      <div className="w-1/3 border-r border-slate-200 bg-white h-[calc(100vh-64px)] overflow-y-auto">
         <div className="p-6 border-b border-slate-100">
           <h1 className="text-xl font-bold text-slate-900">Expert Review Queue</h1>
           <p className="text-sm text-slate-500 mt-1">Audit AI-generated health responses</p>
@@ -124,7 +124,7 @@ export default function ExpertReviewPage() {
       </div>
 
       {/* Main Content - Detail View */}
-      <div className="flex-1 h-screen overflow-y-auto bg-slate-50 p-12">
+      <div className="flex-1 h-[calc(100vh-64px)] overflow-y-auto bg-slate-50 p-12">
         {selectedReview ? (
           <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">

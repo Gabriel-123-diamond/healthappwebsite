@@ -28,7 +28,7 @@ export default function ExpertDetailsPage() {
   }, [id]);
 
   if (authLoading || (loading && !expert)) return (
-    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950">
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950 pt-32 sm:pt-40">
       <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
     </div>
   );

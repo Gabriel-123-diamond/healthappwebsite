@@ -32,7 +32,7 @@ export default function CertificatePage() {
   if (!path || !certInfo) return <div className="p-20 text-center">Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-slate-100 py-12 px-4 print:bg-white print:p-0">
+    <div className="min-h-screen bg-slate-100 pt-32 sm:pt-40 pb-12 px-4 print:bg-white print:p-0">
       <div className="max-w-4xl mx-auto mb-8 flex items-center justify-between print:hidden">
         <Link href={`/learning/${id}`} className="flex items-center text-slate-500 hover:text-blue-600 transition-colors">
           <ArrowLeft className="w-4 h-4 mr-2" />

@@ -65,6 +65,16 @@ export const useOnboardingValidation = (formData: OnboardingFormData) => {
       );
       return;
     }
+
+    // New space/hyphen validation for username
+    const usernameRegex = /^[a-zA-Z0-9-]+$/;
+    if (!usernameRegex.test(username)) {
+      setValidationStatus(prev => 
+        prev.username === "invalid" ? prev : { ...prev, username: "invalid" }
+      );
+      return;
+    }
+
     setValidationStatus(prev => ({ ...prev, username: "checking" }));
     const tid = setTimeout(async () => {
       try {

@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Upload, Camera, MapPin, Calendar, FileText, CheckCircle2, Loader2, Check, X, Contact } from 'lucide-react';
-import CustomDatePicker from '@/components/common/CustomDatePicker';
+import { Upload, Camera, FileText, CheckCircle2, Loader2, Check, X, Contact, ShieldCheck } from 'lucide-react';
 import { BaseInput } from '@/components/common/BaseInput';
 import { userService } from '@/services/userService';
 
@@ -46,27 +45,14 @@ export default function IdentityVerificationStep({ formData, handleUpdate, valid
 
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
-      <div>
-        <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-2">Identity Verification (KYC)</h3>
-        <p className="text-slate-500 dark:text-slate-400 font-medium text-sm">Please provide your identification documents for verification.</p>
-      </div>
-
-      {/* Profile Overview (Step 1 & 2 requirements) */}
-      <div className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-[32px] border border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div className="space-y-1">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Legal Name</p>
-          <p className="text-lg font-black text-slate-900 dark:text-white capitalize">{formData.firstName} {formData.lastName}</p>
-          <p className="text-[10px] font-bold text-slate-400 italic">Matches your registration record</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">Identity Verification</h3>
+          <p className="text-slate-500 dark:text-slate-400 font-medium text-sm">Step 1: Upload your government-issued identification documents.</p>
         </div>
-        <div className="space-y-1">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Primary Contact</p>
-          <p className="text-lg font-black text-slate-900 dark:text-white">
-            {formData.phones?.[0]?.code} {formData.phones?.[0]?.number.replace(/\d(?=\d{4})/g, "*")}
-          </p>
-          <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-            <CheckCircle2 size={12} />
-            <span className="text-[10px] font-black uppercase tracking-tighter">Verified Device</span>
-          </div>
+        <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl">
+          <ShieldCheck className="w-4 h-4 text-blue-600" />
+          <span className="text-[10px] font-black uppercase tracking-widest text-blue-700 dark:text-blue-400">KYC Required</span>
         </div>
       </div>
 
@@ -76,10 +62,10 @@ export default function IdentityVerificationStep({ formData, handleUpdate, valid
           <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest">Government ID</label>
           <div 
             onClick={() => handleFileUpload('idCard')}
-            className={`aspect-square rounded-3xl border-2 border-dashed flex flex-col items-center justify-center p-6 cursor-pointer transition-all ${
+            className={`aspect-square rounded-[32px] border-2 border-dashed flex flex-col items-center justify-center p-6 cursor-pointer transition-all ${
               uploads.idCard 
-                ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800' 
-                : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-400'
+                ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800 shadow-inner' 
+                : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-400 hover:bg-white dark:hover:bg-slate-800 shadow-sm'
             }`}
           >
             {uploads.idCard ? (
@@ -89,11 +75,12 @@ export default function IdentityVerificationStep({ formData, handleUpdate, valid
               </>
             ) : (
               <>
-                <Upload className="w-10 h-10 text-slate-400 mb-2" />
+                <Upload className="w-10 h-10 text-slate-400 mb-2 group-hover:scale-110 transition-transform" />
                 <span className="text-[10px] font-black uppercase text-slate-400 text-center">National ID / Passport</span>
               </>
             )}
           </div>
+          {validationErrors.idCard && <p className="text-[9px] text-red-500 font-black uppercase mt-1 tracking-widest">{validationErrors.idCard}</p>}
         </div>
 
         {/* Selfie Upload */}
@@ -101,10 +88,10 @@ export default function IdentityVerificationStep({ formData, handleUpdate, valid
           <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest">Selfie holding ID</label>
           <div 
             onClick={() => handleFileUpload('selfie')}
-            className={`aspect-square rounded-3xl border-2 border-dashed flex flex-col items-center justify-center p-6 cursor-pointer transition-all ${
+            className={`aspect-square rounded-[32px] border-2 border-dashed flex flex-col items-center justify-center p-6 cursor-pointer transition-all ${
               uploads.selfie 
-                ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800' 
-                : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-400'
+                ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800 shadow-inner' 
+                : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-400 hover:bg-white dark:hover:bg-slate-800 shadow-sm'
             }`}
           >
             {uploads.selfie ? (
@@ -119,6 +106,7 @@ export default function IdentityVerificationStep({ formData, handleUpdate, valid
               </>
             )}
           </div>
+          {validationErrors.selfie && <p className="text-[9px] text-red-500 font-black uppercase mt-1 tracking-widest">{validationErrors.selfie}</p>}
         </div>
 
         {/* Passport Photo Upload */}
@@ -126,10 +114,10 @@ export default function IdentityVerificationStep({ formData, handleUpdate, valid
           <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest">Passport Photograph</label>
           <div 
             onClick={() => handleFileUpload('passportPhoto')}
-            className={`aspect-square rounded-3xl border-2 border-dashed flex flex-col items-center justify-center p-6 cursor-pointer transition-all ${
+            className={`aspect-square rounded-[32px] border-2 border-dashed flex flex-col items-center justify-center p-6 cursor-pointer transition-all ${
               uploads.passportPhoto 
-                ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800' 
-                : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-400'
+                ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800 shadow-inner' 
+                : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-400 hover:bg-white dark:hover:bg-slate-800 shadow-sm'
             }`}
           >
             {uploads.passportPhoto ? (
@@ -147,7 +135,7 @@ export default function IdentityVerificationStep({ formData, handleUpdate, valid
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="space-y-6">
         <div className="relative group">
           <BaseInput
             id="idNumber"
@@ -157,7 +145,7 @@ export default function IdentityVerificationStep({ formData, handleUpdate, valid
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleUpdate('kyc', { ...formData.kyc, idNumber: e.target.value })}
             placeholder="National ID or Passport number"
             prefixIcon={<Contact className="w-4 h-4 text-slate-400" />}
-            className={idStatus === 'taken' ? 'border-red-500 ring-2 ring-red-100' : ''}
+            className={idStatus === 'taken' ? 'border-red-500 ring-2 ring-red-100 !rounded-2xl' : '!rounded-2xl'}
           />
           <div className="absolute right-4 top-[52px] flex items-center gap-2">
             {idStatus === 'checking' && <Loader2 className="w-4 h-4 animate-spin text-blue-500" />}
@@ -167,26 +155,17 @@ export default function IdentityVerificationStep({ formData, handleUpdate, valid
           {idStatus === 'taken' && (
             <p className="text-[10px] font-black text-red-500 uppercase mt-2 ml-2 tracking-widest">Already registered!</p>
           )}
+          {validationErrors.idNumber && <p className="text-[10px] text-red-500 font-black uppercase mt-2 ml-2 tracking-widest">{validationErrors.idNumber}</p>}
         </div>
-        <CustomDatePicker
-          label="Date of Birth"
-          required
-          value={formData.kyc?.dob || ''}
-          onChange={(val) => handleUpdate('kyc', { ...formData.kyc, dob: val })}
-          error={validationErrors.dob}
-        />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-        <BaseInput
-          id="address"
-          label="Residential Address"
-          required
-          value={formData.kyc?.address || ''}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleUpdate('kyc', { ...formData.kyc, address: e.target.value })}
-          placeholder="Full residential address"
-          prefixIcon={<MapPin className="w-4 h-4 text-slate-400" />}
-          error={validationErrors.address}
-        />
+
+      <div className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-[32px] border border-slate-200 dark:border-slate-800 flex items-start gap-4 shadow-sm">
+        <div className="p-2 bg-emerald-500 rounded-xl text-white shadow-lg shadow-emerald-500/20">
+          <ShieldCheck size={18} />
+        </div>
+        <p className="text-[11px] font-bold text-slate-600 dark:text-slate-400 leading-relaxed italic">
+          Your personal identification number and documents are encrypted and only used for professional verification. Contact numbers are not displayed during this stage.
+        </p>
       </div>
     </motion.div>
   );

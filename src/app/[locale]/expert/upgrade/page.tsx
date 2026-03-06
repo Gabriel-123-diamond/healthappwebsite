@@ -140,7 +140,7 @@ export default function ExpertUpgradePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-24 pb-20 px-4 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-32 sm:pt-40 pb-20 px-4 transition-colors">
       <div className="max-w-3xl mx-auto">
         
         <div className="mb-12">

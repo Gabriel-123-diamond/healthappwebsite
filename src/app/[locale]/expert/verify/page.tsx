@@ -70,7 +70,7 @@ export default function VerificationPage() {
 
   if (success) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center px-4">
+      <div className="min-h-[70vh] flex items-center justify-center px-4 pt-32 sm:pt-40">
         <div className="max-w-md w-full text-center space-y-6">
           <div className="mx-auto w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
             <CheckCircle className="w-10 h-10 text-green-600" />
@@ -86,7 +86,7 @@ export default function VerificationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pt-32 sm:pt-40 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-100 dark:border-slate-700">
         <div className="text-center mb-8">
           <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4">

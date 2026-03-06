@@ -6,6 +6,7 @@ import { useLearning } from '@/hooks/useLearning';
 import { LearningPathCard } from '@/components/learning/LearningPathCard';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
+import ScrollToTop from '@/components/common/ScrollToTop';
 
 export default function LearningPage() {
   const t = useTranslations('learningPage');

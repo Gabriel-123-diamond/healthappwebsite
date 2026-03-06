@@ -8,6 +8,7 @@ import { Shield, Users, Video, BookOpen, Calendar, ArrowRight } from "lucide-rea
 import { Link } from "@/i18n/routing";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
+import ScrollToTop from "@/components/common/ScrollToTop";
 
 export default function Home() {
   const t = useTranslations();

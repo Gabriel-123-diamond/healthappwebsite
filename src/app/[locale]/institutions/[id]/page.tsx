@@ -7,6 +7,7 @@ import { Building2, MapPin, BadgeCheck, ExternalLink, Loader2, BookOpen, Users, 
 import { motion } from 'framer-motion';
 import { Link } from '@/i18n/routing';
 import ExpertStatCard from '@/components/expert/ExpertStatCard';
+import ScrollToTop from '@/components/common/ScrollToTop';
 
 interface PageProps {
   params: Promise<{ id: string; locale: string }>;
@@ -25,13 +26,13 @@ export default function InstitutionDetailPage({ params }: PageProps) {
   }, [id]);
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 pt-32 sm:pt-40">
       <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
     </div>
   );
 
   if (!inst) return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 px-4 text-center">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 px-4 text-center pt-32 sm:pt-40">
       <Building2 className="w-16 h-16 text-slate-200 mb-4" />
       <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Institution not found</h1>
       <Link href="/institutions" className="mt-4 text-blue-600 font-bold hover:underline">Back to Directory</Link>
@@ -39,7 +40,7 @@ export default function InstitutionDetailPage({ params }: PageProps) {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 pt-32 sm:pt-40">
       {/* Hero Header */}
       <div className="relative h-64 sm:h-80 w-full overflow-hidden">
         {inst.coverUrl ? (

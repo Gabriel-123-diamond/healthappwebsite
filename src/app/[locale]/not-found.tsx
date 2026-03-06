@@ -25,7 +25,7 @@ export default function NotFound() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900 transition-colors flex items-center justify-center p-6">
+    <div className="min-h-screen bg-white dark:bg-slate-900 transition-colors flex items-center justify-center p-6 pt-32 sm:pt-40">
       <div className="max-w-xl w-full text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

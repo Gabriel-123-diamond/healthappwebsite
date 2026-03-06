@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AtSign, Loader2, Check, X, User, Phone, Calendar as CalendarIcon, Info } from 'lucide-react';
+import { AtSign, Loader2, Check, X, User, Phone, Calendar as CalendarIcon, Info, AlertCircle } from 'lucide-react';
 import CustomSelect from '../../common/CustomSelect';
 import CustomDatePicker from '../../common/CustomDatePicker';
 import { FormFieldWrapper } from '../FormFieldWrapper';
@@ -27,6 +27,22 @@ export default function IdentityStep({
   cities 
 }: IdentityStepProps) {
   const t = useTranslations('onboarding.identity');
+  const [scream, setScream] = useState(false);
+
+  const triggerScream = () => {
+    setScream(true);
+    setTimeout(() => setScream(false), 1500);
+  };
+
+  const handleTextChange = (field: string, value: string) => {
+    if (value.includes(' ')) {
+      triggerScream();
+      const cleanValue = value.replace(/\s/g, '');
+      setFormData({ ...formData, [field]: cleanValue });
+      return;
+    }
+    setFormData({ ...formData, [field]: value });
+  };
 
   const formatPhoneNumber = (value: string) => {
     // Remove all non-digits
@@ -66,25 +82,62 @@ export default function IdentityStep({
         </div>
       </div>
 
+      <AnimatePresence>
+        {scream && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.5, y: 20 }}
+            animate={{ opacity: 1, scale: 1.1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.5, y: -20 }}
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[200] bg-red-600 text-white px-10 py-6 rounded-[40px] shadow-2xl flex flex-col items-center gap-4 border-4 border-white/20 backdrop-blur-md"
+          >
+            <motion.div
+              animate={{ rotate: [0, -10, 10, -10, 10, 0] }}
+              transition={{ repeat: Infinity, duration: 0.2 }}
+            >
+              <X size={60} strokeWidth={4} />
+            </motion.div>
+            <span className="text-2xl font-black uppercase tracking-tighter whitespace-nowrap">NO SPACES ALLOWED!</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 sm:gap-8">
         <FormFieldWrapper label={t('firstName')} icon={<User size={14} />} isRequired className="sm:col-span-6">
           <input
             type="text"
             value={formData.firstName}
-            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+            onChange={(e) => handleTextChange('firstName', e.target.value)}
             placeholder="Jane"
-            className="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border-2 border-transparent outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 transition-all font-bold text-slate-900 dark:text-white text-sm"
+            className={`w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border-2 outline-none focus:bg-white dark:focus:bg-slate-900 transition-all font-bold text-slate-900 dark:text-white text-sm ${
+              validationStatus.name === 'invalid' && formData.firstName.includes(' ') 
+                ? 'border-red-500/50 focus:border-red-500' 
+                : 'border-transparent focus:border-blue-500'
+            }`}
           />
+          {validationStatus.name === 'invalid' && (formData.firstName.includes(' ') || /[^a-zA-Z-]/.test(formData.firstName)) && (
+            <p className="text-[10px] text-red-500 mt-2 font-black uppercase tracking-widest flex items-center gap-1.5 px-1">
+              <AlertCircle size={10} /> {t('nameError')}
+            </p>
+          )}
         </FormFieldWrapper>
 
         <FormFieldWrapper label={t('lastName')} icon={<User size={14} />} isRequired className="sm:col-span-6">
           <input
             type="text"
             value={formData.lastName}
-            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+            onChange={(e) => handleTextChange('lastName', e.target.value)}
             placeholder="Doe"
-            className="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border-2 border-transparent outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 transition-all font-bold text-slate-900 dark:text-white text-sm"
+            className={`w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border-2 outline-none focus:bg-white dark:focus:bg-slate-900 transition-all font-bold text-slate-900 dark:text-white text-sm ${
+              validationStatus.name === 'invalid' && formData.lastName.includes(' ') 
+                ? 'border-red-500/50 focus:border-red-500' 
+                : 'border-transparent focus:border-blue-500'
+            }`}
           />
+          {validationStatus.name === 'invalid' && (formData.lastName.includes(' ') || /[^a-zA-Z-]/.test(formData.lastName)) && (
+            <p className="text-[10px] text-red-500 mt-2 font-black uppercase tracking-widest flex items-center gap-1.5 px-1">
+              <AlertCircle size={10} /> {t('nameError')}
+            </p>
+          )}
         </FormFieldWrapper>
 
         <FormFieldWrapper label={t('username')} icon={<AtSign size={14} />} isRequired className="sm:col-span-5">
@@ -92,16 +145,25 @@ export default function IdentityStep({
             <input
               type="text"
               value={formData.username}
-              onChange={(e) => setFormData({ ...formData, username: e.target.value.toLowerCase() })}
+              onChange={(e) => handleTextChange('username', e.target.value.toLowerCase())}
               placeholder={t('placeholderUsername')}
-              className="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border-2 border-transparent outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 transition-all font-bold text-slate-900 dark:text-white text-sm"
+              className={`w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border-2 outline-none focus:bg-white dark:focus:bg-slate-900 transition-all font-bold text-slate-900 dark:text-white text-sm ${
+                validationStatus.username === 'invalid' || validationStatus.username === 'taken'
+                  ? 'border-red-500/50 focus:border-red-500' 
+                  : 'border-transparent focus:border-blue-500'
+              }`}
             />
             <div className="absolute right-4 top-1/2 -translate-y-1/2">
               {validationStatus.username === 'validating' && <Loader2 className="w-4 h-4 animate-spin text-blue-500" />}
               {validationStatus.username === 'available' && <Check className="w-4 h-4 text-emerald-500" />}
-              {validationStatus.username === 'taken' && <X className="w-4 h-4 text-red-500" />}
+              {(validationStatus.username === 'taken' || validationStatus.username === 'invalid') && <X className="w-4 h-4 text-red-500" />}
             </div>
           </div>
+          {validationStatus.username === 'invalid' && (
+            <p className="text-[10px] text-red-500 mt-2 font-black uppercase tracking-widest flex items-center gap-1.5 px-1">
+              <AlertCircle size={10} /> {t('usernameError')}
+            </p>
+          )}
         </FormFieldWrapper>
 
         <FormFieldWrapper label={t('dob')} icon={<CalendarIcon size={14} />} isRequired className="sm:col-span-7">

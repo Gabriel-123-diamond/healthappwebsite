@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 export default function RootNotFound() {
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-6 font-sans">
+    <div className="min-h-screen bg-white flex items-center justify-center p-6 pt-32 sm:pt-40 font-sans">
       <div className="max-w-xl w-full text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

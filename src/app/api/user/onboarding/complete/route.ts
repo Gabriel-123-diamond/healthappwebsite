@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       onboardingComplete: true,
       profileComplete: true,
       tier: 'basic',
-      role: 'user',
+      role: formData.role || 'user',
       updatedAt: new Date().toISOString()
     };
 

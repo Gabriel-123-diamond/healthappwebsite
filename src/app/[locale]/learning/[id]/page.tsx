@@ -34,8 +34,8 @@ export default function CourseDetailPage() {
     alert("Course downloaded for offline access.");
   };
 
-  if (loading) return <div className="p-12 text-center text-slate-500 font-bold uppercase tracking-widest">{t('loading')}</div>;
-  if (!path) return <div className="p-12 text-center">Course not found.</div>;
+  if (loading) return <div className="p-12 text-center text-slate-500 font-bold uppercase tracking-widest pt-32 sm:pt-40">{t('loading')}</div>;
+  if (!path) return <div className="p-12 text-center pt-32 sm:pt-40">Course not found.</div>;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">

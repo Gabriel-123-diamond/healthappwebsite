@@ -23,11 +23,11 @@ export default function QuestionDetailPage({ params }: PageProps) {
     }
   }, [id]);
 
-  if (loading) return <div className="p-12 text-center bg-slate-50 min-h-screen"><Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-600"/></div>;
-  if (!question) return <div className="p-12 text-center">Discussion not found</div>;
+  if (loading) return <div className="p-12 text-center bg-slate-50 min-h-screen pt-32 sm:pt-40"><Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-600"/></div>;
+  if (!question) return <div className="p-12 text-center pt-32 sm:pt-40">Discussion not found</div>;
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 pt-32 sm:pt-40 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <Link href="/community" className="inline-flex items-center text-slate-500 hover:text-blue-600 mb-6 transition-colors font-bold">
           <ArrowLeft className="w-4 h-4 mr-2" />

@@ -7,6 +7,7 @@ import { Building2, MapPin, BadgeCheck, ArrowRight, Loader2, Search, ChevronLeft
 import { motion } from 'framer-motion';
 import { Link, useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
+import ScrollToTop from '@/components/common/ScrollToTop';
 
 export default function InstitutionsPage() {
   const [institutions, setInstitutions] = useState<Institution[]>([]);

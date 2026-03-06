@@ -85,11 +85,11 @@ export default function PatientDetailPage() {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-blue-600 w-8 h-8" /></div>;
+    return <div className="min-h-screen flex items-center justify-center pt-32 sm:pt-40"><Loader2 className="animate-spin text-blue-600 w-8 h-8" /></div>;
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-8 px-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-32 sm:pt-40 pb-8 px-4">
       <div className="max-w-5xl mx-auto">
         <header className="mb-8 flex justify-between items-start">
           <div>

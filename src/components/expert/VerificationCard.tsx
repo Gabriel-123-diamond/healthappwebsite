@@ -85,10 +85,10 @@ export const VerificationCard: React.FC<VerificationCardProps> = ({ status, type
             
             {status !== 'verified' && status !== 'pending' ? (
               <Link 
-                href="/expert/verify" 
-                className="px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-xs font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl"
+                href="/expert/setup" 
+                className="px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-slate-200 dark:shadow-none"
               >
-                Apply
+                {status === 'rejected' ? 'Re-Apply' : 'Get Verified'}
               </Link>
             ) : (
               <div className="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg">

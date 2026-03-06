@@ -13,6 +13,7 @@ import { Dropdown } from '@/components/ui/Dropdown';
 import { useUserAuth } from '@/hooks/useUserAuth';
 import { RestrictedPage } from '@/components/common/RestrictedPage';
 import { ExpertCardSkeleton } from '@/components/ui/Skeleton';
+import ScrollToTop from '@/components/common/ScrollToTop';
 
 const ITEMS_PER_PAGE = 12;
 

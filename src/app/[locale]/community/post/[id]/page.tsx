@@ -45,20 +45,20 @@ export default function PostDetailPage({ params }: PageProps) {
   };
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 pt-32 sm:pt-40">
       <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
     </div>
   );
 
   if (!post) return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 pt-32 sm:pt-40">
       <h1 className="text-2xl font-bold mb-4">Post not found</h1>
       <Link href="/community" className="text-blue-600 font-bold">Back to Community</Link>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-32 sm:pt-40 pb-12 px-4">
       <div className="max-w-3xl mx-auto">
         <Link href="/community" className="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold mb-8 transition-colors">
           <ArrowLeft size={18} /> Back to Discussions

@@ -58,6 +58,13 @@ export default function ExpertSetupPage() {
         </div>
 
         {step === 1 && (
+          <IdentityVerificationStep 
+            formData={formData} 
+            handleUpdate={handleUpdate} 
+            validationErrors={validationErrors} 
+          />
+        )}
+        {step === 2 && (
           <ProfessionalIdentityStep 
             formData={formData} 
             handleUpdate={handleUpdate} 
@@ -67,7 +74,6 @@ export default function ExpertSetupPage() {
             isReverting={isReverting}
           />
         )}
-        {step === 2 && <IdentityVerificationStep formData={formData} handleUpdate={handleUpdate} validationErrors={validationErrors} />}
         {step === 3 && <MedicalLicenseVerificationStep formData={formData} handleUpdate={handleUpdate} validationErrors={validationErrors} />}
         {step === 4 && <EducationCertificationsStep formData={formData} updateArrayItem={updateArrayItem} addItem={addItem} removeItem={removeItem} validationErrors={validationErrors} />}
         {step === 5 && <PracticeInformationStep formData={formData} handleUpdate={handleUpdate} validationErrors={validationErrors} />}

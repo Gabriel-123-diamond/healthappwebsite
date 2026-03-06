@@ -44,7 +44,7 @@ export default function PaymentSuccessPage() {
   }, [sessionId, router]);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-6 text-center pt-32 sm:pt-40">
       <div className="max-w-md w-full bg-white dark:bg-[#0B1221] rounded-[48px] p-12 shadow-2xl border border-slate-100 dark:border-white/5 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-3xl rounded-full" />
         

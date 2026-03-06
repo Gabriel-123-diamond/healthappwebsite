@@ -3,7 +3,7 @@ import { Loader2 } from 'lucide-react';
 
 export default function Loading() {
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 flex flex-col items-center justify-center transition-colors">
+    <div className="min-h-screen bg-white dark:bg-slate-950 flex flex-col items-center justify-center transition-colors pt-32 sm:pt-40">
       <div className="w-24 h-24 bg-blue-600 rounded-3xl flex items-center justify-center mb-8 animate-pulse shadow-xl">
         <span className="text-white font-bold text-5xl">H</span>
       </div>
