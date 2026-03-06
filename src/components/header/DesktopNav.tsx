@@ -69,7 +69,7 @@ export default function DesktopNav({ user, userProfile, t }: DesktopNavProps) {
               </div>
               {userProfile && isExpertRole(userProfile.role) && (
                 <>
-                  <MenuLink href="/expert/dashboard" label="Expert Console" icon="👨‍⚕️" />
+                  <MenuLink href="/expert/dashboard" label={t('profile.menu.expertConsole')} icon="👨‍⚕️" />
                   <div className="my-2 border-t border-slate-50 dark:border-slate-800" />
                 </>
               )}
@@ -88,7 +88,7 @@ export default function DesktopNav({ user, userProfile, t }: DesktopNavProps) {
           className="flex items-center gap-2 px-4 py-2 text-sm font-black uppercase tracking-widest text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-all rounded-xl shadow-lg shadow-blue-500/20 active:scale-95 ml-2"
         >
           <LayoutDashboard size={14} />
-          {t('profile.menu.expertDashboard') || 'Dashboard'}
+          {t('profile.menu.expertDashboard')}
         </Link>
       )}
     </nav>

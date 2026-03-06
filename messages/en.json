@@ -145,6 +145,8 @@
       "controlSystem": "Control System",
       "adminDashboard": "Admin Dashboard",
       "expertConsole": "Expert Console",
+      "expertDashboard": "Expert Dashboard",
+      "appointments": "Appointments",
       "upgradeTier": "Upgrade Tier",
       "verificationPending": "Verification Pending",
       "network": "Network",

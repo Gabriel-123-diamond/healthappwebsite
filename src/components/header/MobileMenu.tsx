@@ -213,7 +213,7 @@ export default function MobileMenu({
                       <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-white shadow-sm">
                         <LayoutDashboard size={20} />
                       </div>
-                      <span className="font-black text-white text-[10px] uppercase tracking-[0.2em]">{t('profile.menu.expertDashboard') || 'Console'}</span>
+                      <span className="font-black text-white text-[10px] uppercase tracking-[0.2em]">{t('profile.menu.expertDashboard')}</span>
                     </Link>
                   </motion.div>
                 ) : (
