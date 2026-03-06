@@ -85,9 +85,16 @@ export default function DesktopNav({ user, userProfile, t }: DesktopNavProps) {
       {user && userProfile && isExpertRole(userProfile.role) && (
         <Link 
           href="/expert/dashboard" 
-          className="flex items-center gap-2 px-4 py-2 text-sm font-black uppercase tracking-widest text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-all rounded-xl shadow-lg shadow-blue-500/20 active:scale-95 ml-2"
+          className="flex items-center gap-2 px-5 py-2 text-[10px] font-black uppercase tracking-[0.15em] text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all rounded-full shadow-[0_0_20px_rgba(37,99,235,0.2)] hover:shadow-[0_0_25px_rgba(37,99,235,0.4)] active:scale-95 ml-4 whitespace-nowrap border border-white/10"
         >
-          <LayoutDashboard size={14} />
+          <div className="relative">
+            <LayoutDashboard size={14} className="relative z-10" />
+            <motion.div 
+              animate={{ opacity: [0.4, 0.8, 0.4] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+              className="absolute inset-0 bg-white blur-sm rounded-full" 
+            />
+          </div>
           {t('profile.menu.expertDashboard')}
         </Link>
       )}
