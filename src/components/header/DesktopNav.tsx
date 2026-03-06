@@ -6,13 +6,16 @@ import { ChevronDown } from 'lucide-react';
 import { User } from 'firebase/auth';
 import { NAVIGATION_LINKS } from '@/config/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { UserProfile, isExpertRole } from '@/types/user';
+import { LayoutDashboard } from 'lucide-react';
 
 interface DesktopNavProps {
   user: User | null;
+  userProfile: UserProfile | null;
   t: any;
 }
 
-export default function DesktopNav({ user, t }: DesktopNavProps) {
+export default function DesktopNav({ user, userProfile, t }: DesktopNavProps) {
   const [platformMenuOpen, setPlatformMenuOpen] = React.useState(false);
   const platformMenuRef = React.useRef<HTMLDivElement>(null);
 
@@ -64,6 +67,12 @@ export default function DesktopNav({ user, t }: DesktopNavProps) {
               <div className="px-4 py-2 mb-2">
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Development Tools</span>
               </div>
+              {userProfile && isExpertRole(userProfile.role) && (
+                <>
+                  <MenuLink href="/expert/dashboard" label="Expert Console" icon="👨‍⚕️" />
+                  <div className="my-2 border-t border-slate-50 dark:border-slate-800" />
+                </>
+              )}
               <MenuLink href="/seed" label="Standard Seed (V1)" icon="🌱" />
               <MenuLink href="/admin/seed" label="Admin Seed (V2)" icon="👑" />
               <div className="my-2 border-t border-slate-50 dark:border-slate-800" />
@@ -73,9 +82,13 @@ export default function DesktopNav({ user, t }: DesktopNavProps) {
         </AnimatePresence>
       </div>
 
-      {user && (
-        <Link href="/saved" className="px-4 py-2 text-sm font-bold text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-all rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20">
-          {t('common.saved')}
+      {user && userProfile && isExpertRole(userProfile.role) && (
+        <Link 
+          href="/expert/dashboard" 
+          className="flex items-center gap-2 px-4 py-2 text-sm font-black uppercase tracking-widest text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-all rounded-xl shadow-lg shadow-blue-500/20 active:scale-95 ml-2"
+        >
+          <LayoutDashboard size={14} />
+          {t('profile.menu.expertDashboard') || 'Dashboard'}
         </Link>
       )}
     </nav>

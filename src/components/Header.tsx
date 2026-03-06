@@ -13,9 +13,12 @@ import DesktopNav from './header/DesktopNav';
 import AuthActions from './header/AuthActions';
 import MobileMenu from './header/MobileMenu';
 import PushNotificationManager from './PushNotificationManager';
+import { UserProfile } from '@/types/user';
+import { userService } from '@/services/userService';
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -37,8 +40,18 @@ export default function Header() {
   }, [mobileMenuOpen]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        try {
+          const profile = await userService.getUserProfile(currentUser.uid);
+          setUserProfile(profile);
+        } catch (error) {
+          console.error("Error fetching user profile in header:", error);
+        }
+      } else {
+        setUserProfile(null);
+      }
       setLoading(false);
     });
 
@@ -99,7 +112,7 @@ export default function Header() {
         </div>
 
         <div className="hidden xl:block">
-          <DesktopNav user={user} t={t} />
+          <DesktopNav user={user} userProfile={userProfile} t={t} />
         </div>
 
         <div className="hidden xl:block">
@@ -137,6 +150,7 @@ export default function Header() {
         isOpen={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
         user={user}
+        userProfile={userProfile}
         loading={loading}
         locale={locale}
         t={t}
