@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
+import { rateLimiter } from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,6 +16,11 @@ export async function POST(req: NextRequest) {
       uid = decoded.uid;
     } catch (e) {
       return NextResponse.json({ error: "Invalid session" }, { status: 401 });
+    }
+
+    const rateCheck = rateLimiter.isAllowed(uid + "_upgrade", 5, 60 * 1000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: "Rate limit exceeded. Please wait." }, { status: 429 });
     }
 
     const { tier } = await req.json();
