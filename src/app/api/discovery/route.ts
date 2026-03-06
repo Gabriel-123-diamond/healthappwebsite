@@ -1,61 +1,60 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getAIModel } from "@/lib/gemini";
-import { verifyAuth, handleAIError } from "@/lib/serverUtils";
+import { NextRequest, NextResponse } from "next/server";
+import { adminAuth } from "@/lib/firebaseAdmin";
+import { getGeminiModel } from "@/lib/gemini";
+import { rateLimiter } from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
   try {
-    const { error } = await verifyAuth(req);
-    if (error) return error;
+    const authHeader = req.headers.get("Authorization");
+    let uid: string | null = null;
+    
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.split("Bearer ")[1];
+      try {
+        const decodedToken = await adminAuth.verifyIdToken(token);
+        uid = decodedToken.uid;
+      } catch (error) {
+        console.warn("[API Discovery] Invalid token provided");
+      }
+    }
 
-    const { message, history = [] } = await req.json();
+    const forwarded = req.headers.get("x-forwarded-for");
+    const ip = forwarded ? forwarded.split(',')[0] : "unknown";
+    const identifier = uid || `guest_${ip}`;
 
-    const model = getAIModel("discovery", "gemini-1.5-flash");
+    // Rate Limit: 5 discovery requests per minute
+    const rateCheck = rateLimiter.isAllowed(identifier, 5, 60 * 1000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: "Discovery rate limit exceeded. Please wait." }, { status: 429 });
+    }
 
+    const { answers } = await req.json();
+
+    if (!answers) {
+      return NextResponse.json({ error: "Answers are required" }, { status: 400 });
+    }
+
+    const model = getGeminiModel();
     const prompt = `
-      You are the "Health Discovery Engine" for IKIKE HEALTH AI. 
-      Your goal is to guide the user through a series of questions to understand their wellness concerns and eventually suggest a professional path.
-
-      RULES:
-      1. DO NOT provide a medical diagnosis.
-      2. If the user mentions an emergency (e.g. chest pain, severe bleeding), tell them to seek immediate emergency care.
-      3. Ask ONE follow-up question at a time to narrow down the issue.
-      4. After you have enough information (usually 3-4 turns), provide a "Summary" and a "Suggested Specialty".
-      5. FORMAT YOUR RESPONSE AS JSON:
-      {
-        "reply": "Your next question or follow-up...",
-        "isFinal": false,
-        "summary": null,
-        "suggestedSpecialty": null
-      }
-      OR if you are finished:
-      {
-        "reply": "I have gathered enough information.",
-        "isFinal": true,
-        "summary": "Concise 2-sentence educational summary of findings...",
-        "suggestedSpecialty": "One from: Cardiologist, Dermatologist, Neurologist, Psychiatrist, Orthopedist, Pediatrician, Dentist, Ophthalmologist, General Practitioner, Nutritionist, Natural Wellness Practitioner"
-      }
-
-      CONTEXT:
-      User says: "${message}"
-      History: ${JSON.stringify(history)}
+      Analyze these health-related data points and provide a high-level intelligence summary.
+      Focus on patterns and suggest a relevant medical specialty.
+      
+      Data: ${JSON.stringify(answers)}
+      
+      Return JSON format: { "summary": "...", "suggestedSpecialty": "..." }
     `;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    const text = (response as any).text();
+    const text = response.text();
     
-    // Clean JSON from response
-    const jsonStr = text.replace(/```json/g, '').replace(/```/g, '').trim();
-    const data = JSON.parse(jsonStr);
+    // Clean JSON response
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const resultJson = jsonMatch ? JSON.parse(jsonMatch[0]) : { summary: text, suggestedSpecialty: "General Practitioner" };
 
-    return NextResponse.json(data);
-  } catch (err) {
-    console.error("Discovery API Error:", err);
-    return NextResponse.json({ 
-      reply: "I'm having trouble connecting to my knowledge base. Would you like to try again?",
-      isFinal: false,
-      summary: null,
-      suggestedSpecialty: null
-    }, { status: 200 });
+    return NextResponse.json(resultJson);
+  } catch (error) {
+    console.error("Discovery API Error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

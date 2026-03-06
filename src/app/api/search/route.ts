@@ -3,29 +3,9 @@ import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { checkSafetyServer } from "@/lib/safetyServer";
 import { getGeminiModel } from "@/lib/gemini";
 import { fetchEvidence } from "@/services/evidenceService";
-
-// Simple in-memory rate limiting
-const rateLimitMap = new Map<string, { count: number, lastReset: number }>();
-const RATE_LIMIT_WINDOW = 60 * 1000; 
-const MAX_REQUESTS = 10;
+import { rateLimiter } from "@/lib/rateLimit";
 
 type SearchMode = 'medical' | 'herbal' | 'both';
-
-function isRateLimited(uid: string): boolean {
-  const now = Date.now();
-  const userData = rateLimitMap.get(uid) || { count: 0, lastReset: now };
-
-  if (now - userData.lastReset > RATE_LIMIT_WINDOW) {
-    userData.count = 1;
-    userData.lastReset = now;
-    rateLimitMap.set(uid, userData);
-    return false;
-  }
-
-  userData.count++;
-  rateLimitMap.set(uid, userData);
-  return userData.count > MAX_REQUESTS;
-}
 
 function sanitizeInput(input: string): string {
   if (!input) return "";
@@ -51,18 +31,20 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    const forwarded = req.headers.get("x-forwarded-for");
+    const ip = forwarded ? forwarded.split(',')[0] : "unknown";
     const identifier = uid || `guest_${ip}`;
 
-    if (isRateLimited(identifier)) {
-      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    // Apply Rate Limiting: 10 requests per minute
+    const rateCheck = rateLimiter.isAllowed(identifier, 10, 60 * 1000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: "Too many requests. Please wait a minute." }, { status: 429 });
     }
 
     const body = await req.json();
     const query = sanitizeInput(body.query);
     const rawMode = sanitizeInput(body.mode || "both");
     const country = sanitizeInput(body.country || "");
-    const providerOverride = body.provider; // Optional override from request
 
     const allowedModes: SearchMode[] = ['medical', 'herbal', 'both'];
     const mode: SearchMode = allowedModes.includes(rawMode as SearchMode) 
@@ -84,8 +66,6 @@ export async function POST(req: NextRequest) {
     }
 
     const evidence = await fetchEvidence(query, mode);
-
-    // Respect provider switch
     const model = getGeminiModel(); 
 
     const prompt = `

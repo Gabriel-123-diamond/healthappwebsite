@@ -1,26 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
-
-// Simple in-memory rate limiting
-const rateLimitMap = new Map<string, { count: number, lastReset: number }>();
-const RATE_LIMIT_WINDOW = 60 * 1000;
-const MAX_REQUESTS = 20; // Allow 20 checks per minute per user
-
-function isRateLimited(uid: string): boolean {
-  const now = Date.now();
-  const userData = rateLimitMap.get(uid) || { count: 0, lastReset: now };
-
-  if (now - userData.lastReset > RATE_LIMIT_WINDOW) {
-    userData.count = 1;
-    userData.lastReset = now;
-    rateLimitMap.set(uid, userData);
-    return false;
-  }
-
-  userData.count++;
-  rateLimitMap.set(uid, userData);
-  return userData.count > MAX_REQUESTS;
-}
+import { rateLimiter } from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
   try {
@@ -39,9 +19,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid session" }, { status: 401 });
     }
 
-    // 2. Rate Limiting
-    if (isRateLimited(uid)) {
-      return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+    // 2. Rate Limiting: 20 checks per minute per user
+    const rateCheck = rateLimiter.isAllowed(uid, 20, 60 * 1000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: "Rate limit exceeded. Please wait." }, { status: 429 });
     }
 
     const { field, value } = await req.json();

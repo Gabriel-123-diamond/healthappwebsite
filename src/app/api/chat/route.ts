@@ -1,36 +1,54 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getAIModel } from "@/lib/gemini";
-import { verifyAuth, handleAIError } from "@/lib/serverUtils";
-
-export const runtime = 'nodejs';
+import { NextRequest, NextResponse } from "next/server";
+import { getGeminiModel } from "@/lib/gemini";
+import { adminAuth } from "@/lib/firebaseAdmin";
+import { rateLimiter } from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
   try {
-    const { error } = await verifyAuth(req);
-    if (error) return error;
+    const authHeader = req.headers.get("Authorization");
+    let uid: string | null = null;
+    
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.split("Bearer ")[1];
+      try {
+        const decodedToken = await adminAuth.verifyIdToken(token);
+        uid = decodedToken.uid;
+      } catch (error) {
+        console.warn("[API Chat] Invalid token provided");
+      }
+    }
 
-    const { message, history = [] } = await req.json();
+    const forwarded = req.headers.get("x-forwarded-for");
+    const ip = forwarded ? forwarded.split(',')[0] : "unknown";
+    const identifier = uid || `guest_${ip}`;
+
+    // Rate Limit: 15 messages per minute
+    const rateCheck = rateLimiter.isAllowed(identifier, 15, 60 * 1000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: "Messaging rate limit exceeded. Please wait." }, { status: 429 });
+    }
+
+    const { message, history } = await req.json();
 
     if (!message) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
     }
 
-    const model = getAIModel("chat", "gemini-1.5-flash");
+    const model = getGeminiModel();
+    const chat = model.startChat({
+      history: history.map((msg: any) => ({
+        role: msg.role === 'user' ? 'user' : 'model',
+        parts: [{ text: msg.content }],
+      })),
+    });
 
-    const prompt = `
-You are Ikiké, an intelligent, empathetic health assistant.
-User message: ${message}
-Conversation history: ${JSON.stringify(history)}
-
-Please provide a helpful, concise response. Do not provide medical diagnoses. Always recommend consulting a real doctor for serious conditions.
-`;
-
-    const result = await model.generateContent(prompt);
+    const result = await chat.sendMessage(message);
     const response = await result.response;
-    const responseText = (response as any).text();
+    const text = response.text();
 
-    return NextResponse.json({ reply: responseText });
+    return NextResponse.json({ reply: text });
   } catch (error) {
-    return handleAIError(error, "Chat");
+    console.error("Chat API Error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
