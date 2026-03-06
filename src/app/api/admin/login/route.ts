@@ -1,44 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto";
 import { adminDb } from "@/lib/firebaseAdmin";
+import { adminAuth } from "@/lib/adminAuth";
 
 export async function POST(req: NextRequest) {
   try {
-    const { password, uid } = await req.json();
-    const superAdminPassword = process.env.ADMIN_PASSWORD;
-
-    if (!superAdminPassword) {
-      return NextResponse.json({ error: "Server misconfiguration" }, { status: 500 });
-    }
+    const { password } = await req.json();
 
     let isAuthenticated = false;
     let isAdminSuper = false;
 
     // 1. Check if it's the Super Admin
-    if (password === superAdminPassword) {
+    if (adminAuth.isSuperAdminPassword(password)) {
       isAuthenticated = true;
       isAdminSuper = true;
     } else {
       // 2. Check if it's a secondary admin created via dashboard
+      // Note: We search by role 'admin' and then verify the hashed password
       const adminQuery = await adminDb.collection('users')
         .where('role', '==', 'admin')
-        .where('adminPassword', '==', password)
-        .limit(1)
         .get();
       
-      if (!adminQuery.empty) {
-        isAuthenticated = true;
+      for (const doc of adminQuery.docs) {
+        const storedHash = doc.data().adminPassword;
+        if (storedHash && adminAuth.comparePassword(password, storedHash)) {
+          isAuthenticated = true;
+          break;
+        }
       }
     }
 
     if (isAuthenticated) {
-      // Generate a secure session token using HMAC-SHA256
-      const today = new Date().toISOString().split('T')[0];
-      const hmac = crypto.createHmac('sha256', superAdminPassword);
-      hmac.update(today);
-      const signature = hmac.digest('hex');
-      
-      const token = btoa(`ikike_admin_v3:${today}:${signature}:${isAdminSuper ? 'super' : 'regular'}`);
+      const token = adminAuth.signSession(isAdminSuper);
       
       const response = NextResponse.json({ 
         success: true, 
@@ -55,9 +47,11 @@ export async function POST(req: NextRequest) {
         path: '/',
       });
 
-      // Non-sensitive flag for UI
+      // Non-sensitive flag for UI routing logic
       if (isAdminSuper) {
-        response.cookies.set('is_super_admin', 'true', { maxAge: 60 * 60 * 24 });
+        response.cookies.set('is_super_admin', 'true', { maxAge: 60 * 60 * 24, path: '/' });
+      } else {
+        response.cookies.set('is_super_admin', 'false', { maxAge: 60 * 60 * 24, path: '/' });
       }
 
       return response;
