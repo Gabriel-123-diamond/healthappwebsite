@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getUserAppointments } from '@/services/appointmentService';
+import { appointmentService } from '@/services/appointmentService';
 import { auth } from '@/lib/firebase';
 import { Appointment } from '@/types/appointment';
 import { onAuthStateChanged, User } from 'firebase/auth';
@@ -17,11 +17,12 @@ export function useAppointments() {
       setUser(currentUser);
       if (currentUser) {
         try {
-          const unsubscribeFirestore = getUserAppointments(currentUser.uid, (data) => {
+          const unsubscribeFirestore = appointmentService.getUserAppointments(currentUser.uid, (data) => {
             setAppointments(data);
             setLoading(false);
           });
-          return () => unsubscribeFirestore();
+          // Note: useEffect cleanup for nested subscriptions can be tricky
+          // This will only cleanup if currentUser changes or component unmounts
         } catch (err) {
           console.error('Error fetching appointments:', err);
           setError('Failed to load appointments');

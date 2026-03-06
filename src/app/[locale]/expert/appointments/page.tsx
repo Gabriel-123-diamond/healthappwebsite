@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { auth } from '@/lib/firebase';
-import { getExpertAppointments, updateAppointmentStatus } from '@/services/appointmentService';
+import { appointmentService } from '@/services/appointmentService';
 import { Appointment } from '@/types/appointment';
 import { Calendar, Clock, User, CheckCircle, XCircle, Loader2, ArrowLeft, MoreHorizontal } from 'lucide-react';
 import { Link } from '@/i18n/routing';
@@ -18,7 +18,7 @@ export default function ExpertAppointmentsPage() {
     const user = auth.currentUser;
     if (!user) return;
 
-    const unsubscribe = getExpertAppointments(user.uid, (data) => {
+    const unsubscribe = appointmentService.getExpertAppointments(user.uid, (data) => {
       setAppointments(data);
       setLoading(false);
     });
@@ -28,7 +28,7 @@ export default function ExpertAppointmentsPage() {
 
   const handleStatusUpdate = async (id: string, status: 'confirmed' | 'cancelled') => {
     try {
-      await updateAppointmentStatus(id, status);
+      await appointmentService.updateAppointmentStatus(id, status);
     } catch (err) {
       console.error("Error updating status:", err);
     }

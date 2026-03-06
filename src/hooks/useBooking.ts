@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { createAppointment } from '@/services/appointmentService';
+import { appointmentService } from '@/services/appointmentService';
 import { auth } from '@/lib/firebase';
 
 export function useBooking(expertId: string, expertName: string) {
@@ -18,7 +18,7 @@ export function useBooking(expertId: string, expertName: string) {
     setError(null);
 
     try {
-      await createAppointment(
+      await appointmentService.createAppointment(
         user.uid,
         expertId,
         expertName,
