@@ -41,7 +41,7 @@ export default function DesktopNav({ user, userProfile, t }: DesktopNavProps) {
         </Link>
       ))}
       
-      <div className="relative" ref={platformMenuRef}>
+      {/* <div className="relative" ref={platformMenuRef}>
         <button
           onMouseEnter={() => setPlatformMenuOpen(true)}
           onClick={() => setPlatformMenuOpen(!platformMenuOpen)}
@@ -69,7 +69,7 @@ export default function DesktopNav({ user, userProfile, t }: DesktopNavProps) {
               </div>
               {userProfile && isExpertRole(userProfile.role) && (
                 <>
-                  <MenuLink href="/expert/dashboard" label={t('profile.menu.expertConsole')} icon="👨‍⚕️" />
+                  <MenuLink href="/expert/dashboard" label={t('profile.menu.expertConsole') || ''} icon="👨‍⚕️" />
                   <div className="my-2 border-t border-slate-50 dark:border-slate-800" />
                 </>
               )}
@@ -80,7 +80,7 @@ export default function DesktopNav({ user, userProfile, t }: DesktopNavProps) {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </div> */}
 
       {user && userProfile && isExpertRole(userProfile.role) && (
         <Link 
