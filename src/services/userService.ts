@@ -91,6 +91,20 @@ export const userService = {
   },
 
   /**
+   * Fetches all admin users.
+   */
+  getAdmins: async (): Promise<UserProfile[]> => {
+    try {
+      const q = query(collection(db, 'users'), where('role', '==', 'admin'));
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() } as UserProfile));
+    } catch (error) {
+      console.error('Error fetching admins:', error);
+      throw error;
+    }
+  },
+
+  /**
    * Fetches pending experts for admin verification.
    */
   getPendingExperts: async (): Promise<UserProfile[]> => {

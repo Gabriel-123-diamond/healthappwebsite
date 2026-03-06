@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
-import { reviewService, PendingReview } from '@/services/reviewService';
 import { userService } from '@/services/userService';
 import { contentService } from '@/services/contentService';
 import { appointmentService } from '@/services/appointmentService';
@@ -12,7 +11,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from '@/i18n/routing';
 import ExpertStatCard from '@/components/expert/ExpertStatCard';
 import { VerificationCard } from '@/components/expert/VerificationCard';
-import { ReviewQueue } from '@/components/expert/ReviewQueue';
 import { ExpertDashboardHeader } from '@/components/expert/ExpertDashboardHeader';
 import { ExpertDashboardActions } from '@/components/expert/ExpertDashboardActions';
 import { Article } from '@/types/article';
@@ -22,13 +20,12 @@ import ScrollToTop from '@/components/common/ScrollToTop';
 
 export default function ExpertDashboard() {
   const { t } = useLanguage();
-  const [pending, setPending] = useState<PendingReview[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
   const [courses, setCourses] = useState<LearningPath[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'appointments' | 'queue' | 'articles' | 'courses'>('appointments');
+  const [activeTab, setActiveTab] = useState<'appointments' | 'articles' | 'courses'>('appointments');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,8 +33,7 @@ export default function ExpertDashboard() {
       if (!user) return;
 
       try {
-        const [pendingData, profileData, articlesData, coursesData] = await Promise.all([
-          reviewService.getPendingReviews(),
+        const [profileData, articlesData, coursesData] = await Promise.all([
           userService.getUserProfile(user.uid),
           contentService.getExpertArticles(user.uid),
           contentService.getExpertLearningPaths(user.uid)
@@ -48,7 +44,6 @@ export default function ExpertDashboard() {
           setAppointments(data);
         });
 
-        setPending(pendingData);
         setProfile(profileData);
         setArticles(articlesData);
         setCourses(coursesData);
@@ -85,7 +80,7 @@ export default function ExpertDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           <div className="lg:col-span-8 space-y-10">
             <div className="flex bg-white dark:bg-slate-900 rounded-2xl p-1.5 border border-slate-100 dark:border-slate-800 shadow-sm w-fit overflow-x-auto max-w-full">
-              {(['appointments', 'queue', 'articles', 'courses'] as const).map(tab => (
+              {(['appointments', 'articles', 'courses'] as const).map(tab => (
                 <motion.button 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -97,7 +92,7 @@ export default function ExpertDashboard() {
                       : 'text-slate-400 hover:text-blue-600'
                   }`}
                 >
-                  {tab === 'appointments' ? 'Consultations' : tab === 'queue' ? 'Verification Queue' : tab === 'articles' ? 'Medical Records' : 'Curricula'}
+                  {tab === 'appointments' ? 'Consultations' : tab === 'articles' ? 'Medical Records' : 'Curricula'}
                 </motion.button>
               ))}
             </div>
@@ -113,8 +108,6 @@ export default function ExpertDashboard() {
                 >
                   {activeTab === 'appointments' ? (
                     <AppointmentList appointments={appointments} />
-                  ) : activeTab === 'queue' ? (
-                    <ReviewQueue pending={pending} loading={loading} />
                   ) : activeTab === 'articles' ? (
                     <ArticleList articles={articles} />
                   ) : (
@@ -303,6 +296,7 @@ const CourseList = ({ courses }: { courses: LearningPath[] }) => (
             <BookOpen className="w-8 h-8 text-slate-200" />
           </div>
           <p className="text-slate-400 font-bold uppercase tracking-widest text-xs mb-4">No active curricula</p>
+          <p className="text-[10px] text-slate-400 font-medium px-10 mb-6">Structured health intelligence paths for the community.</p>
           <Link href="/expert/courses/new" className="text-blue-600 font-black text-[10px] uppercase tracking-[0.2em] hover:underline">Build first course</Link>
         </div>
       ) : (

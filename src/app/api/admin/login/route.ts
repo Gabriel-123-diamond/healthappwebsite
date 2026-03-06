@@ -5,39 +5,45 @@ import { adminDb } from "@/lib/firebaseAdmin";
 export async function POST(req: NextRequest) {
   try {
     const { password, uid } = await req.json();
-    const adminPassword = process.env.ADMIN_PASSWORD;
+    const superAdminPassword = process.env.ADMIN_PASSWORD;
 
-    if (!adminPassword) {
+    if (!superAdminPassword) {
       return NextResponse.json({ error: "Server misconfiguration" }, { status: 500 });
     }
 
-    if (password === adminPassword) {
-      // 1. If UID is provided, assign 'admin' role in Firestore
-      if (uid) {
-        try {
-          await adminDb.collection('users').doc(uid).update({
-            role: 'admin',
-            updatedAt: new Date().toISOString()
-          });
-          console.log(`[Admin Login] User ${uid} elevated to ADMIN role.`);
-        } catch (dbErr) {
-          console.error(`[Admin Login] Failed to update role for ${uid}:`, dbErr);
-          // We continue anyway as the password was correct
-        }
-      }
+    let isAuthenticated = false;
+    let isAdminSuper = false;
 
-      // 2. Generate a secure session token using HMAC-SHA256
-      // This proves the server generated it without exposing the password itself.
+    // 1. Check if it's the Super Admin
+    if (password === superAdminPassword) {
+      isAuthenticated = true;
+      isAdminSuper = true;
+    } else {
+      // 2. Check if it's a secondary admin created via dashboard
+      const adminQuery = await adminDb.collection('users')
+        .where('role', '==', 'admin')
+        .where('adminPassword', '==', password)
+        .limit(1)
+        .get();
+      
+      if (!adminQuery.empty) {
+        isAuthenticated = true;
+      }
+    }
+
+    if (isAuthenticated) {
+      // Generate a secure session token using HMAC-SHA256
       const today = new Date().toISOString().split('T')[0];
-      const hmac = crypto.createHmac('sha256', adminPassword);
+      const hmac = crypto.createHmac('sha256', superAdminPassword);
       hmac.update(today);
       const signature = hmac.digest('hex');
       
-      const token = btoa(`ikike_admin_v2:${today}:${signature}`);
+      const token = btoa(`ikike_admin_v3:${today}:${signature}:${isAdminSuper ? 'super' : 'regular'}`);
       
       const response = NextResponse.json({ 
         success: true, 
-        message: "Authenticated"
+        message: "Authenticated",
+        isSuper: isAdminSuper
       });
 
       // Set a secure, HTTP-only cookie
@@ -49,11 +55,17 @@ export async function POST(req: NextRequest) {
         path: '/',
       });
 
+      // Non-sensitive flag for UI
+      if (isAdminSuper) {
+        response.cookies.set('is_super_admin', 'true', { maxAge: 60 * 60 * 24 });
+      }
+
       return response;
     }
 
-    return NextResponse.json({ error: "Invalid password" }, { status: 401 });
+    return NextResponse.json({ error: "Invalid security key" }, { status: 401 });
   } catch (error) {
+    console.error("[Admin Login Error]", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
