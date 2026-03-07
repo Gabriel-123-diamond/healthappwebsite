@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useRouter } from '@/i18n/routing';
+import { useSearchParams } from 'next/navigation';
 import { auth, db } from '@/lib/firebase';
 import { 
   createUserWithEmailAndPassword, 
@@ -10,7 +11,7 @@ import {
   sendEmailVerification
 } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import { Loader2, Check, Mail, ShieldCheck, ArrowRight, Cpu, Zap } from 'lucide-react';
+import { Loader2, Check, Mail, ShieldCheck, ArrowRight, Cpu, Zap, Ticket } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BaseInput } from '@/components/common/BaseInput';
 import { PasswordField } from '@/components/common/PasswordField';
@@ -19,12 +20,22 @@ import { useTranslations } from 'next-intl';
 
 export default function SignUpPage() {
   const t = useTranslations('auth');
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [referralCode, setReferralCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+
+  // Handle URL referral code
+  useEffect(() => {
+    const ref = searchParams.get('ref') || searchParams.get('referral');
+    if (ref) {
+      setReferralCode(ref.toUpperCase());
+    }
+  }, [searchParams]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +46,11 @@ export default function SignUpPage() {
     setLoading(true);
     setError('');
     try {
+      // Store referral code for onboarding
+      if (referralCode) {
+        localStorage.setItem('pending_referral_code', referralCode.trim().toUpperCase());
+      }
+
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await sendEmailVerification(userCredential.user);
       router.push('/onboarding');
@@ -49,6 +65,11 @@ export default function SignUpPage() {
     setLoading(true);
     setError('');
     try {
+      // Store referral code for onboarding
+      if (referralCode) {
+        localStorage.setItem('pending_referral_code', referralCode.trim().toUpperCase());
+      }
+
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       
@@ -153,6 +174,19 @@ export default function SignUpPage() {
               autoComplete="new-password"
               className="dark:bg-black/20"
             />
+
+            <div className="pt-2 border-t border-slate-100 dark:border-white/5">
+              <BaseInput
+                id="referralCode"
+                label="Referral Code (Optional)"
+                type="text"
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                placeholder="REF-XXXXXXX"
+                prefixIcon={<Ticket className="w-4 h-4 text-blue-500" />}
+                className="dark:bg-black/20 font-black tracking-widest uppercase placeholder:font-normal placeholder:tracking-normal"
+              />
+            </div>
 
             {error && (
               <motion.div 

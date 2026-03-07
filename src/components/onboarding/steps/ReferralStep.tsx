@@ -56,7 +56,9 @@ export default function ReferralStep({ formData, setFormData, validationStatus }
                 value={formData.referralCode}
                 onChange={(e) => setFormData({...formData, referralCode: e.target.value.toUpperCase().trim()})}
                 className={`w-full pl-14 pr-12 py-5 rounded-[24px] bg-slate-50 dark:bg-slate-800 border-2 outline-none transition-all font-black tracking-widest text-slate-900 dark:text-white placeholder:font-normal placeholder:tracking-normal placeholder:text-slate-400 ${
-                  validationStatus.referral === 'invalid' ? 'border-red-500 focus:bg-white' : 'border-transparent focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900'
+                  validationStatus.referral === 'invalid' 
+                    ? 'border-red-500 bg-red-50/50 dark:bg-red-900/10' 
+                    : 'border-transparent focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900'
                 }`}
                 placeholder="REF-XXXXXXX"
               />

@@ -154,11 +154,17 @@ export const useOnboarding = () => {
     return () => unsubscribe();
   }, [router, searchParams]);
 
-  // Handle URL referral code
+  // Handle URL and localStorage referral code
   useEffect(() => {
-    const refCode = searchParams.get('ref');
-    if (refCode) {
-      setFormData(prev => ({ ...prev, referralCode: refCode.toUpperCase() }));
+    const urlRef = searchParams.get('ref') || searchParams.get('referral');
+    const storedRef = localStorage.getItem('pending_referral_code');
+    
+    const finalRef = urlRef || storedRef;
+    
+    if (finalRef) {
+      setFormData(prev => ({ ...prev, referralCode: finalRef.toUpperCase() }));
+      // Clear it once used so it doesn't persist to other accounts on same machine
+      localStorage.removeItem('pending_referral_code');
     }
   }, [searchParams]);
 
