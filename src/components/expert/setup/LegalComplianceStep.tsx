@@ -43,14 +43,14 @@ export default function LegalComplianceStep({ formData, handleUpdate, validation
           >
             <div className="flex items-center gap-4">
               <div className={`p-3 rounded-xl ${formData.legal?.[item.id] ? 'bg-blue-100' : 'bg-slate-100'}`}>
-                <item.icon className={`w-5 h-5 ${formData.legal?.[item.id] ? 'text-blue-600' : 'text-slate-400'}`} />
+                <item.icon className={`w-5 h-5 ${formData.legal?.[item.id] ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`} />
               </div>
               <span className={`text-sm font-bold ${formData.legal?.[item.id] ? 'text-blue-900 dark:text-blue-100' : 'text-slate-600 dark:text-slate-400'}`}>
                 {item.label}
               </span>
             </div>
             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-              formData.legal?.[item.id] ? 'bg-blue-600 border-blue-600' : 'border-slate-200'
+              formData.legal?.[item.id] ? 'bg-blue-600 dark:bg-blue-500 border-blue-600' : 'border-slate-200'
             }`}>
               {formData.legal?.[item.id] && <div className="w-2 h-2 bg-white rounded-full" />}
             </div>

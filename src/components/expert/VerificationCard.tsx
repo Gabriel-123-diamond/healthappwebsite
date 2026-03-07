@@ -62,7 +62,7 @@ export const VerificationCard: React.FC<VerificationCardProps> = ({ status, type
               transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
               className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-full"
             >
-              <Sparkles className="w-4 h-4 text-blue-600" />
+              <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             </motion.div>
           )}
         </div>

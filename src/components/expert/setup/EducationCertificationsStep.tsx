@@ -33,7 +33,7 @@ export const EducationCertificationsStep: React.FC<EducationCertificationsStepPr
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
       <h3 className="text-lg font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-        <GraduationCap className="w-5 h-5 text-blue-600" /> 
+        <GraduationCap className="w-5 h-5 text-blue-600 dark:text-blue-400" /> 
         Education & Certifications
       </h3>
       <p className="text-sm text-slate-500 mb-4">Add your degrees and professional certifications to build trust with patients.</p>
@@ -56,7 +56,7 @@ export const EducationCertificationsStep: React.FC<EducationCertificationsStepPr
             className={`p-4 rounded-2xl border-2 border-dashed flex items-center justify-between cursor-pointer transition-all ${
               edu.certUrl 
                 ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800' 
-                : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-blue-400'
+                : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500'
             }`}
           >
             <div className="flex items-center gap-3">
@@ -71,20 +71,20 @@ export const EducationCertificationsStep: React.FC<EducationCertificationsStepPr
               </div>
             </div>
             {uploading === i ? (
-               <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+               <div className="w-4 h-4 border-2 border-blue-600 dark:border-blue-400 border-t-transparent rounded-full animate-spin" />
             ) : !edu.certUrl && <Upload className="w-4 h-4 text-slate-300" />}
           </div>
 
           {validationErrors[`edu-${i}`] && <p className="text-xs text-red-500 font-bold">{validationErrors[`edu-${i}`]}</p>}
           
           {formData.education.length > 1 && (
-            <button onClick={() => removeItem('education', i)} className="absolute -top-3 -right-3 p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-red-500 hover:bg-red-50 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+            <button onClick={() => removeItem('education', i)} className="absolute -top-3 -right-3 p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
               <Trash2 className="w-4 h-4" />
             </button>
           )}
         </div>
       ))}
-      <button onClick={() => addItem('education')} className="text-sm font-bold text-blue-600 flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 transition-colors">
+      <button onClick={() => addItem('education')} className="text-sm font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors">
         <Plus className="w-4 h-4" /> Add Another Qualification
       </button>
     </div>

@@ -18,22 +18,22 @@ export default function ExpertContactCard({ location, expertId, expertName }: Ex
 
       <div className="space-y-6">
         <ContactItem 
-          icon={<MapPin className="w-5 h-5 text-blue-600" />} 
+          icon={<MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />} 
           label="Registry Location" 
           value={location} 
         />
         <ContactItem 
-          icon={<Phone className="w-5 h-5 text-blue-600" />} 
+          icon={<Phone className="w-5 h-5 text-blue-600 dark:text-blue-400" />} 
           label="Verification Phone" 
           value="+1 (555) 123-4567" 
         />
         <ContactItem 
-          icon={<Mail className="w-5 h-5 text-blue-600" />} 
+          icon={<Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />} 
           label="Encrypted Email" 
           value="expert.verified@ikike.ai" 
         />
         <ContactItem 
-          icon={<Clock className="w-5 h-5 text-blue-600" />} 
+          icon={<Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />} 
           label="Consultation Hours" 
           value="Mon-Fri: 9am - 5pm" 
         />
@@ -56,7 +56,7 @@ export default function ExpertContactCard({ location, expertId, expertName }: Ex
 function ContactItem({ icon, label, value }: { icon: React.ReactNode, label: string, value: string }) {
   return (
     <div className="flex items-start gap-4 group">
-      <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 group-hover:border-blue-200 transition-all duration-300">
+      <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 group-hover:border-blue-200 dark:border-blue-900/30 transition-all duration-300">
         {icon}
       </div>
       <div className="min-w-0">

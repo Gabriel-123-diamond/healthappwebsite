@@ -67,10 +67,10 @@ export async function getExpertContent(expertId: string): Promise<ExpertContent[
   }
 }
 
-export async function generateAccessCode(expertId: string, expertName: string): Promise<AccessCode> {
+export async function generateAccessCode(expertId: string, expertName: string, expiryHours: number = 24): Promise<AccessCode> {
   const code = Math.floor(100000 + Math.random() * 900000).toString();
   const createdAt = serverTimestamp();
-  const expiresAt = Timestamp.fromDate(new Date(Date.now() + 24 * 60 * 60 * 1000));
+  const expiresAt = Timestamp.fromDate(new Date(Date.now() + expiryHours * 60 * 60 * 1000));
 
   const docRef = await addDoc(collection(db, ACCESS_CODES_COLLECTION), {
     code,

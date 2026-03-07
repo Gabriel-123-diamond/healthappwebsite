@@ -34,7 +34,7 @@ export default function BookAppointmentButton({ expertId, expertName }: BookAppo
     <button 
       onClick={handleBookClick}
       disabled={isLoading}
-      className="w-full mt-6 bg-blue-600 text-white py-4 rounded-[20px] font-black uppercase tracking-widest text-[10px] hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2"
+      className="w-full mt-6 bg-blue-600 dark:bg-blue-500 text-white py-4 rounded-[20px] font-black uppercase tracking-widest text-[10px] hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2"
     >
       {isLoading ? (
         <>

@@ -19,14 +19,20 @@ import ScrollToTop from '@/components/common/ScrollToTop';
 import { ExpertDashboardProvider, useExpertDashboard } from '@/context/ExpertDashboardContext';
 import { PatientQueue } from '@/components/expert/PatientQueue';
 import { RevenueForecast } from '@/components/expert/RevenueForecast';
+import { CodeExpiryModal } from '@/components/expert/CodeExpiryModal';
+import NiceModal from '@/components/common/NiceModal';
+import { useRouter } from '@/i18n/routing';
 
 function DashboardContent() {
   const { t } = useLanguage();
+  const router = useRouter();
   const { state, dispatch } = useExpertDashboard();
   const { articles, courses, appointments, profile, loading, activeTab } = state;
 
   const [activeCode, setActiveCode] = useState<AccessCode | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isExpiryModalOpen, setIsExpiryModalOpen] = useState(false);
+  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchAccessCode = async () => {
@@ -39,19 +45,29 @@ function DashboardContent() {
     fetchAccessCode();
   }, []);
 
-  const handleGenerateCode = async () => {
+  const handleGenerateCode = async (expiryHours: number = 24) => {
     const user = auth.currentUser;
     if (user && profile) {
       setIsGenerating(true);
       try {
-        const newCode = await generateAccessCode(user.uid, profile.fullName || 'Expert');
+        const newCode = await generateAccessCode(user.uid, profile.fullName || 'Expert', expiryHours);
         setActiveCode(newCode);
+        setIsExpiryModalOpen(false);
       } catch (error) {
         console.error("Failed to generate code:", error);
       } finally {
         setIsGenerating(false);
       }
     }
+  };
+
+  const onCreationAttempt = (e: React.MouseEvent, type: 'article' | 'course') => {
+    e.preventDefault();
+    if (profile?.verificationStatus !== 'verified') {
+      setIsVerificationModalOpen(true);
+      return;
+    }
+    router.push(type === 'article' ? '/expert/articles/new' : '/expert/courses/new');
   };
 
   useEffect(() => {
@@ -102,14 +118,17 @@ function DashboardContent() {
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="mb-12">
-          <ExpertDashboardHeader />
+          <ExpertDashboardHeader 
+            verificationStatus={profile?.verificationStatus} 
+            onCreationAttempt={onCreationAttempt} 
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          <ExpertStatCard icon={<Calendar />} label="Clinical Sessions" value={appointments.length.toString()} color="bg-blue-50 dark:bg-blue-900/20 text-blue-600" />
-          <ExpertStatCard icon={<Award />} label="Clinical Impact" value={(articles.length * 10 + courses.length * 50).toString()} color="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600" />
-          <ExpertStatCard icon={<Users />} label="Global Reach" value={profile?.views || "0"} color="bg-purple-50 dark:bg-purple-900/20 text-purple-600" />
-          <ExpertStatCard icon={<Star />} label="Patient Rating" value={profile?.rating || "5.0"} color="bg-amber-50 dark:bg-amber-900/20 text-amber-600" />
+          <ExpertStatCard icon={<Calendar />} label="Clinical Sessions" value={appointments.length.toString()} color="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" />
+          <ExpertStatCard icon={<Award />} label="Clinical Impact" value={(articles.length * 10 + courses.length * 50).toString()} color="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400" />
+          <ExpertStatCard icon={<Users />} label="Global Reach" value={profile?.views || "0"} color="bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400" />
+          <ExpertStatCard icon={<Star />} label="Patient Rating" value={profile?.rating || "5.0"} color="bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -132,7 +151,7 @@ function DashboardContent() {
                     <div className="flex items-center gap-4 bg-slate-50 dark:bg-slate-800/50 p-2 rounded-2xl border border-slate-100 dark:border-slate-800">
                        <div className="text-right px-4">
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Confidence</p>
-                          <p className="text-lg font-black text-indigo-600 tracking-tighter">98.4%</p>
+                          <p className="text-lg font-black text-indigo-600 dark:text-indigo-400 tracking-tighter">98.4%</p>
                        </div>
                        <div className="w-px h-8 bg-slate-200 dark:bg-slate-700" />
                        <div className="text-right px-4">
@@ -169,7 +188,7 @@ function DashboardContent() {
                   className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
                     activeTab === tab 
                       ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg' 
-                      : 'text-slate-400 hover:text-blue-600'
+                      : 'text-slate-400 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-400'
                   }`}
                 >
                   {tab === 'appointments' ? 'Consultations' : tab === 'queue' ? 'Live Triage' : tab === 'articles' ? 'Medical Records' : 'Curricula'}
@@ -191,9 +210,9 @@ function DashboardContent() {
                   ) : activeTab === 'queue' ? (
                     <PatientQueue />
                   ) : activeTab === 'articles' ? (
-                    <ArticleList articles={articles} />
+                    <ArticleList articles={articles} onCreationAttempt={onCreationAttempt} />
                   ) : (
-                    <CourseList courses={courses} />
+                    <CourseList courses={courses} onCreationAttempt={onCreationAttempt} />
                   )}
                 </motion.div>
               </AnimatePresence>
@@ -236,7 +255,7 @@ function DashboardContent() {
               <div className="p-8 bg-white dark:bg-slate-900 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-sm space-y-6">
                  <div className="flex items-center gap-3">
                     <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl">
-                      <ShieldCheck className="w-5 h-5 text-indigo-600" />
+                      <ShieldCheck className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                     </div>
                     <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Compliance Status</h4>
                  </div>
@@ -259,7 +278,7 @@ function DashboardContent() {
                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
-                        <Key className="w-5 h-5 text-amber-600" />
+                        <Key className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                       </div>
                       <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Access Code Node</h4>
                     </div>
@@ -286,7 +305,7 @@ function DashboardContent() {
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      onClick={handleGenerateCode}
+                      onClick={() => setIsExpiryModalOpen(true)}
                       disabled={isGenerating}
                       className="w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 disabled:opacity-50 transition-all shadow-lg hover:shadow-indigo-500/10"
                     >
@@ -301,6 +320,24 @@ function DashboardContent() {
           </aside>
         </div>
       </div>
+
+      <CodeExpiryModal 
+        isOpen={isExpiryModalOpen} 
+        onClose={() => setIsExpiryModalOpen(false)} 
+        onGenerate={handleGenerateCode} 
+        isGenerating={isGenerating} 
+      />
+
+      <NiceModal 
+        isOpen={isVerificationModalOpen}
+        onClose={() => setIsVerificationModalOpen(false)}
+        onConfirm={() => router.push('/expert/setup')}
+        title="Stage 3 Verification Required"
+        description="To maintain the clinical integrity of Ikiké, publishing articles and courses requires Stage 3 Verification. Please complete your professional credentialing to unlock these features."
+        confirmText="Complete Verification"
+        cancelText="Maybe Later"
+        type="warning"
+      />
     </div>
   );
 }

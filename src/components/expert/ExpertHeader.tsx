@@ -22,7 +22,7 @@ export default function ExpertHeader({ name, type, specialty, rating, verified }
       <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="bg-blue-600/20 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 border border-blue-500/30">
+            <span className="bg-blue-600 dark:bg-blue-500/20 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 border border-blue-500/30">
               {type}
             </span>
             {verified && (

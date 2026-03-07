@@ -53,52 +53,42 @@ export default function AuthActions({ user, loading, locale, t, setTheme, resolv
   };
 
   return (
-    <div className="hidden xl:flex items-center gap-2 xl:gap-4">
-      <div className="flex items-center gap-1.5 xl:gap-2 mr-1 xl:mr-2">
-        <LanguageSelector currentLocale={locale} onLocaleChange={handleLocaleChange} />
-        
-        <button 
-          onClick={toggleTheme}
-          className="p-1.5 xl:p-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors h-7 w-7 xl:h-8 xl:w-8 flex items-center justify-center"
-        >
-          {mounted ? (resolvedTheme === 'dark' ? <Sun className="w-3.5 h-3.5 xl:w-4 xl:h-4" /> : <Moon className="w-3.5 h-3.5 xl:w-4 xl:h-4" />) : <div className="w-3.5 h-3.5 xl:w-4 xl:h-4" />}
-        </button>
-      </div>
+    <div className="flex items-center gap-1 xl:gap-2">
+      <LanguageSelector currentLocale={locale} onLocaleChange={handleLocaleChange} />
+      
+      <button 
+        onClick={toggleTheme}
+        className="p-2 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl transition-all active:scale-90 shadow-sm flex items-center justify-center"
+      >
+        {mounted ? (resolvedTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />) : <div className="w-4 h-4" />}
+      </button>
+
+      <div className="w-px h-6 bg-slate-200 dark:bg-slate-800 mx-1" />
 
       {loading ? (
-        <Loader2 className="w-4 h-4 xl:w-5 xl:h-5 animate-spin text-slate-400" />
+        <Loader2 className="w-4 h-4 animate-spin text-slate-400 mx-2" />
       ) : user ? (
-        <div className="flex items-center gap-2 xl:gap-4">
-          <Link 
-            href={userProfile && isExpertRole(userProfile.role) ? "/expert/appointments" : "/appointments"} 
-            className="flex items-center gap-1.5 xl:gap-2 text-xs xl:text-sm font-bold text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-all"
-          >
-            <Calendar className="w-4 h-4" />
-            <span className="hidden 2xl:inline">Appointments</span>
-          </Link>
-
-          <div className="h-4 w-px bg-slate-200 dark:bg-slate-800 mx-1" />
-
-          <Link href="/profile" className="flex items-center gap-1.5 xl:gap-2 text-xs xl:text-sm font-medium text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400">
-            <div className="w-7 h-7 xl:w-8 xl:h-8 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center text-blue-700 dark:text-blue-400 font-bold">
-              {user.email?.[0].toUpperCase() || <UserIcon className="w-3.5 h-3.5 xl:w-4 xl:h-4" />}
+        <div className="flex items-center gap-2 xl:gap-3">
+          <Link href="/profile" className="flex items-center gap-2 p-1 pr-3 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl transition-all">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-black text-xs shadow-lg">
+              {user.email?.[0].toUpperCase() || <UserIcon className="w-4 h-4" />}
             </div>
-            <span className="hidden 2xl:inline">{t('common.profile')}</span>
+            <span className="hidden 2xl:inline text-[10px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-300">{t('common.profile')}</span>
           </Link>
           <button 
             onClick={handleSignOut}
-            className="text-slate-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400 transition-colors"
+            className="p-2 text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
             title={t('common.signOut')}
           >
-            <LogOut className="w-4 h-4 xl:w-5 xl:h-5" />
+            <LogOut className="w-4 h-4" />
           </button>
         </div>
       ) : (
-        <div className="flex items-center gap-2 xl:gap-3">
-          <Link href="/auth/signin" className="text-xs xl:text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">
+        <div className="flex items-center gap-2 px-1">
+          <Link href="/auth/signin" className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 transition-colors">
             {t('common.signIn')}
           </Link>
-          <Link href="/auth/signup" className="bg-blue-600 text-white px-3 xl:px-4 py-1.5 xl:py-2 rounded-lg text-xs xl:text-sm font-medium hover:bg-blue-700 transition-colors">
+          <Link href="/auth/signup" className="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-95">
             {t('common.getStarted')}
           </Link>
         </div>
@@ -136,15 +126,15 @@ function LanguageSelector({ currentLocale, onLocaleChange }: { currentLocale: st
     <div className="relative" ref={ref}>
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+        className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl text-[10px] font-black text-slate-700 dark:text-slate-300 hover:shadow-sm transition-all shadow-sm"
       >
-        <span>{currentLang.flag}</span>
-        <span className="uppercase">{currentLang.code}</span>
-        <Globe className={`w-3 h-3 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <span className="text-sm leading-none mb-0.5">{currentLang.flag}</span>
+        <span className="uppercase tracking-widest">{currentLang.code}</span>
+        <Globe className={`w-3 h-3 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-blue-500' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-2 right-0 w-48 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-2xl p-2 z-[60]">
+        <div className="absolute top-full mt-3 right-0 w-48 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-slate-100 dark:border-slate-800 shadow-2xl p-2 z-[100] animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="grid grid-cols-1 gap-1">
             {languages.map((lang) => (
               <button
@@ -153,17 +143,17 @@ function LanguageSelector({ currentLocale, onLocaleChange }: { currentLocale: st
                   onLocaleChange(lang.code);
                   setIsOpen(false);
                 }}
-                className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
+                className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
                   currentLocale === lang.code 
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400' 
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' 
+                    : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <span>{lang.flag}</span>
-                  <span className="font-medium">{lang.label}</span>
+                  <span className="text-base">{lang.flag}</span>
+                  <span className="">{lang.label}</span>
                 </div>
-                {currentLocale === lang.code && <Check className="w-4 h-4" />}
+                {currentLocale === lang.code && <Check className="w-3.5 h-3.5" />}
               </button>
             ))}
           </div>

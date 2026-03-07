@@ -76,7 +76,11 @@ export default function Header() {
   };
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+    <motion.header 
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
       scrolled 
         ? 'bg-white/70 dark:bg-slate-950/70 backdrop-blur-2xl border-b border-slate-200/30 dark:border-slate-800/30 py-3 shadow-2xl shadow-blue-500/5' 
         : 'bg-transparent py-6 border-b border-transparent'
@@ -88,8 +92,8 @@ export default function Header() {
         style={{ width: `${scrollProgress}%` }}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between relative">
+        <div className="flex items-center gap-8">
           <Link href="/" className="group flex items-center gap-3">
             <div className="relative">
               <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-500">
@@ -99,7 +103,7 @@ export default function Header() {
                 <div className="w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-950 shadow-sm" />
               </div>
             </div>
-            <div className="flex flex-col">
+            <div className="hidden sm:flex flex-col">
               <span className="font-black text-xl text-slate-900 dark:text-white tracking-tight leading-none">
                 Ikiké
               </span>
@@ -109,13 +113,13 @@ export default function Header() {
               </div>
             </div>
           </Link>
+
+          <div className="hidden xl:block">
+            <DesktopNav user={user} userProfile={userProfile} t={t} />
+          </div>
         </div>
 
-        <div className="hidden xl:block">
-          <DesktopNav user={user} userProfile={userProfile} t={t} />
-        </div>
-
-        <div className="hidden xl:block">
+        <div className="hidden xl:flex items-center gap-4 bg-slate-100/50 dark:bg-slate-900/50 p-1 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 backdrop-blur-md">
           <AuthActions 
             user={user} 
             loading={loading} 
@@ -158,6 +162,6 @@ export default function Header() {
         onToggleTheme={toggleTheme}
         mounted={mounted}
       />
-    </header>
+    </motion.header>
   );
 }

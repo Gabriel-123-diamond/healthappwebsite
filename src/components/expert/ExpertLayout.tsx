@@ -22,7 +22,7 @@ export const ExpertLayout: React.FC<ExpertLayoutProps> = ({
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 pt-32 sm:pt-40 px-4 relative overflow-hidden">
       {/* Subtle Background Elements */}
-      <div className="absolute top-0 left-[-10%] w-[500px] h-[500px] bg-blue-400/5 dark:bg-blue-600/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-[-10%] w-[500px] h-[500px] bg-blue-400/5 dark:bg-blue-600 dark:bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 right-[-10%] w-[400px] h-[400px] bg-indigo-400/5 dark:bg-indigo-600/5 blur-[100px] rounded-full pointer-events-none" />
 
       <div className="max-w-5xl mx-auto relative z-10">

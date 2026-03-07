@@ -69,12 +69,12 @@ export const CourseCurriculumBuilder: React.FC<CourseCurriculumBuilderProps> = (
     <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 border border-slate-100 dark:border-slate-700">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <ChevronRight className="w-5 h-5 text-blue-600" />
+          <ChevronRight className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           Course Curriculum
         </h2>
         <button
           onClick={addModule}
-          className="px-3 py-1.5 text-xs font-bold text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 flex items-center gap-1 transition-colors"
+          className="px-3 py-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 rounded-lg hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 flex items-center gap-1 transition-colors"
         >
           <Plus className="w-4 h-4" />
           Add Module
@@ -86,7 +86,7 @@ export const CourseCurriculumBuilder: React.FC<CourseCurriculumBuilderProps> = (
           <div key={module.id} className="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
             <div className="flex items-center justify-between mb-4">
               <input
-                className="bg-transparent font-bold text-slate-900 dark:text-white outline-none focus:text-blue-600 transition-colors w-full"
+                className="bg-transparent font-bold text-slate-900 dark:text-white outline-none focus:text-blue-600 dark:text-blue-400 transition-colors w-full"
                 value={module.title}
                 onChange={(e) => {
                   const newModules = [...modules];

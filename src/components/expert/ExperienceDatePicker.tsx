@@ -99,8 +99,8 @@ export const ExperienceDatePicker: React.FC<ExperienceDatePickerProps> = ({
                     onClick={() => handleSelect(idx, viewDate.getFullYear())}
                     className={`py-2 text-xs font-bold rounded-xl transition-colors ${
                       isSelected 
-                        ? 'bg-blue-600 text-white' 
-                        : 'text-slate-600 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600'
+                        ? 'bg-blue-600 dark:bg-blue-500 text-white' 
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:text-blue-400'
                     }`}
                   >
                     {month}
@@ -114,7 +114,7 @@ export const ExperienceDatePicker: React.FC<ExperienceDatePickerProps> = ({
                 onClick={handlePresent}
                 className={`w-full mt-4 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl border-2 transition-all ${
                   value === 'Present'
-                    ? 'bg-blue-600 border-blue-600 text-white'
+                    ? 'bg-blue-600 dark:bg-blue-500 border-blue-600 text-white'
                     : 'border-slate-100 dark:border-slate-700 text-slate-400 hover:border-blue-500 hover:text-blue-500'
                 }`}
               >

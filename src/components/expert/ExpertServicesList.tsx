@@ -12,7 +12,7 @@ export default function ExpertServicesList() {
   return (
     <section className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600">
+        <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
           <Award size={20} />
         </div>
         <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Clinical Services</h2>

@@ -19,7 +19,7 @@ export const OnlinePresenceStep: React.FC<OnlinePresenceStepProps> = ({
     <div className="space-y-8 animate-in fade-in slide-in-from-right-4">
       <div>
         <h3 className="text-lg font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-          <Globe className="w-5 h-5 text-blue-600" /> 
+          <Globe className="w-5 h-5 text-blue-600 dark:text-blue-400" /> 
           Online Presence
         </h3>
         <p className="text-sm text-slate-500 mt-1">LinkedIn and Website help patients verify your credentials.</p>
@@ -47,7 +47,7 @@ export const OnlinePresenceStep: React.FC<OnlinePresenceStepProps> = ({
       </div>
 
       <div className="p-6 bg-blue-50 dark:bg-blue-900/10 rounded-2xl border border-blue-100 dark:border-blue-900/20 flex gap-4">
-        <ShieldCheck className="w-10 h-10 text-blue-600 flex-shrink-0" />
+        <ShieldCheck className="w-10 h-10 text-blue-600 dark:text-blue-400 flex-shrink-0" />
         <div>
           <h4 className="font-bold text-blue-900 dark:text-blue-400">Final Verification</h4>
           <p className="text-sm text-blue-800 dark:text-blue-300/80 leading-relaxed mt-1">

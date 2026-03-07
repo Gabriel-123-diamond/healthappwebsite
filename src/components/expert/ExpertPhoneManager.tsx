@@ -202,7 +202,7 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
                 
                 <div className="absolute right-2 md:right-4 flex items-center gap-2 sm:gap-3 shrink-0">
                   {phone.isVerified && (
-                    <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 bg-blue-600 rounded-full shadow-lg shadow-blue-200/50">
+                    <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 bg-blue-600 dark:bg-blue-500 rounded-full shadow-lg shadow-blue-200/50">
                        <Shield size={10} className="text-white" />
                        <span className="text-[7px] sm:text-[8px] font-black text-white uppercase tracking-tighter">Verified</span>
                     </div>
@@ -232,7 +232,7 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
             className="p-4 sm:p-6 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border-2 border-dashed border-blue-200 dark:border-blue-900/30 space-y-4"
           >
             <div className="flex justify-between items-center">
-              <h4 className="text-[10px] font-black uppercase tracking-widest text-blue-600">Add New Verified Number</h4>
+              <h4 className="text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400">Add New Verified Number</h4>
               <button onClick={() => setIsAdding(false)} className="text-slate-400 hover:text-red-500"><X size={16} /></button>
             </div>
 
@@ -272,7 +272,7 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
                   whileTap={{ scale: 0.98 }}
                   onClick={handleSendOtp}
                   disabled={isVerifying || !isLengthValid}
-                  className="px-8 py-4 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:grayscale transition-all flex items-center justify-center min-h-[52px] xl:min-w-[140px]"
+                  className="px-8 py-4 bg-blue-600 dark:bg-blue-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:grayscale transition-all flex items-center justify-center min-h-[52px] xl:min-w-[140px]"
                 >
                   {isVerifying ? <Loader2 size={16} className="animate-spin" /> : 'Send OTP'}
                 </motion.button>
@@ -299,7 +299,7 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
                     {isVerifying ? <Loader2 size={16} className="animate-spin" /> : 'Verify & Add'}
                   </motion.button>
                 </div>
-                <button onClick={() => setVerificationStep('idle')} className="text-[9px] font-black uppercase text-blue-600 hover:underline">Change Number</button>
+                <button onClick={() => setVerificationStep('idle')} className="text-[9px] font-black uppercase text-blue-600 dark:text-blue-400 hover:underline">Change Number</button>
               </div>
             )}
 
@@ -314,7 +314,7 @@ export const ExpertPhoneManager: React.FC<ExpertPhoneManagerProps> = ({
             whileHover={{ scale: 1.05, x: 5 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleStartAdd}
-            className="group flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-600 hover:text-blue-700 transition-all px-2 py-1"
+            className="group flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 hover:text-blue-700 transition-all px-2 py-1"
           >
             <div className="p-1 bg-blue-50 group-hover:bg-blue-100 rounded-lg transition-colors">
               <Plus size={12} />

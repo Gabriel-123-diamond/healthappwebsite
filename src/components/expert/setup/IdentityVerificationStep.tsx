@@ -51,7 +51,7 @@ export default function IdentityVerificationStep({ formData, handleUpdate, valid
           <p className="text-slate-500 dark:text-slate-400 font-medium text-sm">Step 1: Upload your government-issued identification documents.</p>
         </div>
         <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl">
-          <ShieldCheck className="w-4 h-4 text-blue-600" />
+          <ShieldCheck className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           <span className="text-[10px] font-black uppercase tracking-widest text-blue-700 dark:text-blue-400">KYC Required</span>
         </div>
       </div>

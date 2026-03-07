@@ -66,10 +66,10 @@ export default function ProfessionalProfileStep({ formData, handleUpdate, valida
         />
       </div>
 
-      <div className="p-6 bg-blue-600/5 dark:bg-blue-400/5 rounded-[32px] border border-blue-600/10 dark:border-blue-400/10 space-y-4">
+      <div className="p-6 bg-blue-600 dark:bg-blue-500/5 dark:bg-blue-400/5 rounded-[32px] border border-blue-600/10 dark:border-blue-400/10 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-600 rounded-xl text-white shadow-lg shadow-blue-500/20">
+            <div className="p-2 bg-blue-600 dark:bg-blue-500 rounded-xl text-white shadow-lg shadow-blue-500/20">
               <ShieldCheck size={18} />
             </div>
             <div>
@@ -79,7 +79,7 @@ export default function ProfessionalProfileStep({ formData, handleUpdate, valida
           </div>
           <button 
             onClick={() => handleUpdate('profile', { ...formData.profile, promoteProfile: !formData.profile?.promoteProfile })}
-            className={`w-12 h-6 rounded-full transition-colors relative ${formData.profile?.promoteProfile ? 'bg-blue-600' : 'bg-slate-200 dark:bg-slate-800'}`}
+            className={`w-12 h-6 rounded-full transition-colors relative ${formData.profile?.promoteProfile ? 'bg-blue-600 dark:bg-blue-500' : 'bg-slate-200 dark:bg-slate-800'}`}
           >
             <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${formData.profile?.promoteProfile ? 'left-7' : 'left-1'}`} />
           </button>

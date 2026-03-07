@@ -85,17 +85,22 @@ export default function DesktopNav({ user, userProfile, t }: DesktopNavProps) {
       {user && userProfile && isExpertRole(userProfile.role) && (
         <Link 
           href="/expert/dashboard" 
-          className="flex items-center gap-2 px-5 py-2 text-[10px] font-black uppercase tracking-[0.15em] text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all rounded-full shadow-[0_0_20px_rgba(37,99,235,0.2)] hover:shadow-[0_0_25px_rgba(37,99,235,0.4)] active:scale-95 ml-4 whitespace-nowrap border border-white/10"
+          className="group relative flex items-center gap-2 px-6 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] text-white dark:text-slate-900 overflow-hidden rounded-xl ml-8 whitespace-nowrap transition-all duration-500 hover:scale-105 active:scale-95 shadow-2xl shadow-blue-500/20"
         >
-          <div className="relative">
-            <LayoutDashboard size={14} className="relative z-10" />
-            <motion.div 
-              animate={{ opacity: [0.4, 0.8, 0.4] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-              className="absolute inset-0 bg-white blur-sm rounded-full" 
-            />
+          {/* Animated Background Layers */}
+          <div className="absolute inset-0 bg-slate-900 dark:bg-white transition-colors duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-indigo-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          
+          {/* Glowing element */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-500" />
+          
+          {/* Glass shine effect */}
+          <div className="absolute top-0 -left-[100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[35deg] group-hover:left-[150%] transition-all duration-1000 ease-in-out" />
+
+          <div className="relative flex items-center gap-2">
+            <LayoutDashboard size={14} className="group-hover:rotate-12 transition-transform duration-500" />
+            {t('profile.menu.expertDashboard')}
           </div>
-          {t('profile.menu.expertDashboard')}
         </Link>
       )}
     </nav>

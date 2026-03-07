@@ -65,7 +65,7 @@ export const ProfessionalIdentityStep: React.FC<ProfessionalIdentityStepProps> =
           <p className="text-slate-500 dark:text-slate-400 font-medium text-sm">Step 2: Confirm your personal details and professional focus.</p>
         </div>
         <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl">
-          <User className="w-4 h-4 text-blue-600" />
+          <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           <span className="text-[10px] font-black uppercase tracking-widest text-blue-700 dark:text-blue-400">
             {formData.expertType.replace('_', ' ')}
           </span>
@@ -192,7 +192,7 @@ export const ProfessionalIdentityStep: React.FC<ProfessionalIdentityStepProps> =
                     whileTap={{ scale: 0.98 }}
                     onClick={handleAssign}
                     disabled={!pendingYears || (pendingSpecialty === 'Other' && !customName)}
-                    className="p-4 bg-blue-600 text-white rounded-2xl shadow-xl flex items-center justify-center disabled:opacity-50 disabled:scale-95 transition-all"
+                    className="p-4 bg-blue-600 dark:bg-blue-500 text-white rounded-2xl shadow-xl flex items-center justify-center disabled:opacity-50 disabled:scale-95 transition-all"
                   >
                     <Check size={24} strokeWidth={4} />
                   </motion.button>
@@ -226,7 +226,7 @@ export const ProfessionalIdentityStep: React.FC<ProfessionalIdentityStepProps> =
               >
                 <div className="flex items-center gap-4">
                   <div className={`p-3 rounded-2xl shadow-sm ${
-                    index === 0 ? 'bg-blue-600 text-white' : 'bg-blue-50 dark:bg-blue-900/30 text-blue-600'
+                    index === 0 ? 'bg-blue-600 dark:bg-blue-500 text-white' : 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
                   }`}>
                     <Stethoscope size={20} />
                   </div>
@@ -234,7 +234,7 @@ export const ProfessionalIdentityStep: React.FC<ProfessionalIdentityStepProps> =
                     <div className="flex items-center gap-2">
                       <span className="font-black text-slate-900 dark:text-white text-sm tracking-tight">{s.name}</span>
                       {index === 0 && (
-                        <span className="text-[7px] font-black bg-blue-600 text-white px-1.5 py-0.5 rounded-full uppercase tracking-tighter">Primary</span>
+                        <span className="text-[7px] font-black bg-blue-600 dark:bg-blue-500 text-white px-1.5 py-0.5 rounded-full uppercase tracking-tighter">Primary</span>
                       )}
                     </div>
                     <p className="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.2em]">{s.years} Years of Experience</p>
@@ -249,7 +249,7 @@ export const ProfessionalIdentityStep: React.FC<ProfessionalIdentityStepProps> =
                         handleUpdate('specialties', newSpecs);
                         handleUpdate('specialty', s.name);
                       }}
-                      className="p-2 text-[8px] font-black uppercase text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity hover:underline"
+                      className="p-2 text-[8px] font-black uppercase text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity hover:underline"
                     >
                       Set Primary
                     </button>
@@ -288,8 +288,8 @@ export const ProfessionalIdentityStep: React.FC<ProfessionalIdentityStepProps> =
         {validationErrors.phones && <p className="text-[10px] text-red-500 font-black uppercase mt-4 tracking-widest">{validationErrors.phones}</p>}
       </div>
       
-      <div className="p-6 bg-blue-600/5 dark:bg-blue-400/5 rounded-[32px] border border-blue-600/10 dark:border-blue-400/10 flex items-start gap-4 shadow-sm">
-        <div className="p-2 bg-blue-600 rounded-xl text-white shadow-lg shadow-blue-500/20">
+      <div className="p-6 bg-blue-600 dark:bg-blue-500/5 dark:bg-blue-400/5 rounded-[32px] border border-blue-600/10 dark:border-blue-400/10 flex items-start gap-4 shadow-sm">
+        <div className="p-2 bg-blue-600 dark:bg-blue-500 rounded-xl text-white shadow-lg shadow-blue-500/20">
           <ShieldCheck size={18} />
         </div>
         <p className="text-[11px] font-bold text-blue-800 dark:text-blue-300 leading-relaxed italic">

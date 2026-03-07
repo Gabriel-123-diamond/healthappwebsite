@@ -98,7 +98,7 @@ export const AvailabilityScheduler: React.FC<AvailabilitySchedulerProps> = ({ va
                 <button
                   type="button"
                   onClick={() => toggleDay(dIdx)}
-                  className={`w-12 h-6 rounded-full relative transition-colors ${d.enabled ? 'bg-blue-600' : 'bg-slate-200 dark:bg-slate-700'}`}
+                  className={`w-12 h-6 rounded-full relative transition-colors ${d.enabled ? 'bg-blue-600 dark:bg-blue-500' : 'bg-slate-200 dark:bg-slate-700'}`}
                 >
                   <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${d.enabled ? 'left-7' : 'left-1'}`} />
                 </button>
@@ -139,7 +139,7 @@ export const AvailabilityScheduler: React.FC<AvailabilitySchedulerProps> = ({ va
                   <button 
                     type="button"
                     onClick={() => addRange(dIdx)}
-                    className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-blue-600 hover:text-blue-700 w-fit px-2"
+                    className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 hover:text-blue-700 w-fit px-2"
                   >
                     <Plus size={12} /> Add Range
                   </button>
@@ -155,7 +155,7 @@ export const AvailabilityScheduler: React.FC<AvailabilitySchedulerProps> = ({ va
       </div>
 
       <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800 flex items-start gap-3">
-        <CheckCircle2 className="w-4 h-4 text-blue-600 mt-0.5" />
+        <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5" />
         <p className="text-[10px] font-bold text-blue-800 dark:text-blue-300 leading-relaxed uppercase tracking-tight">
           Patients can only book consultations during these windows. Ensure your time zone matches your clinical location.
         </p>

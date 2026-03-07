@@ -23,7 +23,7 @@ export const WorkHistoryStep: React.FC<WorkHistoryStepProps> = ({
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
       <h3 className="text-lg font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-        <Briefcase className="w-5 h-5 text-blue-600" /> 
+        <Briefcase className="w-5 h-5 text-blue-600 dark:text-blue-400" /> 
         Work History
       </h3>
       {formData.experience.map((exp: any, i: number) => (
@@ -54,7 +54,7 @@ export const WorkHistoryStep: React.FC<WorkHistoryStepProps> = ({
           )}
         </div>
       ))}
-      <button onClick={() => addItem('experience')} className="text-sm font-bold text-blue-600 flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 transition-colors">
+      <button onClick={() => addItem('experience')} className="text-sm font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 transition-colors">
         <Plus className="w-4 h-4" /> Add Work Experience
       </button>
     </div>

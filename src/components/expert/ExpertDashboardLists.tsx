@@ -16,7 +16,7 @@ export const AppointmentList = ({ appointments }: { appointments: Appointment[] 
       <div className="p-8 sm:p-10 border-b border-slate-50 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-950/50">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-slate-800">
-            <Calendar className="text-blue-600 w-5 h-5" />
+            <Calendar className="text-blue-600 dark:text-blue-400 w-5 h-5" />
           </div>
           <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Consultation Log</h2>
         </div>
@@ -86,16 +86,21 @@ export const AppointmentList = ({ appointments }: { appointments: Appointment[] 
   );
 };
 
-export const ArticleList = ({ articles }: { articles: Article[] }) => (
+export const ArticleList = ({ articles, onCreationAttempt }: { articles: Article[], onCreationAttempt?: (e: React.MouseEvent, type: 'article' | 'course') => void }) => (
   <div className="divide-y divide-slate-50 dark:divide-slate-800/50">
     <div className="p-8 sm:p-10 border-b border-slate-50 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-950/50">
       <div className="flex items-center gap-3">
         <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-slate-800">
-          <FileText className="text-blue-600 w-5 h-5" />
+          <FileText className="text-blue-600 dark:text-blue-400 w-5 h-5" />
         </div>
         <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Record Inventory</h2>
       </div>
-      <Link href="/expert/articles/new" className="px-5 py-2 bg-blue-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-500/20">Write New</Link>
+      <button 
+        onClick={(e) => onCreationAttempt?.(e, 'article')}
+        className="px-5 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-500/20"
+      >
+        Write New
+      </button>
     </div>
     <div className="p-2">
       {articles.length === 0 ? (
@@ -104,19 +109,24 @@ export const ArticleList = ({ articles }: { articles: Article[] }) => (
             <FileText className="w-8 h-8 text-slate-200" />
           </div>
           <p className="text-slate-400 font-bold uppercase tracking-widest text-xs mb-4">No published documentation</p>
-          <Link href="/expert/articles/new" className="text-blue-600 font-black text-[10px] uppercase tracking-[0.2em] hover:underline">Initialize first entry</Link>
+          <button 
+            onClick={(e) => onCreationAttempt?.(e, 'article')}
+            className="text-blue-600 dark:text-blue-400 font-black text-[10px] uppercase tracking-[0.2em] hover:underline"
+          >
+            Initialize first entry
+          </button>
         </div>
       ) : (
         articles.map(article => (
           <div key={article.id} className="p-6 sm:p-8 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all rounded-[32px] group">
             <div className="space-y-2">
-              <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors tracking-tight capitalize">{article.title}</h3>
+              <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-blue-600 dark:text-blue-400 dark:group-hover:text-blue-400 transition-colors tracking-tight capitalize">{article.title}</h3>
               <div className="flex items-center gap-4">
                 <span className={`px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border ${article.status === 'published' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 border-emerald-100' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 border-amber-100'}`}>{article.status}</span>
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{article.category}</span>
               </div>
             </div>
-            <Link href={`/article/${article.id}`} className="p-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl text-slate-400 hover:text-blue-600 transition-all shadow-sm active:scale-90">
+            <Link href={`/article/${article.id}`} className="p-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl text-slate-400 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-400 transition-all shadow-sm active:scale-90">
               <ExternalLink className="w-5 h-5" />
             </Link>
           </div>
@@ -126,16 +136,21 @@ export const ArticleList = ({ articles }: { articles: Article[] }) => (
   </div>
 );
 
-export const CourseList = ({ courses }: { courses: LearningPath[] }) => (
+export const CourseList = ({ courses, onCreationAttempt }: { courses: LearningPath[], onCreationAttempt?: (e: React.MouseEvent, type: 'article' | 'course') => void }) => (
   <div className="divide-y divide-slate-50 dark:divide-slate-800/50">
     <div className="p-8 sm:p-10 border-b border-slate-50 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-950/50">
       <div className="flex items-center gap-3">
         <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-slate-800">
-          <BookOpen className="text-blue-600 w-5 h-5" />
+          <BookOpen className="text-blue-600 dark:text-blue-400 w-5 h-5" />
         </div>
         <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Learning Programs</h2>
       </div>
-      <Link href="/expert/courses/new" className="px-5 py-2 bg-blue-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-500/20">Initialize</Link>
+      <button 
+        onClick={(e) => onCreationAttempt?.(e, 'course')}
+        className="px-5 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-500/20"
+      >
+        Initialize
+      </button>
     </div>
     <div className="p-2">
       {courses.length === 0 ? (
@@ -145,19 +160,24 @@ export const CourseList = ({ courses }: { courses: LearningPath[] }) => (
           </div>
           <p className="text-slate-400 font-bold uppercase tracking-widest text-xs mb-4">No active curricula</p>
           <p className="text-[10px] text-slate-400 font-medium px-10 mb-6">Structured health intelligence paths for the community.</p>
-          <Link href="/expert/courses/new" className="text-blue-600 font-black text-[10px] uppercase tracking-[0.2em] hover:underline">Build first course</Link>
+          <button 
+            onClick={(e) => onCreationAttempt?.(e, 'course')}
+            className="text-blue-600 dark:text-blue-400 font-black text-[10px] uppercase tracking-[0.2em] hover:underline"
+          >
+            Build first course
+          </button>
         </div>
       ) : (
         courses.map(course => (
           <div key={course.id} className="p-6 sm:p-8 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all rounded-[32px] group">
             <div className="space-y-2">
-              <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors tracking-tight capitalize">{course.title}</h3>
+              <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-blue-600 dark:text-blue-400 dark:group-hover:text-blue-400 transition-colors tracking-tight capitalize">{course.title}</h3>
               <div className="flex items-center gap-4">
                 <span className={`px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border ${course.status === 'published' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 border-emerald-100' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 border-amber-100'}`}>{course.status}</span>
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{course.category}</span>
               </div>
             </div>
-            <Link href={`/learning/path/${course.id}`} className="p-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl text-slate-400 hover:text-blue-600 transition-all shadow-sm active:scale-90">
+            <Link href={`/learning/path/${course.id}`} className="p-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl text-slate-400 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-400 transition-all shadow-sm active:scale-90">
               <ExternalLink className="w-5 h-5" />
             </Link>
           </div>

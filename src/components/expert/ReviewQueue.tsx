@@ -14,7 +14,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ pending, loading }) =>
   if (loading) {
     return (
       <div className="p-20 flex justify-center">
-        <Loader2 className="animate-spin text-blue-600" />
+        <Loader2 className="animate-spin text-blue-600 dark:text-blue-400" />
       </div>
     );
   }
@@ -23,7 +23,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ pending, loading }) =>
     <>
       <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
         <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <Bot className="text-blue-600 w-5 h-5" />
+          <Bot className="text-blue-600 dark:text-blue-400 w-5 h-5" />
           Pending Reviews
         </h2>
         <span className="bg-blue-100 text-blue-700 text-xs font-black px-2.5 py-1 rounded-full">
@@ -44,7 +44,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ pending, loading }) =>
               className="block p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
             >
               <div className="flex justify-between items-start mb-2">
-                <h3 className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors">
+                <h3 className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:text-blue-400 transition-colors">
                   {item.query}
                 </h3>
                 <span className="text-[10px] font-black text-slate-400 flex items-center gap-1">
@@ -61,7 +61,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ pending, loading }) =>
                     {item.mode}
                   </span>
                 </div>
-                <div className="flex items-center gap-1 text-blue-600 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-1 text-blue-600 dark:text-blue-400 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">
                   Review Now <ArrowRight className="w-3 h-3" />
                 </div>
               </div>
