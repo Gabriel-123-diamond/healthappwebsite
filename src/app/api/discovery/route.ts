@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    const text = response.text();
+    const text = (response as any).text();
     
     // Clean JSON response
     const jsonMatch = text.match(/\{[\s\S]*\}/);
