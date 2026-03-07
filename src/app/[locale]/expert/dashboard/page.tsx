@@ -221,31 +221,31 @@ function DashboardContent() {
 
           <aside className="lg:col-span-4 space-y-8">
             <div className="sticky top-32 space-y-8">
-              <div className="p-8 bg-gradient-to-br from-slate-900 to-blue-900 rounded-[40px] text-white shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-white/20 transition-all" />
+              <div className="p-8 bg-white dark:bg-slate-900 rounded-[40px] text-slate-900 dark:text-white border border-slate-100 dark:border-slate-800 shadow-sm relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 dark:bg-white/10 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-blue-500/10 dark:group-hover:bg-white/20 transition-all" />
                 <div className="relative z-10 space-y-6">
                   <div className="flex items-center justify-between">
-                    <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md">
-                      <Wallet className="w-6 h-6 text-blue-300" />
+                    <div className="p-3 bg-blue-50 dark:bg-white/10 rounded-2xl backdrop-blur-md">
+                      <Wallet className="w-6 h-6 text-blue-600 dark:text-blue-300" />
                     </div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-blue-300 bg-blue-500/20 px-3 py-1 rounded-full border border-blue-400/30">Revenue Node</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-300 bg-blue-500/10 dark:bg-blue-500/20 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-400/30">Revenue Node</span>
                   </div>
                   <div>
-                    <p className="text-blue-200 text-xs font-bold uppercase tracking-widest mb-1">Accumulated Points</p>
+                    <p className="text-slate-500 dark:text-blue-200 text-xs font-bold uppercase tracking-widest mb-1">Accumulated Points</p>
                     <h3 className="text-4xl font-black tracking-tighter flex items-baseline gap-2">
                       {profile?.points || "0"}
-                      <span className="text-sm font-bold text-blue-400 tracking-normal uppercase">PTS</span>
+                      <span className="text-sm font-bold text-blue-600 dark:text-blue-400 tracking-normal uppercase">PTS</span>
                     </h3>
                   </div>
 
                   <RevenueForecast />
 
-                  <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                  <div className="pt-4 border-t border-slate-50 dark:border-white/10 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-emerald-400" />
-                      <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">+12% this cycle</span>
+                      <TrendingUp className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+                      <span className="text-[10px] font-bold text-emerald-500 dark:text-emerald-400 uppercase tracking-widest">+12% this cycle</span>
                     </div>
-                    <Link href="/expert/revenue" className="text-[10px] font-black uppercase tracking-widest text-white/60 hover:text-white transition-colors">View Ledger</Link>
+                    <Link href="/expert/revenue" className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/60 hover:text-blue-600 dark:hover:text-white transition-colors">View Ledger</Link>
                   </div>
                 </div>
               </div>
