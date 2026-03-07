@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { getExperts, getExpertsNearby } from '@/services/directoryService';
+import { getExperts, getExpertsNearby, getExpertById } from '@/services/directoryService';
+import { verifyAccessCode } from '@/services/expertDashboardService';
 import { PublicExpert } from '@/types/expert';
-import { MapPin, Star, BadgeCheck, Stethoscope, Leaf, Building2, Loader2, ChevronLeft, ChevronRight, Search, SlidersHorizontal, X, Navigation, Users } from 'lucide-react';
+import { MapPin, Star, BadgeCheck, Stethoscope, Leaf, Building2, Loader2, ChevronLeft, ChevronRight, Search, SlidersHorizontal, X, Navigation, Users, Key, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -39,6 +40,40 @@ export default function DirectoryPage() {
   
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Access Code State
+  const [accessCode, setAccessCode] = useState('');
+  const [privateExpert, setPrivateExpert] = useState<PublicExpert | null>(null);
+  const [verifyingCode, setVerifyingCode] = useState(false);
+
+  useEffect(() => {
+    const verifyCode = async () => {
+      if (accessCode.length === 6) {
+        setVerifyingCode(true);
+        try {
+          const codeData = await verifyAccessCode(accessCode);
+          if (codeData) {
+            const expert = await getExpertById(codeData.expertId);
+            if (expert) {
+              setPrivateExpert({ ...expert, isPrivate: true });
+            } else {
+              setPrivateExpert(null);
+            }
+          } else {
+            setPrivateExpert(null);
+          }
+        } catch (error) {
+          console.error("Error verifying access code:", error);
+          setPrivateExpert(null);
+        } finally {
+          setVerifyingCode(false);
+        }
+      } else {
+        setPrivateExpert(null);
+      }
+    };
+    verifyCode();
+  }, [accessCode]);
 
   // Sync searchQuery with URL filter if it changes
   useEffect(() => {
@@ -85,6 +120,10 @@ export default function DirectoryPage() {
   };
 
   const filteredExperts = useMemo(() => {
+    if (privateExpert) {
+      return [privateExpert];
+    }
+
     let result = allExperts;
 
     if (filterType !== 'all') {
@@ -269,6 +308,29 @@ export default function DirectoryPage() {
                       className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border-none outline-none font-bold text-sm text-slate-900 dark:text-white transition-colors"
                     />
                   </div>
+
+                  <div className="space-y-3 md:col-span-3 pt-6 border-t border-slate-100 dark:border-slate-800">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-amber-500 ml-1 flex items-center gap-2">
+                      <Key className="w-3 h-3" /> Private Clinical Access
+                    </label>
+                    <div className="relative max-w-md">
+                      <Shield className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                      <input
+                        type="text"
+                        maxLength={6}
+                        placeholder="Enter 6-digit Private Access Code"
+                        value={accessCode}
+                        onChange={(e) => setAccessCode(e.target.value.replace(/\D/g, ''))}
+                        className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border-none focus:ring-2 focus:ring-amber-500 outline-none transition-all font-black tracking-[0.3em] text-lg text-slate-900 dark:text-white placeholder:tracking-normal placeholder:text-xs placeholder:font-bold"
+                      />
+                      {verifyingCode && (
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                          <Loader2 className="w-5 h-5 animate-spin text-amber-500" />
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider ml-1">Unlocks direct access to private expert profiles</p>
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -402,6 +464,12 @@ function ExpertCard({ expert, t }: { expert: PublicExpert, t: any }) {
               {getIcon()}
             </div>
             <div className="flex flex-col items-end gap-2">
+              {expert.isPrivate && (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500 text-white border border-amber-400 text-[10px] font-black uppercase tracking-widest shadow-lg shadow-amber-500/20">
+                  <Shield className="w-3.5 h-3.5" />
+                  Private Result
+                </div>
+              )}
               {expert.verificationStatus === 'verified' && (
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800 text-[10px] font-black uppercase tracking-widest">
                   <BadgeCheck className="w-3.5 h-3.5" />

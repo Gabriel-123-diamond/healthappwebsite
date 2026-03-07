@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { userService } from '@/services/userService';
 import { contentService } from '@/services/contentService';
 import { appointmentService } from '@/services/appointmentService';
+import { getActiveAccessCode, generateAccessCode, AccessCode } from '@/services/expertDashboardService';
 import { auth } from '@/lib/firebase';
-import { CheckCircle, Star, Users, Calendar, TrendingUp, Wallet, ShieldCheck, Activity, Award } from 'lucide-react';
+import { CheckCircle, Star, Users, Calendar, TrendingUp, Wallet, ShieldCheck, Activity, Award, Key, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from '@/i18n/routing';
 import ExpertStatCard from '@/components/expert/ExpertStatCard';
@@ -23,6 +24,35 @@ function DashboardContent() {
   const { t } = useLanguage();
   const { state, dispatch } = useExpertDashboard();
   const { articles, courses, appointments, profile, loading, activeTab } = state;
+
+  const [activeCode, setActiveCode] = useState<AccessCode | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  useEffect(() => {
+    const fetchAccessCode = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const code = await getActiveAccessCode(user.uid);
+        setActiveCode(code);
+      }
+    };
+    fetchAccessCode();
+  }, []);
+
+  const handleGenerateCode = async () => {
+    const user = auth.currentUser;
+    if (user && profile) {
+      setIsGenerating(true);
+      try {
+        const newCode = await generateAccessCode(user.uid, profile.fullName || 'Expert');
+        setActiveCode(newCode);
+      } catch (error) {
+        console.error("Failed to generate code:", error);
+      } finally {
+        setIsGenerating(false);
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -222,6 +252,47 @@ function DashboardContent() {
                       <span className="text-slate-500 font-bold uppercase tracking-wider">Security Audit</span>
                       <span className="text-slate-900 dark:text-white font-black">L-3 PASS</span>
                     </div>
+                 </div>
+              </div>
+
+              <div className="p-8 bg-white dark:bg-slate-900 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-sm space-y-6">
+                 <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
+                        <Key className="w-5 h-5 text-amber-600" />
+                      </div>
+                      <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Access Code Node</h4>
+                    </div>
+                    {activeCode && (
+                       <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Active</span>
+                    )}
+                 </div>
+                 
+                 <div className="space-y-4">
+                    {activeCode ? (
+                      <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 text-center">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Your Private Access Code</p>
+                        <p className="text-3xl font-black text-slate-900 dark:text-white tracking-[0.2em]">{activeCode.code}</p>
+                        <p className="text-[10px] text-slate-500 font-medium mt-2 italic text-center">
+                          Expires: {new Date(activeCode.expiresAt.seconds ? activeCode.expiresAt.seconds * 1000 : activeCode.expiresAt).toLocaleString()}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 text-center">
+                        <p className="text-xs text-slate-500 font-medium italic">No active access code found.</p>
+                      </div>
+                    )}
+
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={handleGenerateCode}
+                      disabled={isGenerating}
+                      className="w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 disabled:opacity-50 transition-all shadow-lg hover:shadow-indigo-500/10"
+                    >
+                      {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Key className="w-4 h-4" />}
+                      Generate New Code
+                    </motion.button>
                  </div>
               </div>
 
