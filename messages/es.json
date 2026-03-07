@@ -108,7 +108,7 @@
     "subtitle": "Conéctese con médicos verificados, herbolarios certificados e instituciones médicas acreditadas.",
     "allExperts": "Todos los Expertos",
     "doctors": "Médicos",
-    "herbalists": "Herbolarios",
+    "herbalists": "Practicantes de medicina herbal",
     "hospitals": "Hospitales",
     "verified": "VERIFICADO"
   },
@@ -566,7 +566,7 @@
     "nearby": "CERCANOS",
     "allTypes": "Todos los tipos",
     "doctors": "Médicos",
-    "herbalists": "Praticantes",
+    "herbalists": "Practicantes de medicina herbal",
     "clinics": "Clínicas",
     "noExperts": "No se encontraron expertos que coincidan con los filtros",
     "viewProfile": "Ver Perfil",

@@ -11,7 +11,7 @@ export interface ChatContext {
  * simple regex-based intent detection
  */
 export function detectIntent(query: string) {
-  const isExpertQuery = /doctor|specialist|herbalist|clinic|hospital|find|search|contact|expert/i.test(query);
+  const isExpertQuery = /doctor|specialist|herbalist|herbal practitioner|clinic|hospital|find|search|contact|expert/i.test(query);
   const isResearchQuery = query.length > 10 && !isExpertQuery; // Heuristic: Long queries usually need info
   return { isExpertQuery, isResearchQuery };
 }

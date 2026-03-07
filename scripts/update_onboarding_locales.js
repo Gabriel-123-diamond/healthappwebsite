@@ -66,7 +66,7 @@ const translations = {
       userDesc: "Access intelligence and verified experts.",
       doctor: "Medical Doctor",
       doctorDesc: "Provide verified clinical expertise.",
-      herbal: "Herbalist",
+      herbal: "Herbal Practitioner",
       herbalDesc: "Offer validated traditional wisdom.",
       hospital: "Health Center",
       hospitalDesc: "Register a clinical institution."
@@ -132,7 +132,7 @@ const translations = {
       userDesc: "Accédez à l'intelligence et aux experts vérifiés.",
       doctor: "Médecin",
       doctorDesc: "Fournir une expertise clinique vérifiée.",
-      herbal: "Herboriste",
+      herbal: "Praticien en phytothérapie",
       herbalDesc: "Offrir une sagesse traditionnelle validée.",
       hospital: "Centre de santé",
       hospitalDesc: "Enregistrer une institution clinique."
@@ -198,7 +198,7 @@ const translations = {
       userDesc: "Acceda a inteligencia y expertos verificados.",
       doctor: "Médico",
       doctorDesc: "Brinde experiencia clínica verificada.",
-      herbal: "Herborista",
+      herbal: "Practicante de medicina herbal",
       herbalDesc: "Ofrezca sabiduría tradicional validada.",
       hospital: "Centro de Salud",
       hospitalDesc: "Registre una institución clínica."
@@ -264,7 +264,7 @@ const translations = {
       userDesc: "Zugriff auf Intelligenz und verifizierte Experten.",
       doctor: "Arzt",
       doctorDesc: "Bieten Sie verifizierte klinische Expertise an.",
-      herbal: "Heilpraktiker",
+      herbal: "Kräuterpraktiker",
       herbalDesc: "Bieten Sie validiertes traditionelles Wissen an.",
       hospital: "Gesundheitszentrum",
       hospitalDesc: "Registrieren Sie eine klinische Institution."

@@ -32,10 +32,10 @@ export const RestrictedPage: React.FC<RestrictedPageProps> = ({
       >
         <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[64px] border border-white dark:border-slate-800 p-8 sm:p-16 shadow-3xl shadow-blue-900/5 text-center">
           {/* Icon */}
-          <div className="relative w-24 h-24 mx-auto mb-10">
+          <div className="relative w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-8 sm:mb-10">
             <div className="absolute inset-0 bg-blue-600 blur-2xl opacity-20 animate-pulse" />
-            <div className="relative w-full h-full bg-blue-600 rounded-[32px] flex items-center justify-center shadow-2xl shadow-blue-500/30">
-              <Lock className="w-10 h-10 text-white" strokeWidth={2.5} />
+            <div className="relative w-full h-full bg-blue-600 rounded-[24px] sm:rounded-[32px] flex items-center justify-center shadow-2xl shadow-blue-500/30">
+              <Lock className="w-8 h-8 sm:w-10 sm:h-10 text-white" strokeWidth={2.5} />
             </div>
           </div>
 

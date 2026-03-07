@@ -108,7 +108,7 @@
     "subtitle": "Connectez-vous avec des médecins vérifiés, des herboristes certifiés et des établissements médicaux accrédités.",
     "allExperts": "Tous les Experts",
     "doctors": "Médecins",
-    "herbalists": "Herboristes",
+    "herbalists": "Praticiens en phytothérapie",
     "hospitals": "Hôpitaux",
     "verified": "VÉRIFIÉ"
   },
@@ -566,7 +566,7 @@
     "nearby": "À PROXIMITÉ",
     "allTypes": "Tous les types",
     "doctors": "Médecins",
-    "herbalists": "Praticiens",
+    "herbalists": "Praticiens en phytothérapie",
     "clinics": "Cliniques",
     "noExperts": "Aucun expert trouvé correspondant aux filtres",
     "viewProfile": "Voir le profil",

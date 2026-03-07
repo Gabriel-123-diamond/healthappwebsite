@@ -70,7 +70,7 @@
     "feature2Title": "AI Telehealth",
     "feature2Desc": "Connect with verified professionals through secure, AI-assisted video consultations.",
     "feature3Title": "Global Network",
-    "feature3Desc": "A decentralized directory of doctors and herbal practitioners with manual credentialing.",
+    "feature3Desc": "A decentralized directory of doctors and Herbal Practitioners with manual credentialing.",
     "feature4Title": "Smart Scheduling",
     "feature4Desc": "Automated booking system that respects practitioner availability and clinical priority.",
     "feature5Title": "Intelligence Stream",
@@ -565,7 +565,7 @@
   "directoryPage": {
     "badge": "Expert Registry",
     "title": "Expert Directory",
-    "subtitle": "Connect with verified medical and herbal practitioners.",
+    "subtitle": "Connect with verified medical and Herbal Practitioners.",
     "searchPlaceholder": "Search by specialty or name...",
     "specialists": "Specialists",
     "centers": "Centers",

@@ -48,9 +48,9 @@ export const RestrictedAccessModal: React.FC<RestrictedAccessModalProps> = ({
                </button>
             </div>
 
-            <div className="p-8 sm:p-12 text-center -mt-12 relative z-10">
-               <div className="w-24 h-24 bg-white dark:bg-slate-800 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-2xl border-8 border-slate-50 dark:border-slate-950">
-                  <Lock className="w-10 h-10 text-blue-600" strokeWidth={2.5} />
+            <div className="p-6 sm:p-12 text-center -mt-8 sm:-mt-10 relative z-10">
+               <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white dark:bg-slate-800 rounded-[24px] sm:rounded-[32px] flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-2xl border-8 border-slate-50 dark:border-slate-950">
+                  <Lock className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" strokeWidth={2.5} />
                </div>
 
                <div className="space-y-4 mb-10">

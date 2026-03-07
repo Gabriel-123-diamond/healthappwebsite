@@ -108,7 +108,7 @@
     "subtitle": "联系经过验证的医生、认证草药师和认可的医疗机构。",
     "allExperts": "所有专家",
     "doctors": "医生",
-    "herbalists": "草药师",
+    "herbalists": "草药从业者",
     "hospitals": "医院",
     "verified": "已认证",
     "menuLabel": "机构"
@@ -528,7 +528,7 @@
     "nearby": "附近",
     "allTypes": "所有类型",
     "doctors": "医生",
-    "herbalists": "从业者",
+    "herbalists": "草药从业者",
     "clinics": "诊所",
     "noExperts": "未找到符合筛选条件的专家",
     "viewProfile": "查看个人资料",

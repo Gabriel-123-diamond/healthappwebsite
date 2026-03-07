@@ -136,9 +136,12 @@ export const ProfessionalIdentityStep: React.FC<ProfessionalIdentityStepProps> =
 
         <div className="pt-2">
           <CustomSelect
-            options={currentSpecialtyList
-              .filter(s => !specialties.some((selected: any) => selected.name === s))
-              .map(s => ({ value: s, label: s }))}
+            options={[
+              ...currentSpecialtyList
+                .filter(s => !specialties.some((selected: any) => selected.name === s) && s !== "Other")
+                .map(s => ({ value: s, label: s })),
+              { value: "Other", label: "Other (Specify...)" }
+            ]}
             value={pendingSpecialty || ""}
             onChange={(val) => setPendingSpecialty(val)}
             placeholder="Search through 200+ specialized fields..."

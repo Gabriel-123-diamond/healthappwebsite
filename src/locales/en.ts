@@ -75,10 +75,10 @@ export const en = {
   },
   directory: {
     title: 'Find Trusted Health Experts',
-    subtitle: 'Connect with verified doctors, certified natural wellness practitioners, and accredited medical institutions.',
+    subtitle: 'Connect with verified doctors, certified Herbal Practitioners, and accredited medical institutions.',
     allExperts: 'All Experts',
     doctors: 'Doctors',
-    herbalists: 'Natural Wellness Practitioners',
+    herbalists: 'Herbal Practitioners',
     hospitals: 'Hospitals',
     verified: 'VERIFIED',
   },

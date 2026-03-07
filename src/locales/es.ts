@@ -77,10 +77,10 @@ export const es: typeof en = {
   },
   directory: {
     title: 'Encuentre Expertos en Salud de Confianza',
-    subtitle: 'Conéctese con médicos verificados, herbolarios certificados e instituciones médicas acreditadas.',
+    subtitle: 'Conéctese con médicos verificados, practicantes de medicina herbal certificados e instituciones médicas acreditadas.',
     allExperts: 'Todos los Expertos',
     doctors: 'Médicos',
-    herbalists: 'Herbolarios',
+    herbalists: 'Practicantes de medicina herbal',
     hospitals: 'Hospitales',
     verified: 'VERIFICADO',
   },

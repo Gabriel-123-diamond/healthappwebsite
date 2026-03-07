@@ -19,63 +19,29 @@ service cloud.firestore {
       return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['doctor', 'herbal_practitioner', 'hospital'];
     }
 
-    // Protected collections (accessible by signed-in users)
+    // Discovery collections (accessible by guests for public preview)
     match /feed_items/{document=**} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow write: if false; 
     }
 
     match /experts/{document=**} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow write: if false;
     }
 
     match /institutions/{document=**} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow write: if false;
     }
 
     match /learningPaths/{document=**} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow write: if false;
     }
 
-    match /community_posts/{postId} {
-      allow read: if isSignedIn();
-      allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
-      allow update: if isSignedIn() && (
-        (request.auth.uid == resource.data.authorId && request.resource.data.authorId == request.auth.uid) || 
-        userIsAdmin()
-      );
-      allow delete: if isSignedIn() && (request.auth.uid == resource.data.authorId || userIsAdmin());
-
-      match /answers/{answerId} {
-        allow read: if isSignedIn();
-        allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
-        allow update, delete: if isSignedIn() && (request.auth.uid == resource.data.authorId || userIsAdmin());
-      }
-    }
-
-    match /reports/{reportId} {
-      allow read: if userIsAdmin();
-      allow create: if isSignedIn();
-      allow update, delete: if false;
-    }
-
-    match /expert_requests/{requestId} {
-      allow read: if userIsAdmin();
-      allow create: if isSignedIn();
-      allow update, delete: if userIsAdmin();
-    }
-
-    match /search_feedback/{docId} {
-      allow read: if userIsAdmin();
-      allow create: if isSignedIn();
-      allow update, delete: if false;
-    }
-
     match /articles/{docId} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow create: if userIsExpert() && request.resource.data.authorId == request.auth.uid;
       allow update, delete: if userIsAdmin() || (userIsExpert() && resource.data.authorId == request.auth.uid);
     }
