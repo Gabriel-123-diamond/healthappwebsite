@@ -13,6 +13,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { Loader2, Check, Mail, ShieldCheck, ArrowRight, Cpu, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BaseInput } from '@/components/common/BaseInput';
+import { PasswordField } from '@/components/common/PasswordField';
 import { getRedirectPath } from '@/lib/authUtils';
 import { useTranslations } from 'next-intl';
 
@@ -129,29 +130,25 @@ export default function SignUpPage() {
               className="dark:bg-black/20"
             />
 
-            <BaseInput
+            <PasswordField
               id="password"
               label={t('passwordLabel')}
-              type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder={t('passwordPlaceholder')}
               autoComplete="new-password"
-              prefixIcon={<div className="w-4 h-4 rounded-sm border-2 border-slate-400 opacity-50" />}
               className="dark:bg-black/20"
             />
 
-            <BaseInput
+            <PasswordField
               id="confirmPassword"
               label={t('confirmPasswordLabel')}
-              type="password"
               required
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder={t('passwordPlaceholder')}
               autoComplete="new-password"
-              prefixIcon={<Check className="w-4 h-4 text-slate-400" />}
               className="dark:bg-black/20"
             />
 

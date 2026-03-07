@@ -10,6 +10,8 @@ import { UserProfile } from '@/types';
 import ExpertVerificationModal from '@/components/admin/ExpertVerificationModal';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { PasswordField } from '@/components/common/PasswordField';
+
 export default function AdminDashboardPage() {
   const router = useRouter();
   const { isLoading, isSuper } = useAdminAuth();
@@ -326,7 +328,13 @@ export default function AdminDashboardPage() {
               </div>
               <div className="space-y-2 pb-4">
                 <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-2">Security Key</label>
-                <input required type="password" value={adminPass} onChange={e => setAdminPass(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border-none outline-none font-bold text-sm" placeholder="••••••••" />
+                <PasswordField
+                  id="admin-password"
+                  value={adminPass}
+                  onChange={(e) => setAdminPass(e.target.value)}
+                  placeholder="••••••••"
+                  className="dark:bg-white/5"
+                />
               </div>
               <button disabled={creatingAdmin} className="w-full py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-[24px] font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 active:scale-95 transition-all">
                 {creatingAdmin ? <Loader2 className="animate-spin" /> : <><Key size={16}/> Activate Access</>}
