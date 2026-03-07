@@ -16,12 +16,42 @@ interface ReferralCodeCardProps {
 export default function ReferralCodeCard({ code, generating, onGenerate, onCopy, onCopyLink, onShare }: ReferralCodeCardProps) {
   const isSpecialState = code === 'LOADING...' || code === 'NO CODE' || code === 'LOGIN REQUIRED' || code === 'ERROR' || code === '...';
 
+  // Split code into segments or characters for better display
+  const renderCode = () => {
+    if (isSpecialState) return code;
+    
+    return (
+      <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+        {code.split('').map((char, index) => (
+          <motion.span
+            key={index}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05 }}
+            className={`
+              inline-flex items-center justify-center 
+              w-8 h-12 sm:w-10 sm:h-14 
+              rounded-xl sm:rounded-2xl 
+              text-xl sm:text-2xl font-black font-mono
+              ${char === '-' 
+                ? 'bg-transparent text-blue-500 w-4 sm:w-6' 
+                : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-lg border border-slate-100 dark:border-white/5'
+              }
+            `}
+          >
+            {char}
+          </motion.span>
+        ))}
+      </div>
+    );
+  };
+
   return (
-    <div className="relative max-w-md mx-auto group">
+    <div className="relative max-w-md mx-auto group no-transition">
       {/* Dynamic Glow Effect */}
       <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[40px] blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
       
-      <div className="relative bg-white dark:bg-slate-900 rounded-[40px] border border-slate-100 dark:border-white/10 shadow-2xl overflow-hidden transition-colors">
+      <div className="relative bg-white dark:bg-slate-900 rounded-[40px] border border-slate-100 dark:border-white/10 shadow-2xl overflow-hidden transition-colors duration-500">
         {/* Tech Pattern Overlay */}
         <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px]" />
         
@@ -39,26 +69,24 @@ export default function ReferralCodeCard({ code, generating, onGenerate, onCopy,
             </div>
           </div>
 
-          <div className="bg-slate-50 dark:bg-black/40 rounded-[32px] p-8 border border-slate-100 dark:border-white/5 relative group/code overflow-hidden">
+          <div className="bg-slate-50 dark:bg-black/40 rounded-[32px] p-6 sm:p-10 border border-slate-100 dark:border-white/5 relative group/code overflow-hidden transition-all duration-500">
             {/* Holographic Gradient on Hover */}
             <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/0 via-indigo-500/0 to-purple-500/0 group-hover/code:from-blue-500/5 group-hover/code:via-indigo-500/5 group-hover/code:to-purple-500/5 transition-all duration-700" />
             
-            <div className="flex flex-col items-center justify-center gap-4 relative z-10">
-              <span className={`text-2xl sm:text-3xl font-mono font-black tracking-[0.2em] transition-all ${
-                isSpecialState ? 'text-slate-300 dark:text-slate-700 text-xl' : 'text-slate-900 dark:text-white drop-shadow-sm'
-              }`}>
-                {code}
-              </span>
+            <div className="flex flex-col items-center justify-center gap-8 relative z-10">
+              <div className="w-full">
+                {renderCode()}
+              </div>
               
               {!isSpecialState && (
                 <motion.button 
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={onCopy}
-                  className="flex items-center gap-2 px-6 py-2 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border border-slate-200 dark:border-white/10 shadow-sm"
+                  className="flex items-center gap-2 px-8 py-3 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border border-slate-200 dark:border-white/10 shadow-md"
                 >
                   <Copy size={12} strokeWidth={3} />
-                  Copy Key
+                  Copy Protocol Key
                 </motion.button>
               )}
             </div>
