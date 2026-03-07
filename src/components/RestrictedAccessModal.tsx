@@ -48,13 +48,13 @@ export const RestrictedAccessModal: React.FC<RestrictedAccessModalProps> = ({
                </button>
             </div>
 
-            <div className="p-6 sm:p-12 text-center -mt-8 sm:-mt-10 relative z-10">
-               <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white dark:bg-slate-800 rounded-[24px] sm:rounded-[32px] flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-2xl border-8 border-slate-50 dark:border-slate-950">
+            <div className="p-6 sm:p-12 text-center relative z-10">
+               <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white dark:bg-slate-800 rounded-[24px] sm:rounded-[32px] flex items-center justify-center mx-auto mb-10 sm:mb-12 shadow-2xl border-8 border-slate-50 dark:border-slate-950 -mt-16 sm:-mt-20">
                   <Lock className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" strokeWidth={2.5} />
                </div>
 
                <div className="space-y-4 mb-10">
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] border border-blue-100 dark:border-blue-800/50">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] border border-blue-100 dark:border-blue-800/50 mb-2">
                      <Sparkles size={12} strokeWidth={3} />
                      Access Verification Required
                   </div>
