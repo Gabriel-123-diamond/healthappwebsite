@@ -44,8 +44,8 @@ export default function ReferralCodeCard({ code, generating, onGenerate, onCopy,
             <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/0 via-indigo-500/0 to-purple-500/0 group-hover/code:from-blue-500/5 group-hover/code:via-indigo-500/5 group-hover/code:to-purple-500/5 transition-all duration-700" />
             
             <div className="flex flex-col items-center justify-center gap-4 relative z-10">
-              <span className={`text-4xl sm:text-5xl font-mono font-black tracking-[0.2em] transition-all ${
-                isSpecialState ? 'text-slate-300 dark:text-slate-700 text-2xl' : 'text-slate-900 dark:text-white drop-shadow-sm'
+              <span className={`text-2xl sm:text-3xl font-mono font-black tracking-[0.2em] transition-all ${
+                isSpecialState ? 'text-slate-300 dark:text-slate-700 text-xl' : 'text-slate-900 dark:text-white drop-shadow-sm'
               }`}>
                 {code}
               </span>
