@@ -281,16 +281,6 @@ export const ProfessionalIdentityStep: React.FC<ProfessionalIdentityStepProps> =
         </div>
       </div>
 
-      {/* Phone Management */}
-      <div className="pt-8 border-t border-slate-100 dark:border-slate-800">
-        <ExpertPhoneManager 
-          phones={formData.phones} 
-          onChange={(p) => handleUpdate('phones', p)}
-          primaryPhoneDisabled={true}
-        />
-        {validationErrors.phones && <p className="text-[10px] text-red-500 font-black uppercase mt-4 tracking-widest">{validationErrors.phones}</p>}
-      </div>
-      
       <div className="p-6 bg-blue-600 dark:bg-blue-500/5 dark:bg-blue-400/5 rounded-[32px] border border-blue-600/10 dark:border-blue-400/10 flex items-start gap-4 shadow-sm">
         <div className="p-2 bg-blue-600 dark:bg-blue-500 rounded-xl text-white shadow-lg shadow-blue-500/20">
           <ShieldCheck size={18} />

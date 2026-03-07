@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Building2, MapPin, Briefcase, Stethoscope, CheckCircle2, Upload } from 'lucide-react';
 import { BaseInput } from '@/components/common/BaseInput';
 import CustomSelect from '@/components/common/CustomSelect';
+import { ExpertPhoneManager } from '@/components/expert/ExpertPhoneManager';
 
 interface PracticeInformationStepProps {
   formData: any;
@@ -97,6 +98,26 @@ export default function PracticeInformationStep({ formData, handleUpdate, valida
               <p className="text-[10px] text-slate-500">PDF, JPG, or PNG</p>
             </div>
           </div>
+        </div>
+
+        {/* Communication Nodes */}
+        <div className="pt-8 border-t border-slate-100 dark:border-slate-800 space-y-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600">
+              <Stethoscope size={18} />
+            </div>
+            <div>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight uppercase">Communication Nodes</h3>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Manage active contact channels for consultations</p>
+            </div>
+          </div>
+
+          <ExpertPhoneManager 
+            phones={formData.phones} 
+            onChange={(p) => handleUpdate('phones', p)}
+            primaryPhoneDisabled={true}
+          />
+          {validationErrors.phones && <p className="text-[10px] text-red-500 font-black uppercase mt-4 tracking-widest">{validationErrors.phones}</p>}
         </div>
       </div>
     </motion.div>

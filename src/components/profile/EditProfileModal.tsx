@@ -84,19 +84,16 @@ export default function EditProfileModal({ isOpen, onClose, initialData, onSave 
                     label="Phone Number"
                     type="tel"
                     value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                    readOnly
                     prefixIcon={<Phone className="w-5 h-5 text-slate-400" />}
                     placeholder="+234 ..."
-                    className={phoneStatus === 'taken' ? 'border-red-500 ring-2 ring-red-100' : ''}
+                    className="bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed opacity-70"
                   />
-                  <div className="absolute right-4 top-[52px] flex items-center gap-2">
-                    {phoneStatus === 'checking' && <Loader2 className="w-4 h-4 animate-spin text-blue-500" />}
-                    {phoneStatus === 'available' && <CheckCircle2 className="w-4 h-4 text-emerald-500" />}
-                    {phoneStatus === 'taken' && <AlertCircle className="w-4 h-4 text-red-500" />}
+                  <div className="mt-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800/50">
+                    <p className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest leading-relaxed">
+                      Security Protocol: To update your number, you must add and verify a new one first. Multiple active nodes prevent account lockout.
+                    </p>
                   </div>
-                  {phoneStatus === 'taken' && (
-                    <p className="text-[10px] font-black text-red-500 uppercase mt-2 ml-2 tracking-widest">number in use already</p>
-                  )}
                 </div>
 
                 <button 
