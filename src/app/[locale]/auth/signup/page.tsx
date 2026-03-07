@@ -132,6 +132,7 @@ export default function SignUpPage() {
 
             <PasswordField
               id="password"
+              name="password"
               label={t('passwordLabel')}
               required
               value={password}
@@ -143,6 +144,7 @@ export default function SignUpPage() {
 
             <PasswordField
               id="confirmPassword"
+              name="confirmPassword"
               label={t('confirmPasswordLabel')}
               required
               value={confirmPassword}

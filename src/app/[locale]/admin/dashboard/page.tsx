@@ -330,6 +330,7 @@ export default function AdminDashboardPage() {
                 <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-2">Security Key</label>
                 <PasswordField
                   id="admin-password"
+                  name="admin-password"
                   value={adminPass}
                   onChange={(e) => setAdminPass(e.target.value)}
                   placeholder="••••••••"
