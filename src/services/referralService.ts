@@ -53,7 +53,8 @@ export const referralService = {
   getReferralLink: (code: string): string => {
     if (typeof window === 'undefined') return '';
     const baseUrl = window.location.origin;
-    return `${baseUrl}/onboarding?ref=${code}`;
+    // Redirect to sign-up page so new users can register with the code auto-filled
+    return `${baseUrl}/auth/signup?ref=${code}`;
   },
 
   getExistingReferralCode: async (uid: string): Promise<string | null> => {
