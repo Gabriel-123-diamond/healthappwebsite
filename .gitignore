@@ -43,10 +43,6 @@ next-env.d.ts
 # local logs
 issues.txt
 
-# Firebase Config
-firebase.json
-.firebaserc
-firestore.rules
-storage.rules
-.firestore.rules
+# Firebase Config (Un-ignored for version control)
+# .env*.local ignored below
 .env*.local
