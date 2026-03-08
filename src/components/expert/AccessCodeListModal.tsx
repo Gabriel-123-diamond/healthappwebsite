@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Key, Copy, Check, Trash2, Hourglass, Users, AlertCircle, Shield } from 'lucide-react';
 import { AccessCode } from '@/services/expertDashboardService';
@@ -13,24 +13,53 @@ interface AccessCodeListModalProps {
   onCopy: (code: string) => void;
 }
 
+function CodeCountdown({ expiresAt }: { expiresAt: Date }) {
+  const [timeLeft, setTimeLeft] = useState<string>('');
+  const [isNearExpiry, setIsNearExpiry] = useState(false);
+
+  useEffect(() => {
+    const calculateTime = () => {
+      const diff = new Date(expiresAt).getTime() - new Date().getTime();
+      if (diff <= 0) {
+        setTimeLeft('Expired');
+        setIsNearExpiry(false);
+        return;
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      setIsNearExpiry(diff < 1000 * 60 * 60); // Less than 1 hour
+
+      if (hours > 24) {
+        const days = Math.floor(hours / 24);
+        return setTimeLeft(`${days}d ${hours % 24}h ${minutes}m ${seconds}s`);
+      }
+      
+      return setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
+    };
+
+    calculateTime();
+    const interval = setInterval(calculateTime, 1000);
+    return () => clearInterval(interval);
+  }, [expiresAt]);
+
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center gap-1.5 text-slate-400">
+        <Hourglass size={12} className={isNearExpiry ? 'text-amber-500 animate-pulse' : ''} />
+        <span className="text-[8px] font-black uppercase tracking-widest">Time Buffer</span>
+      </div>
+      <p className={`text-xs font-black font-mono ${isNearExpiry ? 'text-amber-500' : 'text-slate-600 dark:text-slate-300'}`}>
+        {timeLeft}
+      </p>
+    </div>
+  );
+}
+
 export function AccessCodeListModal({ isOpen, onClose, codes, onDelete, onCopy }: AccessCodeListModalProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
-
-  const formatRemainingTime = (expiresAt: Date) => {
-    const diff = expiresAt.getTime() - new Date().getTime();
-    if (diff <= 0) return 'Expired';
-    
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    
-    if (hours > 24) {
-      const days = Math.floor(hours / 24);
-      return `${days}d ${hours % 24}h left`;
-    }
-    
-    if (hours > 0) return `${hours}h ${minutes}m left`;
-    return `${minutes}m left`;
-  };
 
   const handleCopy = (code: string, id: string) => {
     onCopy(code);
@@ -86,8 +115,6 @@ export function AccessCodeListModal({ isOpen, onClose, codes, onDelete, onCopy }
                 const isExpired = expiryDate < new Date();
                 const isLimitReached = item.usageLimit > 0 && item.usageCount >= item.usageLimit;
                 const isActive = !isExpired && !isLimitReached;
-                const remainingTime = formatRemainingTime(expiryDate);
-                const isNearExpiry = !isExpired && (expiryDate.getTime() - new Date().getTime()) < (1000 * 60 * 60);
 
                 return (
                   <motion.div
@@ -111,15 +138,7 @@ export function AccessCodeListModal({ isOpen, onClose, codes, onDelete, onCopy }
                       </div>
 
                       <div className="flex flex-wrap items-center gap-6 md:border-l md:pl-6 border-slate-100 dark:border-white/5">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1.5 text-slate-400">
-                            <Hourglass size={12} className={isNearExpiry ? 'text-amber-500 animate-pulse' : ''} />
-                            <span className="text-[8px] font-black uppercase tracking-widest">Time Buffer</span>
-                          </div>
-                          <p className={`text-xs font-bold ${isNearExpiry ? 'text-amber-500' : 'text-slate-600 dark:text-slate-300'}`}>
-                            {remainingTime}
-                          </p>
-                        </div>
+                        <CodeCountdown expiresAt={expiryDate} />
 
                         <div className="space-y-1">
                           <div className="flex items-center gap-1.5 text-slate-400">

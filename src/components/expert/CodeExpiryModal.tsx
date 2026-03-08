@@ -21,7 +21,11 @@ const EXPIRY_OPTIONS = [
 
 export function CodeExpiryModal({ isOpen, onClose, onGenerate, isGenerating }: CodeExpiryModalProps) {
   const [selectedExpiry, setSelectedExpiry] = useState(24);
+  const [customExpiry, setCustomExpiry] = useState('');
   const [usageLimit, setUsageLimit] = useState(0);
+  const [isCustom, setIsCustom] = useState(false);
+
+  const finalExpiry = isCustom ? (parseInt(customExpiry) || 1) : selectedExpiry;
 
   if (!isOpen) return null;
 
@@ -57,32 +61,77 @@ export function CodeExpiryModal({ isOpen, onClose, onGenerate, isGenerating }: C
             </button>
           </div>
 
-          <div className="p-8 space-y-6">
+          <div className="p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
             <div className="grid grid-cols-1 gap-3">
               {EXPIRY_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
-                  onClick={() => setSelectedExpiry(opt.value)}
+                  onClick={() => { setSelectedExpiry(opt.value); setIsCustom(false); }}
                   className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${
-                    selectedExpiry === opt.value
+                    !isCustom && selectedExpiry === opt.value
                       ? 'bg-indigo-500/5 border-indigo-500 shadow-sm'
                       : 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800 hover:border-indigo-500/30'
                   }`}
                 >
                   <div className="text-left">
-                    <p className={`text-sm font-black uppercase tracking-widest ${selectedExpiry === opt.value ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-300'}`}>
+                    <p className={`text-sm font-black uppercase tracking-widest ${!isCustom && selectedExpiry === opt.value ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-300'}`}>
                       {opt.label}
                     </p>
                     <p className="text-[10px] text-slate-400 font-medium uppercase tracking-tighter mt-0.5">{opt.desc}</p>
                   </div>
-                  {selectedExpiry === opt.value && (
+                  {!isCustom && selectedExpiry === opt.value && (
                     <div className="w-5 h-5 bg-indigo-600 rounded-full flex items-center justify-center">
                       <Zap className="w-3 h-3 text-white fill-white" />
                     </div>
                   )}
                 </button>
               ))}
+
+              {/* Custom Expiry Toggle */}
+              <button
+                onClick={() => setIsCustom(true)}
+                className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${
+                  isCustom
+                    ? 'bg-indigo-500/5 border-indigo-500 shadow-sm'
+                    : 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800 hover:border-indigo-500/30'
+                }`}
+              >
+                <div className="text-left">
+                  <p className={`text-sm font-black uppercase tracking-widest ${isCustom ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-300'}`}>
+                    Custom Duration
+                  </p>
+                  <p className="text-[10px] text-slate-400 font-medium uppercase tracking-tighter mt-0.5">Define your own time window</p>
+                </div>
+                {isCustom && (
+                  <div className="w-5 h-5 bg-indigo-600 rounded-full flex items-center justify-center">
+                    <Zap className="w-3 h-3 text-white fill-white" />
+                  </div>
+                )}
+              </button>
             </div>
+
+            <AnimatePresence>
+              {isCustom && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="p-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2 block">Lifespan (Hours)</label>
+                    <input 
+                      type="number" 
+                      min="1"
+                      value={customExpiry}
+                      onChange={(e) => setCustomExpiry(e.target.value)}
+                      className="w-full px-5 py-4 bg-white dark:bg-slate-950 border border-indigo-500/30 rounded-2xl text-sm font-black text-indigo-600 dark:text-indigo-400 outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all"
+                      placeholder="e.g. 48"
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Usage Limit Input */}
             <div className="space-y-3">
@@ -118,8 +167,8 @@ export function CodeExpiryModal({ isOpen, onClose, onGenerate, isGenerating }: C
             </div>
 
             <button
-              onClick={() => onGenerate(selectedExpiry, usageLimit)}
-              disabled={isGenerating}
+              onClick={() => onGenerate(finalExpiry, usageLimit)}
+              disabled={isGenerating || (isCustom && !customExpiry)}
               className="w-full py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-indigo-500/10 disabled:opacity-50"
             >
               {isGenerating ? 'Generating...' : 'Confirm & Generate'}
