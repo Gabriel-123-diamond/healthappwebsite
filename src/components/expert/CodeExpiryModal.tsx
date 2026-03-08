@@ -213,8 +213,3 @@ export function CodeExpiryModal({ isOpen, onClose, onGenerate, isGenerating }: C
     </AnimatePresence>
   );
 }
-        </motion.div>
-      </div>
-    </AnimatePresence>
-  );
-}
