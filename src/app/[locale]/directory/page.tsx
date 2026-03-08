@@ -47,36 +47,30 @@ export default function DirectoryPage() {
   const [privateExpert, setPrivateExpert] = useState<PublicExpert | null>(null);
   const [verifyingCode, setVerifyingCode] = useState(false);
 
-  useEffect(() => {
-    const verifyCode = async () => {
-      if (accessCode.length === 6) {
-        setVerifyingCode(true);
-        try {
-          const codeData = await verifyAccessCode(accessCode);
-          if (codeData) {
-            const expert = await getExpertById(codeData.expertId);
-            if (expert) {
-              const isMe = user?.uid === expert.id;
-              setPrivateExpert({ ...expert, isPrivate: true, isMe });
-            } else {
-              setPrivateExpert(null);
-            }
+  const handleVerifyCode = async () => {
+    if (accessCode.length === 6) {
+      setVerifyingCode(true);
+      try {
+        const codeData = await verifyAccessCode(accessCode);
+        if (codeData) {
+          const expert = await getExpertById(codeData.expertId);
+          if (expert) {
+            const isMe = user?.uid === expert.id;
+            setPrivateExpert({ ...expert, isPrivate: true, isMe });
           } else {
             setPrivateExpert(null);
           }
-        } catch (error) {
-          console.error("Error verifying access code:", error);
+        } else {
           setPrivateExpert(null);
-        } finally {
-          setVerifyingCode(false);
         }
-      } else {
-        // If code is empty or not 6 digits, clear private expert and show normal results
+      } catch (error) {
+        console.error("Error verifying access code:", error);
         setPrivateExpert(null);
+      } finally {
+        setVerifyingCode(false);
       }
-    };
-    verifyCode();
-  }, [accessCode, user?.uid]);
+    }
+  };
 
   // Sync searchQuery with URL filter if it changes
   useEffect(() => {
@@ -85,6 +79,13 @@ export default function DirectoryPage() {
       setShowFilters(true);
     }
   }, [urlFilter]);
+
+  // Clear private expert if code is deleted or shortened
+  useEffect(() => {
+    if (accessCode.length < 6) {
+      setPrivateExpert(null);
+    }
+  }, [accessCode]);
 
   useEffect(() => {
     const fetchExperts = async () => {
@@ -316,21 +317,32 @@ export default function DirectoryPage() {
                     <label className="text-[10px] font-black uppercase tracking-widest text-amber-500 ml-1 flex items-center gap-2">
                       <Key className="w-3 h-3" /> Private Clinical Access
                     </label>
-                    <div className="relative max-w-md">
-                      <Shield className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-                      <input
-                        type="text"
-                        maxLength={6}
-                        placeholder="Enter 6-digit Private Access Code"
-                        value={accessCode}
-                        onChange={(e) => setAccessCode(e.target.value.replace(/\D/g, ''))}
-                        className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border-none focus:ring-2 focus:ring-amber-500 outline-none transition-all font-black tracking-[0.3em] text-lg text-slate-900 dark:text-white placeholder:tracking-normal placeholder:text-xs placeholder:font-bold"
-                      />
-                      {verifyingCode && (
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                          <Loader2 className="w-5 h-5 animate-spin text-amber-500" />
-                        </div>
-                      )}
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <div className="relative flex-1 max-w-md">
+                        <Shield className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                        <input
+                          type="text"
+                          maxLength={6}
+                          placeholder="Enter 6-digit Private Access Code"
+                          value={accessCode}
+                          onChange={(e) => setAccessCode(e.target.value.replace(/\D/g, ''))}
+                          className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border-none focus:ring-2 focus:ring-amber-500 outline-none transition-all font-black tracking-[0.3em] text-lg text-slate-900 dark:text-white placeholder:tracking-normal placeholder:text-xs placeholder:font-bold"
+                        />
+                      </div>
+                      <button
+                        onClick={handleVerifyCode}
+                        disabled={accessCode.length !== 6 || verifyingCode}
+                        className="px-8 py-4 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-200 dark:disabled:bg-slate-800 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 min-w-[140px] shadow-lg shadow-amber-500/20 disabled:shadow-none"
+                      >
+                        {verifyingCode ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <>
+                            <Key className="w-4 h-4" />
+                            Unlock Node
+                          </>
+                        )}
+                      </button>
                     </div>
                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider ml-1">Unlocks direct access to private expert profiles</p>
                   </div>
