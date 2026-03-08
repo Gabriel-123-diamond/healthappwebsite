@@ -6,11 +6,32 @@ import { createLearningPath, Module, Lesson } from '@/services/learningService';
 import { ArrowLeft, Plus, Trash2, Save, Loader2, BookOpen, Activity, Leaf, Moon, Sparkles } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
+import NiceModal from '@/components/common/NiceModal';
 
 export default function CreateLearningPathPage() {
   const router = useRouter();
   const { isLoading: authLoading } = useAdminAuth();
   const [loading, setLoading] = useState(false);
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    type: 'success' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    type: 'info'
+  });
+
+  const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' = 'info') => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      description,
+      type
+    });
+  };
   
   // Form State
   const [title, setTitle] = useState('');
@@ -78,7 +99,7 @@ export default function CreateLearningPathPage() {
 
   const handleSave = async () => {
     if (!title || !description) {
-      alert('Please fill in course title and description.');
+      showAlert('Missing Information', 'Please provide a valid course title and description.', 'warning');
       return;
     }
 
@@ -92,11 +113,11 @@ export default function CreateLearningPathPage() {
         totalModules: modules.length,
         modules
       });
-      alert('Course created successfully!');
-      router.push('/admin/dashboard');
+      showAlert('Course Created', 'The new curriculum has been synchronized with the learning nodes.', 'success');
+      setTimeout(() => router.push('/admin/dashboard'), 2000);
     } catch (error) {
       console.error(error);
-      alert('Failed to create course.');
+      showAlert('Action Failed', 'We could not synchronize the new course. Please check your network.', 'warning');
     } finally {
       setLoading(false);
     }
@@ -295,6 +316,15 @@ export default function CreateLearningPathPage() {
           </div>
         </div>
       </div>
+
+      <NiceModal 
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        title={modalConfig.title}
+        description={modalConfig.description}
+        type={modalConfig.type}
+        confirmText="Got it"
+      />
     </div>
   );
 }

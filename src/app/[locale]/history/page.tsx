@@ -9,6 +9,7 @@ import { History, Calendar, Loader2, Trash2, ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import DateRangePicker from '@/components/common/DateRangePicker';
+import NiceModal from '@/components/common/NiceModal';
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<SearchHistoryItem[]>([]);
@@ -16,8 +17,29 @@ export default function HistoryPage() {
   const [clearing, setClearing] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    type: 'success' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    type: 'info'
+  });
+
   const router = useRouter();
   const { t } = useLanguage();
+
+  const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' = 'info') => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      description,
+      type
+    });
+  };
 
   const fetchHistory = React.useCallback(async (userId: string) => {
     setLoading(true);
@@ -48,8 +70,9 @@ export default function HistoryPage() {
     try {
       await clearSearchHistory();
       setHistory([]);
+      showAlert('History Cleared', 'Your entire search history has been wiped from the secure nodes.', 'success');
     } catch (e) {
-      alert("Failed to clear history");
+      showAlert('Action Failed', 'We could not clear your history. Please try again.', 'warning');
     } finally {
       setClearing(false);
     }
@@ -144,6 +167,15 @@ export default function HistoryPage() {
           </div>
         )}
       </div>
+
+      <NiceModal 
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        title={modalConfig.title}
+        description={modalConfig.description}
+        type={modalConfig.type}
+        confirmText="Got it"
+      />
     </div>
   );
 }

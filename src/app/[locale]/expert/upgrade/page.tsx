@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserRole } from '@/types';
+import NiceModal from '@/components/common/NiceModal';
 
 export default function ExpertUpgradePage() {
   const [user, setUser] = useState<any>(null);
@@ -30,6 +31,27 @@ export default function ExpertUpgradePage() {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsLoading] = useState(false);
   const router = useRouter();
+
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    type: 'success' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    type: 'info'
+  });
+
+  const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' = 'info') => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      description,
+      type
+    });
+  };
 
   const [formData, setFormData] = useState({
     role: 'doctor' as UserRole,
@@ -105,7 +127,7 @@ export default function ExpertUpgradePage() {
         setStep(3);
       } catch (error) {
         console.error(error);
-        alert('Failed to submit application');
+        showAlert('Submission Failed', 'Failed to submit application', 'warning');
       } finally {
         setIsLoading(false);
       }
@@ -116,10 +138,10 @@ export default function ExpertUpgradePage() {
     setIsLoading(true);
     try {
       await userService.upgradeTier(newTier);
-      alert(`Successfully upgraded to ${newTier.toUpperCase()}!`);
-      router.push('/expert/dashboard');
+      showAlert('Upgrade Successful', `Successfully upgraded to ${newTier.toUpperCase()}!`, 'success');
+      setTimeout(() => router.push('/expert/dashboard'), 2000);
     } catch (error) {
-      alert('Failed to upgrade tier');
+      showAlert('Upgrade Failed', 'Failed to upgrade tier', 'warning');
     } finally {
       setIsLoading(false);
     }
@@ -431,6 +453,13 @@ export default function ExpertUpgradePage() {
           )}
         </AnimatePresence>
 
+        <NiceModal
+          isOpen={modalConfig.isOpen}
+          onClose={() => setModalConfig({ ...modalConfig, isOpen: false })}
+          title={modalConfig.title}
+          description={modalConfig.description}
+          type={modalConfig.type}
+        />
       </div>
     </div>
   );

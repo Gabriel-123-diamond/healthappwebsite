@@ -36,6 +36,27 @@ function DashboardContent() {
   const [isExpiryModalOpen, setIsExpiryModalOpen] = useState(false);
   const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
 
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    type: 'success' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    type: 'info'
+  });
+
+  const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' = 'info') => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      description,
+      type
+    });
+  };
+
   useEffect(() => {
     const fetchAccessCodes = async () => {
       const user = auth.currentUser;
@@ -51,12 +72,12 @@ function DashboardContent() {
   const handleGenerateCode = async (expiryHours: number = 24, usageLimit: number = 0) => {
     const user = auth.currentUser;
     if (!user) {
-      alert("Session expired. Please sign in again.");
+      showAlert("Session Expired", "Session expired. Please sign in again.", "warning");
       return;
     }
     
     if (!profile) {
-      alert("Expert profile not fully loaded. Please wait a moment.");
+      showAlert("Expert Profile", "Expert profile not fully loaded. Please wait a moment.", "info");
       return;
     }
 
@@ -69,7 +90,7 @@ function DashboardContent() {
       // Optional: alert("Access code generated successfully.");
     } catch (error: any) {
       console.error("Failed to generate code:", error);
-      alert(`Generation failed: ${error.message || 'Unknown error'}. Check your connection.`);
+      showAlert("Generation Failed", `Generation failed: ${error.message || 'Unknown error'}. Check your connection.`, "warning");
     } finally {
       setIsGenerating(false);
     }
@@ -82,7 +103,7 @@ function DashboardContent() {
       setAccessCodes(prev => prev.filter(c => c.id !== id));
     } catch (error: any) {
       console.error("Failed to delete code:", error);
-      alert("Failed to delete code. Please try again.");
+      showAlert("Delete Failed", "Failed to delete code. Please try again.", "warning");
     }
   };
 
@@ -379,6 +400,14 @@ function DashboardContent() {
         confirmText="Complete Verification"
         cancelText="Maybe Later"
         type="warning"
+      />
+
+      <NiceModal
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig({ ...modalConfig, isOpen: false })}
+        title={modalConfig.title}
+        description={modalConfig.description}
+        type={modalConfig.type}
       />
     </div>
   );

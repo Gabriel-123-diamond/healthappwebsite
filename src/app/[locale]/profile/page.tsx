@@ -15,6 +15,7 @@ import ProfileHeader from '@/components/profile/ProfileHeader';
 import ProfileStats from '@/components/profile/ProfileStats';
 import ProfileMenu from '@/components/profile/ProfileMenu';
 import EditProfileModal from '@/components/profile/EditProfileModal';
+import NiceModal from '@/components/common/NiceModal';
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
@@ -23,9 +24,29 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editFormData, setEditFormData] = useState({ displayName: '', phone: '' });
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    type: 'success' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    type: 'info'
+  });
   
   const router = useRouter();
   const t = useTranslations('profile');
+
+  const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' = 'info') => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      description,
+      type
+    });
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -73,9 +94,9 @@ export default function ProfilePage() {
       });
       setEditFormData(data);
       setUserProfile((prev: any) => ({ ...prev, fullName: data.displayName, phone: data.phone }));
-      alert('Profile updated successfully!');
+      showAlert('Profile Updated', 'Your profile has been updated successfully!', 'success');
     } catch (error) {
-      alert('Failed to update profile.');
+      showAlert('Update Failed', 'We could not update your profile. Please try again.', 'warning');
     }
   };
 
@@ -180,6 +201,15 @@ export default function ProfilePage() {
           onSave={handleSaveProfile}
         />
       </div>
+
+      <NiceModal 
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        title={modalConfig.title}
+        description={modalConfig.description}
+        type={modalConfig.type}
+        confirmText="Got it"
+      />
     </div>
   );
 }

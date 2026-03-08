@@ -9,11 +9,33 @@ import ChatWindow from '@/components/chat/ChatWindow';
 import AppointmentCard from '@/components/appointment/AppointmentCard';
 import { Link } from '@/i18n/routing';
 import { motion, AnimatePresence } from 'framer-motion';
+import NiceModal from '@/components/common/NiceModal';
 
 export default function AppointmentsPage() {
   const { appointments, loading, user } = useAppointments();
   const [activeChat, setActiveChat] = useState<{ id: string; name: string } | null>(null);
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    type: 'success' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    type: 'info'
+  });
+
   const router = useRouter();
+
+  const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' = 'info') => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      description,
+      type
+    });
+  };
 
   const handleStartChat = async (expertId: string, expertName: string) => {
     if (!user) return;
@@ -22,7 +44,7 @@ export default function AppointmentsPage() {
       setActiveChat({ id: chatId, name: expertName });
     } catch (error) {
       console.error('Error starting chat:', error);
-      alert('Could not start chat. Please try again.');
+      showAlert('Chat Error', 'Could not initialize secure chat session. Please try again.', 'warning');
     }
   };
 
@@ -117,6 +139,15 @@ export default function AppointmentsPage() {
           onClose={() => setActiveChat(null)}
         />
       )}
+
+      <NiceModal 
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        title={modalConfig.title}
+        description={modalConfig.description}
+        type={modalConfig.type}
+        confirmText="Got it"
+      />
     </div>
   );
 }

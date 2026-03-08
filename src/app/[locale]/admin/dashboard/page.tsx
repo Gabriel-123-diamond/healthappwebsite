@@ -9,6 +9,7 @@ import { userService } from '@/services/userService';
 import { UserProfile } from '@/types';
 import ExpertVerificationModal from '@/components/admin/ExpertVerificationModal';
 import { motion, AnimatePresence } from 'framer-motion';
+import NiceModal from '@/components/common/NiceModal';
 
 import { PasswordField } from '@/components/common/PasswordField';
 
@@ -21,6 +22,17 @@ export default function AdminDashboardPage() {
   const [selectedExpert, setSelectedExpert] = useState<UserProfile | null>(null);
   const [seeding, setSeeding] = useState(false);
   const [activeTab, setActiveTab] = useState<'verifications' | 'admins'>('verifications');
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    type: 'success' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    type: 'info'
+  });
   
   // Create Admin Form State
   const [showAddAdmin, setShowAddAddmin] = useState(false);
@@ -28,6 +40,15 @@ export default function AdminDashboardPage() {
   const [adminPass, setAdminPass] = useState('');
   const [adminName, setAdminName] = useState('');
   const [creatingAdmin, setCreatingAdmin] = useState(false);
+
+  const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' = 'info') => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      description,
+      type
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,8 +86,9 @@ export default function AdminDashboardPage() {
       if (!res.ok) throw new Error('Failed to verify');
       setExperts(prev => prev.filter(e => e.uid !== id));
       setSelectedExpert(null);
+      showAlert('Expert Verified', 'Expert application has been successfully verified.', 'success');
     } catch (err) {
-      alert('Failed to verify expert.');
+      showAlert('Verification Failed', 'Failed to verify expert application.', 'warning');
     }
   };
 
@@ -80,8 +102,9 @@ export default function AdminDashboardPage() {
       if (!res.ok) throw new Error('Failed to reject');
       setExperts(prev => prev.filter(e => e.uid !== id));
       setSelectedExpert(null);
+      showAlert('Application Rejected', 'Expert application has been rejected.', 'info');
     } catch (err) {
-      alert('Failed to reject application.');
+      showAlert('Rejection Failed', 'Failed to reject application.', 'warning');
     }
   };
 
@@ -96,7 +119,7 @@ export default function AdminDashboardPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        alert(data.message);
+        showAlert('Admin Created', data.message || 'New admin has been created.', 'success');
         setShowAddAddmin(false);
         setAdminEmail('');
         setAdminPass('');
@@ -105,10 +128,10 @@ export default function AdminDashboardPage() {
         const adminsData = await userService.getAdmins();
         setAdmins(adminsData);
       } else {
-        alert(data.error || 'Failed to create admin');
+        showAlert('Creation Failed', data.error || 'Failed to create admin.', 'warning');
       }
     } catch (err) {
-      alert('Error creating admin');
+      showAlert('Error', 'An error occurred while creating admin.', 'warning');
     } finally {
       setCreatingAdmin(false);
     }
@@ -125,8 +148,8 @@ export default function AdminDashboardPage() {
     setSeeding(true);
     try {
       const res = await fetch('/api/admin/seed', { method: 'POST' });
-      if (res.ok) alert('Database seeded successfully!');
-      else alert('Failed to seed database.');
+      if (res.ok) showAlert('Success', 'Database seeded successfully!', 'success');
+      else showAlert('Error', 'Failed to seed database.', 'warning');
     } finally {
       setSeeding(false);
     }
@@ -344,6 +367,15 @@ export default function AdminDashboardPage() {
           </motion.div>
         </div>
       )}
+
+      <NiceModal 
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        title={modalConfig.title}
+        description={modalConfig.description}
+        type={modalConfig.type}
+        confirmText="Got it"
+      />
     </div>
   );
 }

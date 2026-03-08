@@ -7,6 +7,7 @@ import { ArrowLeft, PlayCircle, FileText, CheckCircle, Clock, ChevronDown, Chevr
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
+import NiceModal from '@/components/common/NiceModal';
 
 export default function CourseDetailPage() {
   const t = useTranslations('learningPage');
@@ -16,6 +17,26 @@ export default function CourseDetailPage() {
   const [loading, setLoading] = useState(true);
   const [expandedModule, setExpandedModule] = useState<string | null>(null);
   const [isOffline, setIsOffline] = useState(false);
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    type: 'success' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    type: 'info'
+  });
+
+  const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' = 'info') => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      description,
+      type
+    });
+  };
 
   useEffect(() => {
     const fetchPath = async () => {
@@ -31,7 +52,7 @@ export default function CourseDetailPage() {
 
   const handleDownload = () => {
     setIsOffline(true);
-    alert("Course downloaded for offline access.");
+    showAlert('Download Complete', 'Course data has been securely cached for offline clinical access.', 'success');
   };
 
   if (loading) return <div className="p-12 text-center text-slate-500 font-bold uppercase tracking-widest pt-32 sm:pt-40">{t('loading')}</div>;
@@ -166,6 +187,15 @@ export default function CourseDetailPage() {
           )}
         </div>
       </div>
+
+      <NiceModal 
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        title={modalConfig.title}
+        description={modalConfig.description}
+        type={modalConfig.type}
+        confirmText="Got it"
+      />
     </div>
   );
 }

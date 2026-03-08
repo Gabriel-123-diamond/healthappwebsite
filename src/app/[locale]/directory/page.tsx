@@ -15,6 +15,7 @@ import { useUserAuth } from '@/hooks/useUserAuth';
 import { RestrictedPage } from '@/components/common/RestrictedPage';
 import { ExpertCardSkeleton } from '@/components/ui/Skeleton';
 import ScrollToTop from '@/components/common/ScrollToTop';
+import NiceModal from '@/components/common/NiceModal';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -47,6 +48,26 @@ export default function DirectoryPage() {
   const [privateExpert, setPrivateExpert] = useState<PublicExpert | null>(null);
   const [verifyingCode, setVerifyingCode] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    type: 'success' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    type: 'info'
+  });
+
+  const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' = 'info') => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      description,
+      type
+    });
+  };
 
   const handleVerifyCode = async () => {
     if (accessCode.length === 6) {
@@ -61,16 +82,16 @@ export default function DirectoryPage() {
             setShowSuccessModal(true);
           } else {
             setPrivateExpert(null);
-            alert("Protocol failed. Expert record no longer exists.");
+            showAlert("Protocol Failed", "Expert record no longer exists.", "warning");
           }
         } else {
           setPrivateExpert(null);
-          alert("Invalid or expired access code.");
+          showAlert("Invalid Access Code", "The code you entered is invalid or has expired.", "warning");
         }
       } catch (error) {
         console.error("Error verifying access code:", error);
         setPrivateExpert(null);
-        alert("Verification error. Please check your network and try again.");
+        showAlert("Verification Error", "Please check your network and try again.", "warning");
       } finally {
         setVerifyingCode(false);
       }
@@ -123,7 +144,7 @@ export default function DirectoryPage() {
       },
       (err) => {
         console.error(err);
-        alert("Location access denied.");
+        showAlert("Location Denied", "Location access was denied. Please enable it in your browser settings.", "warning");
       }
     );
   };
@@ -625,6 +646,15 @@ export default function DirectoryPage() {
           </div>
         )}
       </AnimatePresence>
+
+      <NiceModal 
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        title={modalConfig.title}
+        description={modalConfig.description}
+        type={modalConfig.type}
+        confirmText="Got it"
+      />
     </div>
   );
 }

@@ -9,11 +9,33 @@ import { EmptyState } from '@/components/common/EmptyState';
 import { SavedItemCard, SavedSearchCard } from '@/components/profile/SavedCards';
 import DateRangePicker from '@/components/common/DateRangePicker';
 import { useRouter } from 'next/navigation';
+import NiceModal from '@/components/common/NiceModal';
 
 export default function SavedPage() {
   const { t } = useLanguage();
   const router = useRouter();
   const [isClearing, setIsClearing] = useState(false);
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    type: 'success' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    type: 'info'
+  });
+
+  const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' = 'info') => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      description,
+      type
+    });
+  };
+
   const {
     activeTab, setActiveTab,
     loading, syncing,
@@ -36,8 +58,9 @@ export default function SavedPage() {
     try {
       if (activeTab === 'items') await clearAllItems();
       else await clearAllSearches();
+      showAlert('Content Cleared', 'All saved items in this category have been removed.', 'success');
     } catch (e) {
-      alert("Failed to clear content");
+      showAlert('Action Failed', 'We could not clear the content. Please try again.', 'warning');
     } finally {
       setIsClearing(false);
     }
@@ -158,6 +181,15 @@ export default function SavedPage() {
           )
         )}
       </div>
+
+      <NiceModal 
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        title={modalConfig.title}
+        description={modalConfig.description}
+        type={modalConfig.type}
+        confirmText="Got it"
+      />
     </div>
   );
 }
