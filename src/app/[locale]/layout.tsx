@@ -94,11 +94,12 @@ export default async function LocaleLayout({
                     <div className="space-y-6">
                       <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Resources</h4>
                       <ul className="space-y-4">
-                        <li><Link href="/tools" className="text-sm font-bold text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors">Professional Tools</Link></li>
+                        {/* <li><Link href="/tools" className="text-sm font-bold text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors">Professional Tools</Link></li> */}
                         <li><Link href="/history" className="text-sm font-bold text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors">Synthesis History</Link></li>
                         <li><Link href="/support" className="text-sm font-bold text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors">Assistance Center</Link></li>
                       </ul>
                     </div>
+
                     <div className="space-y-6 col-span-2 sm:col-span-1">
                       <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Legal Core</h4>
                       <ul className="space-y-4">
