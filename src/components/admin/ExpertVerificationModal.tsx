@@ -4,7 +4,7 @@ import React from 'react';
 import { UserProfile } from '@/types';
 import { 
   X, CheckCircle, XCircle, FileText, ExternalLink, 
-  User, Shield, Building2, Briefcase, Calendar, MapPin, Award, DollarSign, Building
+  User, Shield, Building2, Briefcase, Calendar, MapPin, Award, DollarSign, Building, Mail
 } from 'lucide-react';
 
 interface ExpertVerificationModalProps {

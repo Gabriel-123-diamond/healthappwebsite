@@ -24,7 +24,7 @@ export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<'verifications' | 'admins'>('verifications');
   
   // Create Admin Form State
-  const [showAddAddmin, setShowAddAddmin] = useState(false);
+  const [showAddAdmin, setShowAddAdmin] = useState(false);
   const [adminEmail, setAdminEmail] = useState('');
   const [adminPass, setAdminPass] = useState('');
   const [adminName, setAdminName] = useState('');
@@ -142,7 +142,7 @@ export default function AdminDashboardPage() {
       const data = await res.json();
       if (res.ok) {
         showAlert('Admin Created', data.message || 'New admin has been created.', 'success');
-        setShowAddAddmin(false);
+        setShowAddAdmin(false);
         setAdminEmail('');
         setAdminPass('');
         setAdminName('');
@@ -319,7 +319,7 @@ export default function AdminDashboardPage() {
                   <p className="text-slate-500 font-medium mt-1 uppercase tracking-widest text-[10px] font-black">Super User Authority Node</p>
                 </div>
                 <button 
-                  onClick={() => setShowAddAddmin(true)}
+                  onClick={() => setShowAddAdmin(true)}
                   className="flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-[24px] text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 dark:shadow-none"
                 >
                   <UserPlus size={18} /> Add Authority
@@ -368,7 +368,7 @@ export default function AdminDashboardPage() {
           >
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Initialize Admin</h2>
-              <button onClick={() => setShowAddAddmin(false)}><XCircle className="text-slate-300" /></button>
+              <button onClick={() => setShowAddAdmin(false)}><XCircle className="text-slate-300" /></button>
             </div>
             <form onSubmit={handleCreateAdmin} className="space-y-6">
               <div className="space-y-2">
