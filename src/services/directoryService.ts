@@ -75,12 +75,42 @@ export const getExperts = async (type: string = 'all'): Promise<PublicExpert[]> 
 
 export const getExpertById = async (id: string): Promise<PublicExpert | undefined> => {
   try {
+    // 1. Try fetching from 'experts' collection (primary directory)
     const docRef = doc(db, EXPERTS_COLLECTION, id);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
       return { id: docSnap.id, ...docSnap.data() } as PublicExpert;
     }
+
+    // 2. Fallback to 'users' collection (for professionals not yet in primary directory)
+    const userRef = doc(db, 'users', id);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      const userData = userSnap.data();
+      // Only return if they have an expert role
+      if (['doctor', 'herbal_practitioner', 'hospital', 'expert'].includes(userData.role)) {
+        // Use nested expertProfile if it exists, otherwise use top-level fields
+        const ep = userData.expertProfile || {};
+        
+        return {
+          id: userSnap.id,
+          name: ep.name || userData.fullName || userData.username || 'Expert',
+          type: ep.type || (userData.role === 'expert' ? 'doctor' : userData.role),
+          specialty: ep.specialty || userData.specialty || userData.customSpecialty || 'General Practice',
+          verificationStatus: ep.verificationStatus || userData.verificationStatus || 'unverified',
+          location: ep.location || [userData.city, userData.state, userData.country].filter(Boolean).join(', ') || 'Global',
+          rating: ep.rating || userData.rating || 5.0,
+          lat: ep.lat || userData.lat || 0,
+          lng: ep.lng || userData.lng || 0,
+          imageUrl: ep.imageUrl || userData.imageUrl || userData.photoURL,
+          bio: ep.bio || userData.bio,
+          updatedAt: ep.updatedAt || userData.updatedAt || new Date().toISOString()
+        } as PublicExpert;
+      }
+    }
+
     return undefined;
   } catch (error) {
     console.error("Error fetching expert:", error);
