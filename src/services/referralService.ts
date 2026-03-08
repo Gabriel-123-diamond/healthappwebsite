@@ -26,7 +26,7 @@ if (typeof window !== 'undefined') {
 }
 
 export const referralService = {
-  generateReferralCode: async (_uid: string, username: string): Promise<string> => {
+  generateReferralCode: async (_uid: string, username: string, usageLimit?: number): Promise<string> => {
     try {
       const user = auth.currentUser;
       if (!user) throw new Error("Unauthorized");
@@ -38,7 +38,7 @@ export const referralService = {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username })
+        body: JSON.stringify({ username, usageLimit })
       });
 
       if (!response.ok) throw new Error('Failed to generate code');
@@ -46,6 +46,49 @@ export const referralService = {
       return data.code;
     } catch (e) {
       console.error('Error generating referral code:', e);
+      throw e;
+    }
+  },
+
+  listReferralCodes: async (): Promise<any[]> => {
+    try {
+      const user = auth.currentUser;
+      if (!user) return [];
+
+      const token = await user.getIdToken();
+      const response = await fetch('/api/referral/list', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) throw new Error('Failed to list codes');
+      const data = await response.json();
+      return data.codes || [];
+    } catch (e) {
+      console.error('Error listing referral codes:', e);
+      return [];
+    }
+  },
+
+  deleteReferralCode: async (code: string): Promise<void> => {
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("Unauthorized");
+
+      const token = await user.getIdToken();
+      const response = await fetch('/api/referral/delete', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code })
+      });
+
+      if (!response.ok) throw new Error('Failed to delete code');
+    } catch (e) {
+      console.error('Error deleting referral code:', e);
       throw e;
     }
   },
@@ -58,11 +101,14 @@ export const referralService = {
   },
 
   getExistingReferralCode: async (uid: string): Promise<string | null> => {
-    const docSnap = await getDoc(doc(db, 'referral_codes', uid));
-    if (docSnap.exists()) {
-      return docSnap.data().code as string;
+    // For backward compatibility, fetch the first active code
+    try {
+      const codes = await referralService.listReferralCodes();
+      return codes.length > 0 ? codes[0].code : null;
+    } catch (e) {
+      console.error('Error getting existing referral code:', e);
+      return null;
     }
-    return null;
   },
 
   validateReferralCode: async (code: string): Promise<string | null> => {

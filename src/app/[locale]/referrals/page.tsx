@@ -29,7 +29,8 @@ export default function ReferralsPage() {
   };
 
   const {
-    code,
+    codes,
+    loadingCodes,
     generating,
     referrals,
     loadingReferrals,
@@ -44,6 +45,7 @@ export default function ReferralsPage() {
     pointsFilter,
     setPointsFilter,
     handleGenerate,
+    handleDelete,
     copyToClipboard,
     copyLinkToClipboard,
     user
@@ -59,12 +61,11 @@ export default function ReferralsPage() {
 
   const currentRank = 1 + Math.floor((referralPoints || 0) / 500);
 
-  const handleShare = async () => {
-    if (code === 'LOADING...' || code === 'NO CODE' || code === 'LOGIN REQUIRED') return;
-    const link = referralService.getReferralLink(code);
+  const handleShare = async (sharedCode: string) => {
+    const link = referralService.getReferralLink(sharedCode);
     const shareData = {
       title: 'Join me on Ikiké Health AI',
-      text: `Join me on Ikiké Health AI and let's discover holistic health together! Use my referral code: ${code} to get ${REWARD_POINTS} bonus points.`,
+      text: `Join me on Ikiké Health AI and let's discover holistic health together! Use my referral code: ${sharedCode} to get ${REWARD_POINTS} bonus points.`,
       url: link,
     };
 
@@ -75,7 +76,7 @@ export default function ReferralsPage() {
         console.error('Error sharing:', err);
       }
     } else {
-      copyLinkToClipboard();
+      copyLinkToClipboard(sharedCode);
     }
   };
 
@@ -170,9 +171,11 @@ export default function ReferralsPage() {
               </div>
               
               <ReferralCodeCard 
-                code={code}
+                codes={codes}
+                loading={loadingCodes}
                 generating={generating}
                 onGenerate={handleGenerate}
+                onDelete={handleDelete}
                 onCopy={copyToClipboard}
                 onCopyLink={copyLinkToClipboard}
                 onShare={handleShare}

@@ -16,10 +16,11 @@ const sortReferralsByDateDesc = (referrals: Referral[]) => {
 };
 
 export const useReferralData = () => {
-  const [code, setCode] = useState<string>('LOADING...');
+  const [codes, setCodes] = useState<any[]>([]);
   const [generating, setGenerating] = useState(false);
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [loadingReferrals, setLoadingReferrals] = useState(true);
+  const [loadingCodes, setLoadingCodes] = useState(true);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
   const [startDate, setStartDate] = useState<string>('');
@@ -37,23 +38,35 @@ export const useReferralData = () => {
             setUserProfile(profileSnap.data());
           }
           await loadReferralData(currentUser.uid);
+          await loadCodes();
         } catch (error) {
           console.error('Error fetching user data:', error);
           setLoadingReferrals(false);
+          setLoadingCodes(false);
         }
       } else {
-        setCode('LOGIN REQUIRED');
+        setCodes([]);
         setLoadingReferrals(false);
+        setLoadingCodes(false);
       }
     });
     return () => unsubscribe();
   }, []);
 
+  const loadCodes = async () => {
+    setLoadingCodes(true);
+    try {
+      const allCodes = await referralService.listReferralCodes();
+      setCodes(allCodes);
+    } catch (error) {
+      console.error('Failed to load codes:', error);
+    } finally {
+      setLoadingCodes(false);
+    }
+  };
+
   const loadReferralData = async (uid: string) => {
     try {
-      const existingCode = await referralService.getExistingReferralCode(uid);
-      setCode(existingCode || 'NO CODE');
-      
       const unsub = referralService.getReferralTracker(
         uid, 
         (snapshot) => {
@@ -70,18 +83,17 @@ export const useReferralData = () => {
       return unsub;
     } catch (error) {
       console.error('Failed to load referral data:', error);
-      setCode('ERROR');
       setLoadingReferrals(false);
     }
   };
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (usageLimit?: number) => {
     if (!user) return;
     setGenerating(true);
     try {
       const username = userProfile?.username || user.displayName || 'USER';
-      const newCode = await referralService.generateReferralCode(user.uid, username);
-      setCode(newCode);
+      await referralService.generateReferralCode(user.uid, username, usageLimit);
+      await loadCodes(); // Refresh codes list
     } catch (error) {
       console.error('Failed to generate code:', error);
     } finally {
@@ -89,22 +101,27 @@ export const useReferralData = () => {
     }
   };
 
-  const copyToClipboard = () => {
-    if (code === 'LOADING...' || code === 'NO CODE' || code === 'LOGIN REQUIRED') return;
-    navigator.clipboard.writeText(code);
-    alert('Referral code copied!');
+  const handleDelete = async (codeToDelete: string) => {
+    if (!user) return;
+    try {
+      await referralService.deleteReferralCode(codeToDelete);
+      await loadCodes(); // Refresh codes list
+    } catch (error) {
+      console.error('Failed to delete code:', error);
+    }
   };
 
-  const copyLinkToClipboard = () => {
-    if (code === 'LOADING...' || code === 'NO CODE' || code === 'LOGIN REQUIRED') return;
-    const link = referralService.getReferralLink(code);
+  const copyToClipboard = (text: string) => {
+    if (!text || text === 'LOADING...' || text === 'NO CODE') return;
+    navigator.clipboard.writeText(text);
+    // You might want to use a toast here instead of alert
+  };
+
+  const copyLinkToClipboard = (text: string) => {
+    if (!text || text === 'LOADING...' || text === 'NO CODE') return;
+    const link = referralService.getReferralLink(text);
     navigator.clipboard.writeText(link);
-    alert('Referral link copied!');
   };
-
-  const referralLink = code !== 'LOADING...' && code !== 'NO CODE' && code !== 'LOGIN REQUIRED' 
-    ? referralService.getReferralLink(code) 
-    : '';
 
   const filteredReferrals = useMemo(() => {
     return referrals.filter(ref => {
@@ -134,8 +151,8 @@ export const useReferralData = () => {
   const filteredPoints = referralService.calculateReferralPoints(filteredReferrals);
 
   return {
-    code,
-    referralLink,
+    codes,
+    loadingCodes,
     generating,
     referrals: filteredReferrals,
     totalReferrals: referrals,
@@ -151,6 +168,7 @@ export const useReferralData = () => {
     pointsFilter,
     setPointsFilter,
     handleGenerate,
+    handleDelete,
     copyToClipboard,
     copyLinkToClipboard,
     user

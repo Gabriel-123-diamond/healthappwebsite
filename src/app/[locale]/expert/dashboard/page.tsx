@@ -5,7 +5,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { userService } from '@/services/userService';
 import { contentService } from '@/services/contentService';
 import { appointmentService } from '@/services/appointmentService';
-import { getActiveAccessCode, generateAccessCode, AccessCode } from '@/services/expertDashboardService';
+import { getActiveAccessCode, generateAccessCode, getExpertAccessCodes, deleteAccessCode, AccessCode } from '@/services/expertDashboardService';
 import { auth } from '@/lib/firebase';
 import { CheckCircle, Star, Users, Calendar, TrendingUp, Wallet, ShieldCheck, Activity, Award, Key, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,6 +19,7 @@ import ScrollToTop from '@/components/common/ScrollToTop';
 import { ExpertDashboardProvider, useExpertDashboard } from '@/context/ExpertDashboardContext';
 import { PatientQueue } from '@/components/expert/PatientQueue';
 import { RevenueForecast } from '@/components/expert/RevenueForecast';
+import { AccessCodeManager } from '@/components/expert/AccessCodeManager';
 import { CodeExpiryModal } from '@/components/expert/CodeExpiryModal';
 import NiceModal from '@/components/common/NiceModal';
 import { useRouter } from '@/i18n/routing';
@@ -29,36 +30,66 @@ function DashboardContent() {
   const { state, dispatch } = useExpertDashboard();
   const { articles, courses, appointments, profile, loading, activeTab } = state;
 
-  const [activeCode, setActiveCode] = useState<AccessCode | null>(null);
+  const [accessCodes, setAccessCodes] = useState<AccessCode[]>([]);
+  const [loadingCodes, setLoadingCodes] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isExpiryModalOpen, setIsExpiryModalOpen] = useState(false);
   const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
 
   useEffect(() => {
-    const fetchAccessCode = async () => {
+    const fetchAccessCodes = async () => {
       const user = auth.currentUser;
       if (user) {
-        const code = await getActiveAccessCode(user.uid);
-        setActiveCode(code);
+        const codes = await getExpertAccessCodes(user.uid);
+        setAccessCodes(codes);
+        setLoadingCodes(false);
       }
     };
-    fetchAccessCode();
+    fetchAccessCodes();
   }, []);
 
-  const handleGenerateCode = async (expiryHours: number = 24) => {
+  const handleGenerateCode = async (expiryHours: number = 24, usageLimit: number = 0) => {
     const user = auth.currentUser;
-    if (user && profile) {
-      setIsGenerating(true);
-      try {
-        const newCode = await generateAccessCode(user.uid, profile.fullName || 'Expert', expiryHours);
-        setActiveCode(newCode);
-        setIsExpiryModalOpen(false);
-      } catch (error) {
-        console.error("Failed to generate code:", error);
-      } finally {
-        setIsGenerating(false);
-      }
+    if (!user) {
+      alert("Session expired. Please sign in again.");
+      return;
     }
+    
+    if (!profile) {
+      alert("Expert profile not fully loaded. Please wait a moment.");
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      await generateAccessCode(user.uid, profile.fullName || 'Expert', expiryHours, usageLimit);
+      const updatedCodes = await getExpertAccessCodes(user.uid);
+      setAccessCodes(updatedCodes);
+      setIsExpiryModalOpen(false);
+      // Optional: alert("Access code generated successfully.");
+    } catch (error: any) {
+      console.error("Failed to generate code:", error);
+      alert(`Generation failed: ${error.message || 'Unknown error'}. Check your connection.`);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleDeleteCode = async (id: string) => {
+    if (!confirm("Delete this access node? It will immediately stop working.")) return;
+    try {
+      await deleteAccessCode(id);
+      setAccessCodes(prev => prev.filter(c => c.id !== id));
+    } catch (error: any) {
+      console.error("Failed to delete code:", error);
+      alert("Failed to delete code. Please try again.");
+    }
+  };
+
+
+  const handleCopyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    // User gets visual feedback from the AccessCodeManager component itself
   };
 
   const onCreationAttempt = (e: React.MouseEvent, type: 'article' | 'course') => {
@@ -301,25 +332,18 @@ function DashboardContent() {
                       </div>
                       <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Access Code Node</h4>
                     </div>
-                    {activeCode && (
+                    {accessCodes.some(c => new Date(c.expiresAt) > new Date()) && (
                        <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Active</span>
                     )}
                  </div>
-                 
-                 <div className="space-y-4">
-                    {activeCode ? (
-                      <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 text-center">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Your Private Access Code</p>
-                        <p className="text-3xl font-black text-slate-900 dark:text-white tracking-[0.2em]">{activeCode.code}</p>
-                        <p className="text-[10px] text-slate-500 font-medium mt-2 italic text-center">
-                          Expires: {new Date(activeCode.expiresAt.seconds ? activeCode.expiresAt.seconds * 1000 : activeCode.expiresAt).toLocaleString()}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 text-center">
-                        <p className="text-xs text-slate-500 font-medium italic">No active access code found.</p>
-                      </div>
-                    )}
+
+                 <div className="space-y-6">
+                    <AccessCodeManager 
+                      codes={accessCodes}
+                      loading={loadingCodes}
+                      onDelete={handleDeleteCode}
+                      onCopy={handleCopyCode}
+                    />
 
                     <motion.button
                       whileHover={{ scale: 1.02 }}
@@ -333,7 +357,6 @@ function DashboardContent() {
                     </motion.button>
                  </div>
               </div>
-
               <ExpertDashboardActions expertId={profile?.id} />
             </div>
           </aside>

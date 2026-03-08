@@ -23,6 +23,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Code and Referrer UID required" }, { status: 400 });
     }
 
+    const normalizedCode = code.trim().toUpperCase();
+
+    // Verify code exists and check usage limit
+    const codeRef = adminDb.collection("referral_codes").doc(normalizedCode);
+    const codeDoc = await codeRef.get();
+
+    if (!codeDoc.exists) {
+      return NextResponse.json({ error: "Invalid referral code" }, { status: 404 });
+    }
+
+    const codeData = codeDoc.data();
+    if (codeData?.ownerUid !== referrerUid) {
+      return NextResponse.json({ error: "Code and owner mismatch" }, { status: 400 });
+    }
+
+    if (codeData?.usageLimit > 0 && codeData?.usageCount >= codeData?.usageLimit) {
+      return NextResponse.json({ error: "Usage limit reached" }, { status: 400 });
+    }
+
     // Check if invitee already applied a code
     const existingRef = await adminDb.collection("referrals")
       .where("inviteeUid", "==", inviteeUid)
@@ -35,14 +54,24 @@ export async function POST(req: NextRequest) {
 
     const inviteeRecord = await adminAuth.getUser(inviteeUid);
 
-    await adminDb.collection("referrals").add({
+    // Update usage count and create referral record in a transaction or batch
+    const batch = adminDb.batch();
+    
+    batch.update(codeRef, {
+      usageCount: admin.firestore.FieldValue.increment(1)
+    });
+
+    const newReferralRef = adminDb.collection("referrals").doc();
+    batch.set(newReferralRef, {
       referrerUid,
       inviteeUid,
       inviteeEmail: inviteeRecord.email || null,
-      code: code.trim().toUpperCase(),
+      code: normalizedCode,
       status: 'pending',
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
+
+    await batch.commit();
 
     return NextResponse.json({ success: true });
 

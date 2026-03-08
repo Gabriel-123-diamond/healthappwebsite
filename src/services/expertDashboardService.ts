@@ -1,5 +1,8 @@
 import { db } from "@/lib/firebase";
-import { collection, getDocs, doc, getDoc, query, where, orderBy, serverTimestamp, Timestamp, addDoc, limit } from "firebase/firestore";
+import { 
+  collection, getDocs, doc, getDoc, query, where, orderBy, 
+  serverTimestamp, Timestamp, addDoc, limit, deleteDoc, updateDoc, increment 
+} from "firebase/firestore";
 
 export interface ExpertStats {
   totalViews: number;
@@ -22,6 +25,8 @@ export interface AccessCode {
   code: string;
   expertId: string;
   expertName: string;
+  usageCount: number;
+  usageLimit: number; // 0 for unlimited
   createdAt: any;
   expiresAt: any;
 }
@@ -41,7 +46,6 @@ export async function getExpertStats(expertId: string): Promise<ExpertStats> {
     if (docSnap.exists()) {
       return docSnap.data() as ExpertStats;
     }
-    // Return empty/zero stats if not found
     return { totalViews: 0, questionsAnswered: 0, articlesPublished: 0, rating: 0 };
   } catch (error) {
     console.error("Error fetching expert stats:", error);
@@ -67,27 +71,82 @@ export async function getExpertContent(expertId: string): Promise<ExpertContent[
   }
 }
 
-export async function generateAccessCode(expertId: string, expertName: string, expiryHours: number = 24): Promise<AccessCode> {
-  const code = Math.floor(100000 + Math.random() * 900000).toString();
-  const createdAt = serverTimestamp();
-  const expiresAt = Timestamp.fromDate(new Date(Date.now() + expiryHours * 60 * 60 * 1000));
+export async function generateAccessCode(expertId: string, expertName: string, expiryHours: number = 24, usageLimit: number = 0): Promise<AccessCode> {
+  try {
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const createdAt = serverTimestamp();
+    const expiresAt = Timestamp.fromDate(new Date(Date.now() + expiryHours * 60 * 60 * 1000));
 
-  const docRef = await addDoc(collection(db, ACCESS_CODES_COLLECTION), {
-    code,
-    expertId,
-    expertName,
-    createdAt,
-    expiresAt
-  });
+    const codeData = {
+      code,
+      expertId,
+      expertName,
+      usageCount: 0,
+      usageLimit,
+      createdAt,
+      expiresAt
+    };
 
-  return {
-    id: docRef.id,
-    code,
-    expertId,
-    expertName,
-    createdAt: new Date(),
-    expiresAt: expiresAt.toDate()
-  };
+    const docRef = await addDoc(collection(db, ACCESS_CODES_COLLECTION), codeData);
+
+    return {
+      ...codeData,
+      id: docRef.id,
+      createdAt: new Date(),
+      expiresAt: expiresAt.toDate()
+    } as AccessCode;
+  } catch (error) {
+    console.error("Error generating access code:", error);
+    throw error;
+  }
+}
+
+export async function getExpertAccessCodes(expertId: string): Promise<AccessCode[]> {
+  try {
+    const q = query(
+      collection(db, ACCESS_CODES_COLLECTION),
+      where('expertId', '==', expertId)
+    );
+    const snapshot = await getDocs(q);
+    const codes = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        ...data,
+        id: doc.id,
+        createdAt: data.createdAt?.toDate?.() || new Date(),
+        expiresAt: data.expiresAt?.toDate?.() || new Date()
+      } as AccessCode;
+    });
+    
+    // Sort manually by createdAt desc to avoid requiring a composite index
+    return codes.sort((a, b) => {
+      const timeA = a.createdAt instanceof Date ? a.createdAt.getTime() : new Date(a.createdAt).getTime();
+      const timeB = b.createdAt instanceof Date ? b.createdAt.getTime() : new Date(b.createdAt).getTime();
+      return timeB - timeA;
+    });
+  } catch (error) {
+    console.error("Error fetching access codes:", error);
+    return [];
+  }
+}
+
+export async function deleteAccessCode(codeId: string): Promise<void> {
+  try {
+    await deleteDoc(doc(db, ACCESS_CODES_COLLECTION, codeId));
+  } catch (error) {
+    console.error("Error deleting access code:", error);
+    throw error;
+  }
+}
+
+export async function incrementAccessCodeUsage(codeId: string): Promise<void> {
+  try {
+    await updateDoc(doc(db, ACCESS_CODES_COLLECTION, codeId), {
+      usageCount: increment(1)
+    });
+  } catch (error) {
+    console.error("Error incrementing access code usage:", error);
+  }
 }
 
 export async function getActiveAccessCode(expertId: string): Promise<AccessCode | null> {
@@ -96,17 +155,27 @@ export async function getActiveAccessCode(expertId: string): Promise<AccessCode 
     const q = query(
       collection(db, ACCESS_CODES_COLLECTION),
       where('expertId', '==', expertId),
-      where('expiresAt', '>', now),
-      orderBy('expiresAt', 'desc'),
-      limit(1)
+      where('expiresAt', '>', now)
     );
     const snapshot = await getDocs(q);
     if (snapshot.empty) return null;
-    const data = snapshot.docs[0].data();
-    return {
-      id: snapshot.docs[0].id,
-      ...data
-    } as AccessCode;
+    
+    const codes = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        ...data,
+        id: doc.id,
+        createdAt: data.createdAt?.toDate?.() || new Date(),
+        expiresAt: data.expiresAt?.toDate?.() || new Date()
+      } as AccessCode;
+    });
+    
+    // Filter by usage limit and sort manually
+    const validCodes = codes.filter(data => !(data.usageLimit > 0 && data.usageCount >= data.usageLimit));
+    
+    if (validCodes.length === 0) return null;
+
+    return validCodes.sort((a, b) => b.expiresAt.getTime() - a.expiresAt.getTime())[0];
   } catch (error) {
     console.error("Error fetching active access code:", error);
     return null;
@@ -124,10 +193,18 @@ export async function verifyAccessCode(code: string): Promise<AccessCode | null>
     );
     const snapshot = await getDocs(q);
     if (snapshot.empty) return null;
-    const data = snapshot.docs[0].data();
+    
+    const docSnap = snapshot.docs[0];
+    const data = docSnap.data();
+    
+    // Check usage limit
+    if (data.usageLimit > 0 && data.usageCount >= data.usageLimit) {
+      return null;
+    }
+
     return {
-      id: snapshot.docs[0].id,
-      ...data
+      ...data,
+      id: docSnap.id
     } as AccessCode;
   } catch (error) {
     console.error("Error verifying access code:", error);

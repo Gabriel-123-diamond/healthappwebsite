@@ -18,15 +18,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid session" }, { status: 401 });
     }
 
-    const { username } = await req.json();
+    const { username, usageLimit } = await req.json();
     if (!username) {
       return NextResponse.json({ error: "Username required" }, { status: 400 });
-    }
-
-    // Check if user already has a code
-    const existingDoc = await adminDb.collection("referral_codes").doc(uid).get();
-    if (existingDoc.exists) {
-      return NextResponse.json({ code: existingDoc.data()?.code });
     }
 
     // Logic to generate a unique code
@@ -44,10 +38,10 @@ export async function POST(req: NextRequest) {
     let code = '';
     let isUnique = false;
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 10; i++) {
       code = generateCode();
-      const snapshot = await adminDb.collection("referral_codes").where("code", "==", code).limit(1).get();
-      if (snapshot.empty) {
+      const snapshot = await adminDb.collection("referral_codes").doc(code).get();
+      if (!snapshot.exists) {
         isUnique = true;
         break;
       }
@@ -57,14 +51,18 @@ export async function POST(req: NextRequest) {
       code = `REF-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
     }
 
-    await adminDb.collection("referral_codes").doc(uid).set({
+    const codeData = {
       code,
       ownerUid: uid,
       ownerUsername: username,
+      usageCount: 0,
+      usageLimit: usageLimit ? parseInt(usageLimit) : 0, // 0 for unlimited
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
+    };
 
-    return NextResponse.json({ success: true, code });
+    await adminDb.collection("referral_codes").doc(code).set(codeData);
+
+    return NextResponse.json({ success: true, code, data: codeData });
 
   } catch (error: any) {
     console.error("Referral generation error:", error);

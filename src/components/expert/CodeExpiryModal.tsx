@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Clock, Shield, Zap } from 'lucide-react';
+import { X, Clock, Shield, Zap, Info } from 'lucide-react';
 
 interface CodeExpiryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onGenerate: (expiryHours: number) => void;
+  onGenerate: (expiryHours: number, usageLimit: number) => void;
   isGenerating: boolean;
 }
 
@@ -21,6 +21,7 @@ const EXPIRY_OPTIONS = [
 
 export function CodeExpiryModal({ isOpen, onClose, onGenerate, isGenerating }: CodeExpiryModalProps) {
   const [selectedExpiry, setSelectedExpiry] = useState(24);
+  const [usageLimit, setUsageLimit] = useState(0);
 
   if (!isOpen) return null;
 
@@ -83,15 +84,41 @@ export function CodeExpiryModal({ isOpen, onClose, onGenerate, isGenerating }: C
               ))}
             </div>
 
+            {/* Usage Limit Input */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between px-1">
+                <div className="flex items-center gap-2">
+                  <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Usage Limit</h4>
+                  <div className="group relative">
+                    <Info size={12} className="text-slate-300 cursor-help" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-40 p-2 bg-slate-800 text-white text-[9px] rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
+                      Set to 0 for unlimited uses within the expiration period.
+                    </div>
+                  </div>
+                </div>
+                <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">
+                  {usageLimit === 0 ? 'Unlimited' : `${usageLimit} Uses`}
+                </span>
+              </div>
+              <input 
+                type="number" 
+                min="0"
+                value={usageLimit}
+                onChange={(e) => setUsageLimit(parseInt(e.target.value) || 0)}
+                className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl text-sm font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                placeholder="Enter usage limit (0 for unlimited)"
+              />
+            </div>
+
             <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-start gap-3 border border-blue-100 dark:border-blue-800/50">
                <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5" />
                <p className="text-[10px] text-blue-700 dark:text-blue-300 font-medium leading-relaxed">
-                 Once the code expires, it will be automatically purged from the directory. You can regenerate a new one anytime.
+                 Once the code expires or reaches its usage limit, it will be automatically purged. You can manage all active nodes from your dashboard.
                </p>
             </div>
 
             <button
-              onClick={() => onGenerate(selectedExpiry)}
+              onClick={() => onGenerate(selectedExpiry, usageLimit)}
               disabled={isGenerating}
               className="w-full py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-indigo-500/10 disabled:opacity-50"
             >
