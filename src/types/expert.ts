@@ -97,6 +97,7 @@ export interface PublicExpert {
   languages?: string[];
   updatedAt: string;
   isPrivate?: boolean;
+  isMe?: boolean;
 }
 
 export interface Education {

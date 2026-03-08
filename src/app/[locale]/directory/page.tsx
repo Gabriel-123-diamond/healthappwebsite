@@ -56,7 +56,8 @@ export default function DirectoryPage() {
           if (codeData) {
             const expert = await getExpertById(codeData.expertId);
             if (expert) {
-              setPrivateExpert({ ...expert, isPrivate: true });
+              const isMe = user?.uid === expert.id;
+              setPrivateExpert({ ...expert, isPrivate: true, isMe });
             } else {
               setPrivateExpert(null);
             }
@@ -74,7 +75,7 @@ export default function DirectoryPage() {
       }
     };
     verifyCode();
-  }, [accessCode]);
+  }, [accessCode, user?.uid]);
 
   // Sync searchQuery with URL filter if it changes
   useEffect(() => {
@@ -338,6 +339,35 @@ export default function DirectoryPage() {
           </AnimatePresence>
         </div>
 
+        {/* Auth Banner */}
+        <AnimatePresence>
+          {privateExpert && privateExpert.isMe && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="mb-8 p-6 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-[32px] flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-emerald-500/5"
+            >
+              <div className="flex items-center gap-4 text-center md:text-left">
+                <div className="p-3 bg-emerald-500 rounded-2xl shadow-lg shadow-emerald-500/20">
+                  <BadgeCheck className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">Authenticated as Owner</h3>
+                  <p className="text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-[0.2em] mt-0.5">You are viewing your own private clinical entry</p>
+                </div>
+              </div>
+              <Link 
+                href="/expert/dashboard"
+                className="px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl hover:scale-105 transition-all flex items-center gap-2"
+              >
+                Go to Dashboard
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Results Info */}
         <div className="mb-8 flex justify-between items-center px-2">
           <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">
@@ -535,6 +565,12 @@ function ExpertCard({ expert, t }: { expert: PublicExpert, t: any }) {
               {getIcon()}
             </div>
             <div className="flex flex-col items-end gap-2">
+              {expert.isMe && (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600 text-white border border-blue-400 text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-500/20 animate-pulse">
+                  <Users className="w-3.5 h-3.5" />
+                  This is You
+                </div>
+              )}
               {expert.isPrivate && (
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500 text-white border border-amber-400 text-[10px] font-black uppercase tracking-widest shadow-lg shadow-amber-500/20">
                   <Shield className="w-3.5 h-3.5" />
