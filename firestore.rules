@@ -234,7 +234,12 @@ service cloud.firestore {
     match /access_codes/{codeId} {
       allow read: if isSignedIn();
       allow create: if userIsExpert() && request.resource.data.expertId == request.auth.uid;
-      allow update, delete: if isSignedIn() && (resource.data.expertId == request.auth.uid || userIsAdmin());
+      allow update: if isSignedIn() && (
+        resource.data.expertId == request.auth.uid || 
+        userIsAdmin() ||
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['usageCount']))
+      );
+      allow delete: if isSignedIn() && (resource.data.expertId == request.auth.uid || userIsAdmin());
     }
 
     match /chats/{chatId} {
