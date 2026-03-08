@@ -184,18 +184,28 @@ export async function getActiveAccessCode(expertId: string): Promise<AccessCode 
 
 export async function verifyAccessCode(code: string): Promise<AccessCode | null> {
   try {
-    const now = Timestamp.now();
+    // Simplify query to only code to avoid composite index requirements for (code == AND expiresAt >)
     const q = query(
       collection(db, ACCESS_CODES_COLLECTION),
       where('code', '==', code),
-      where('expiresAt', '>', now),
       limit(1)
     );
     const snapshot = await getDocs(q);
-    if (snapshot.empty) return null;
+    
+    if (snapshot.empty) {
+      console.warn(`No access code found matching: ${code}`);
+      return null;
+    }
     
     const docSnap = snapshot.docs[0];
     const data = docSnap.data();
+    
+    // Manual expiry check
+    const expiresAt = data.expiresAt?.toDate?.() || new Date(data.expiresAt);
+    if (expiresAt < new Date()) {
+      console.warn("Access code has expired");
+      return null;
+    }
     
     // Check usage limit
     if (data.usageLimit > 0 && data.usageCount >= data.usageLimit) {
@@ -210,10 +220,11 @@ export async function verifyAccessCode(code: string): Promise<AccessCode | null>
 
     return {
       ...data,
-      id: docSnap.id
+      id: docSnap.id,
+      expiresAt // Return the parsed date
     } as AccessCode;
   } catch (error) {
     console.error("Error verifying access code:", error);
-    return null;
+    throw error; // Throw so caller can handle
   }
 }

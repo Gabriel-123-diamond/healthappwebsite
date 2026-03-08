@@ -57,15 +57,19 @@ export default function DirectoryPage() {
           if (expert) {
             const isMe = user?.uid === expert.id;
             setPrivateExpert({ ...expert, isPrivate: true, isMe });
+            alert("Protocol established. Private clinical entry unlocked.");
           } else {
             setPrivateExpert(null);
+            alert("Protocol failed. Expert record no longer exists.");
           }
         } else {
           setPrivateExpert(null);
+          alert("Invalid or expired access code.");
         }
       } catch (error) {
         console.error("Error verifying access code:", error);
         setPrivateExpert(null);
+        alert("Verification error. Please check your network and try again.");
       } finally {
         setVerifyingCode(false);
       }
