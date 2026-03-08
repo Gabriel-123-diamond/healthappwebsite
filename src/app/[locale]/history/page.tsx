@@ -29,6 +29,18 @@ export default function HistoryPage() {
     type: 'info'
   });
 
+  const [confirmConfig, setConfirmConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    onConfirm: () => {}
+  });
+
   const router = useRouter();
   const { t } = useLanguage();
 
@@ -38,6 +50,15 @@ export default function HistoryPage() {
       title,
       description,
       type
+    });
+  };
+
+  const showConfirm = (title: string, description: string, onConfirm: () => void) => {
+    setConfirmConfig({
+      isOpen: true,
+      title,
+      description,
+      onConfirm
     });
   };
 
@@ -64,18 +85,25 @@ export default function HistoryPage() {
   }, [fetchHistory, router]);
 
   const handleClearHistory = async () => {
-    if (!window.confirm(t.history.clearConfirm || "Are you sure you want to permanently clear your entire search history?")) return;
+    const confirmMsg = t.history.clearConfirm || "Are you sure you want to permanently clear your entire search history from the encrypted database?";
     
-    setClearing(true);
-    try {
-      await clearSearchHistory();
-      setHistory([]);
-      showAlert('History Cleared', 'Your entire search history has been wiped from the secure nodes.', 'success');
-    } catch (e) {
-      showAlert('Action Failed', 'We could not clear your history. Please try again.', 'warning');
-    } finally {
-      setClearing(false);
-    }
+    showConfirm(
+      "Confirm Wipe",
+      confirmMsg,
+      async () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+        setClearing(true);
+        try {
+          await clearSearchHistory();
+          setHistory([]);
+          showAlert('History Cleared', 'Your entire search history has been wiped from the secure nodes.', 'success');
+        } catch (e) {
+          showAlert('Action Failed', 'We could not clear your history. Please try again.', 'warning');
+        } finally {
+          setClearing(false);
+        }
+      }
+    );
   };
 
   return (
@@ -175,6 +203,17 @@ export default function HistoryPage() {
         description={modalConfig.description}
         type={modalConfig.type}
         confirmText="Got it"
+      />
+
+      <NiceModal
+        isOpen={confirmConfig.isOpen}
+        onClose={() => setConfirmConfig({ ...confirmConfig, isOpen: false })}
+        onConfirm={confirmConfig.onConfirm}
+        title={confirmConfig.title}
+        description={confirmConfig.description}
+        confirmText="Confirm Action"
+        cancelText="Cancel"
+        type="warning"
       />
     </div>
   );

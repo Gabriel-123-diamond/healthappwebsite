@@ -48,12 +48,33 @@ function DashboardContent() {
     type: 'info'
   });
 
+  const [confirmConfig, setConfirmConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    onConfirm: () => {}
+  });
+
   const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' = 'info') => {
     setModalConfig({
       isOpen: true,
       title,
       description,
       type
+    });
+  };
+
+  const showConfirm = (title: string, description: string, onConfirm: () => void) => {
+    setConfirmConfig({
+      isOpen: true,
+      title,
+      description,
+      onConfirm
     });
   };
 
@@ -97,14 +118,22 @@ function DashboardContent() {
   };
 
   const handleDeleteCode = async (id: string) => {
-    if (!confirm("Delete this access node? It will immediately stop working.")) return;
-    try {
-      await deleteAccessCode(id);
-      setAccessCodes(prev => prev.filter(c => c.id !== id));
-    } catch (error: any) {
-      console.error("Failed to delete code:", error);
-      showAlert("Delete Failed", "Failed to delete code. Please try again.", "warning");
-    }
+    showConfirm(
+      "Confirm Deletion",
+      "Are you sure you want to delete this access node? It will immediately stop working for all users.",
+      async () => {
+        try {
+          await deleteAccessCode(id);
+          setAccessCodes(prev => prev.filter(c => c.id !== id));
+          setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+          showAlert("Node Deleted", "The access node has been successfully removed.", "success");
+        } catch (error: any) {
+          console.error("Failed to delete code:", error);
+          setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+          showAlert("Delete Failed", "Failed to delete code. Please try again.", "warning");
+        }
+      }
+    );
   };
 
 
@@ -408,6 +437,17 @@ function DashboardContent() {
         title={modalConfig.title}
         description={modalConfig.description}
         type={modalConfig.type}
+      />
+
+      <NiceModal
+        isOpen={confirmConfig.isOpen}
+        onClose={() => setConfirmConfig({ ...confirmConfig, isOpen: false })}
+        onConfirm={confirmConfig.onConfirm}
+        title={confirmConfig.title}
+        description={confirmConfig.description}
+        confirmText="Confirm Deletion"
+        cancelText="Cancel"
+        type="warning"
       />
     </div>
   );

@@ -36,12 +36,33 @@ export default function ProfileMenu({ userProfile }: ProfileMenuProps) {
     type: 'info'
   });
 
+  const [confirmConfig, setConfirmConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    onConfirm: () => {}
+  });
+
   const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' = 'info') => {
     setModalConfig({
       isOpen: true,
       title,
       description,
       type
+    });
+  };
+
+  const showConfirm = (title: string, description: string, onConfirm: () => void) => {
+    setConfirmConfig({
+      isOpen: true,
+      title,
+      description,
+      onConfirm
     });
   };
   
@@ -75,19 +96,24 @@ export default function ProfileMenu({ userProfile }: ProfileMenuProps) {
   };
 
   const handleDelete = async () => {
-    if (!confirm(t('deleteConfirm'))) return;
-    
-    setProcessing(true);
-    try {
-      await deleteAccount();
-      await signOut(auth);
-      router.push('/');
-    } catch (error) {
-      console.error(error);
-      showAlert('Error', 'Failed to delete account', 'warning');
-    } finally {
-      setProcessing(false);
-    }
+    showConfirm(
+      "Terminate Account",
+      t('deleteConfirm') || "Are you sure you want to permanently delete your account and all associated health records? This action is irreversible.",
+      async () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+        setProcessing(true);
+        try {
+          await deleteAccount();
+          await signOut(auth);
+          router.push('/');
+        } catch (error) {
+          console.error(error);
+          showAlert('Error', 'Failed to delete account', 'warning');
+        } finally {
+          setProcessing(false);
+        }
+      }
+    );
   };
 
   return (
@@ -217,6 +243,17 @@ export default function ProfileMenu({ userProfile }: ProfileMenuProps) {
         title={modalConfig.title}
         description={modalConfig.description}
         type={modalConfig.type}
+      />
+
+      <NiceModal
+        isOpen={confirmConfig.isOpen}
+        onClose={() => setConfirmConfig({ ...confirmConfig, isOpen: false })}
+        onConfirm={confirmConfig.onConfirm}
+        title={confirmConfig.title}
+        description={confirmConfig.description}
+        confirmText="Confirm Action"
+        cancelText="Cancel"
+        type="warning"
       />
     </>
   );

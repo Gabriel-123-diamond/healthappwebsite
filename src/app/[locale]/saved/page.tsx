@@ -27,12 +27,33 @@ export default function SavedPage() {
     type: 'info'
   });
 
+  const [confirmConfig, setConfirmConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    onConfirm: () => {}
+  });
+
   const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' = 'info') => {
     setModalConfig({
       isOpen: true,
       title,
       description,
       type
+    });
+  };
+
+  const showConfirm = (title: string, description: string, onConfirm: () => void) => {
+    setConfirmConfig({
+      isOpen: true,
+      title,
+      description,
+      onConfirm
     });
   };
 
@@ -49,21 +70,26 @@ export default function SavedPage() {
 
   const handleClearAll = async () => {
     const confirmMsg = activeTab === 'items' 
-      ? "Permanently delete all saved articles and videos?"
-      : "Permanently delete all saved AI responses?";
+      ? "This will permanently delete all saved articles and videos from your secure vault. Continue?"
+      : "This will permanently delete all saved AI responses and clinical summaries. Continue?";
     
-    if (!window.confirm(confirmMsg)) return;
-
-    setIsClearing(true);
-    try {
-      if (activeTab === 'items') await clearAllItems();
-      else await clearAllSearches();
-      showAlert('Content Cleared', 'All saved items in this category have been removed.', 'success');
-    } catch (e) {
-      showAlert('Action Failed', 'We could not clear the content. Please try again.', 'warning');
-    } finally {
-      setIsClearing(false);
-    }
+    showConfirm(
+      "Confirm Wipe",
+      confirmMsg,
+      async () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+        setIsClearing(true);
+        try {
+          if (activeTab === 'items') await clearAllItems();
+          else await clearAllSearches();
+          showAlert('Content Cleared', 'All saved items in this category have been removed.', 'success');
+        } catch (e) {
+          showAlert('Action Failed', 'We could not clear the content. Please try again.', 'warning');
+        } finally {
+          setIsClearing(false);
+        }
+      }
+    );
   };
 
   if (loading) {
@@ -189,6 +215,17 @@ export default function SavedPage() {
         description={modalConfig.description}
         type={modalConfig.type}
         confirmText="Got it"
+      />
+
+      <NiceModal
+        isOpen={confirmConfig.isOpen}
+        onClose={() => setConfirmConfig({ ...confirmConfig, isOpen: false })}
+        onConfirm={confirmConfig.onConfirm}
+        title={confirmConfig.title}
+        description={confirmConfig.description}
+        confirmText="Confirm Action"
+        cancelText="Cancel"
+        type="warning"
       />
     </div>
   );

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { apiKeyService, APIKey } from '@/services/apiServiceKey';
 import { Key, Plus, Trash2, Copy, Check, Loader2, Code, Terminal, Book } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import NiceModal from '@/components/common/NiceModal';
 
 export default function DeveloperPage() {
   const [keys, setKeys] = useState<APIKey[]>([]);
@@ -11,6 +12,48 @@ export default function DeveloperPage() {
   const [newKeyName, setNewPostName] = useState('');
   const [generating, setGenerating] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    type: 'success' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    type: 'info'
+  });
+
+  const [confirmConfig, setConfirmConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    onConfirm: () => {}
+  });
+
+  const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' = 'info') => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      description,
+      type
+    });
+  };
+
+  const showConfirm = (title: string, description: string, onConfirm: () => void) => {
+    setConfirmConfig({
+      isOpen: true,
+      title,
+      description,
+      onConfirm
+    });
+  };
 
   useEffect(() => {
     apiKeyService.getMyKeys().then(data => {
@@ -28,15 +71,29 @@ export default function DeveloperPage() {
       setNewPostName('');
       const updatedKeys = await apiKeyService.getMyKeys();
       setKeys(updatedKeys);
+      showAlert('API Key Generated', 'Your new access key has been successfully created and encrypted.', 'success');
+    } catch (error) {
+      showAlert('Generation Failed', 'We could not generate your API key. Please check your connection.', 'warning');
     } finally {
       setGenerating(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this API key? Any applications using it will lose access.")) return;
-    await apiKeyService.deleteKey(id);
-    setKeys(keys.filter(k => k.id !== id));
+    showConfirm(
+      "Confirm Revocation",
+      "Are you sure you want to delete this API key? Any applications or hospital portals using it will immediately lose access to clinical intelligence.",
+      async () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+        try {
+          await apiKeyService.deleteKey(id);
+          setKeys(keys.filter(k => k.id !== id));
+          showAlert('Access Revoked', 'The API key has been securely removed from all nodes.', 'success');
+        } catch (error) {
+          showAlert('Action Failed', 'Could not delete the API key. Please try again.', 'warning');
+        }
+      }
+    );
   };
 
   const copyToClipboard = (text: string, id: string) => {
@@ -196,6 +253,26 @@ export default function DeveloperPage() {
 
         </div>
       </div>
+
+      <NiceModal 
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        title={modalConfig.title}
+        description={modalConfig.description}
+        type={modalConfig.type}
+        confirmText="Got it"
+      />
+
+      <NiceModal
+        isOpen={confirmConfig.isOpen}
+        onClose={() => setConfirmConfig({ ...confirmConfig, isOpen: false })}
+        onConfirm={confirmConfig.onConfirm}
+        title={confirmConfig.title}
+        description={confirmConfig.description}
+        confirmText="Confirm Revocation"
+        cancelText="Cancel"
+        type="warning"
+      />
     </div>
   );
 }

@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { JournalEntry, deleteJournalEntry } from '@/services/journalService';
 import { Thermometer, Smile, MessageSquare, Calendar, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
+import NiceModal from '@/components/common/NiceModal';
 
 interface JournalHistoryListProps {
   entries: JournalEntry[];
@@ -12,16 +13,41 @@ interface JournalHistoryListProps {
 
 export default function JournalHistoryList({ entries }: JournalHistoryListProps) {
   const t = useTranslations('journalPage');
+  const [confirmConfig, setConfirmConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    onConfirm: () => {}
+  });
+
+  const showConfirm = (title: string, description: string, onConfirm: () => void) => {
+    setConfirmConfig({
+      isOpen: true,
+      title,
+      description,
+      onConfirm
+    });
+  };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this entry?')) {
-      try {
-        await deleteJournalEntry(id);
-        window.location.reload(); // Simple refresh to update list
-      } catch (e) {
-        console.error(e);
+    showConfirm(
+      "Delete Entry",
+      "Are you sure you want to permanently delete this health journal entry? This action cannot be undone.",
+      async () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+        try {
+          await deleteJournalEntry(id);
+          window.location.reload(); // Simple refresh to update list
+        } catch (e) {
+          console.error(e);
+        }
       }
-    }
+    );
   };
 
   if (entries.length === 0) {
@@ -87,6 +113,17 @@ export default function JournalHistoryList({ entries }: JournalHistoryListProps)
           )}
         </div>
       ))}
+
+      <NiceModal
+        isOpen={confirmConfig.isOpen}
+        onClose={() => setConfirmConfig({ ...confirmConfig, isOpen: false })}
+        onConfirm={confirmConfig.onConfirm}
+        title={confirmConfig.title}
+        description={confirmConfig.description}
+        confirmText="Delete Entry"
+        cancelText="Cancel"
+        type="warning"
+      />
     </div>
   );
 }

@@ -33,13 +33,18 @@ export default function AdminDashboardPage() {
     description: '',
     type: 'info'
   });
-  
-  // Create Admin Form State
-  const [showAddAdmin, setShowAddAddmin] = useState(false);
-  const [adminEmail, setAdminEmail] = useState('');
-  const [adminPass, setAdminPass] = useState('');
-  const [adminName, setAdminName] = useState('');
-  const [creatingAdmin, setCreatingAdmin] = useState(false);
+
+  const [confirmConfig, setConfirmConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    onConfirm: () => {}
+  });
 
   const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' = 'info') => {
     setModalConfig({
@@ -47,6 +52,15 @@ export default function AdminDashboardPage() {
       title,
       description,
       type
+    });
+  };
+
+  const showConfirm = (title: string, description: string, onConfirm: () => void) => {
+    setConfirmConfig({
+      isOpen: true,
+      title,
+      description,
+      onConfirm
     });
   };
 
@@ -144,15 +158,23 @@ export default function AdminDashboardPage() {
   };
 
   const handleSeed = async () => {
-    if (!confirm('This will add sample data to the live database. Continue?')) return;
-    setSeeding(true);
-    try {
-      const res = await fetch('/api/admin/seed', { method: 'POST' });
-      if (res.ok) showAlert('Success', 'Database seeded successfully!', 'success');
-      else showAlert('Error', 'Failed to seed database.', 'warning');
-    } finally {
-      setSeeding(false);
-    }
+    showConfirm(
+      'System Seeding',
+      'This will inject sample data into the production environment. Are you sure you wish to proceed?',
+      async () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+        setSeeding(true);
+        try {
+          const res = await fetch('/api/admin/seed', { method: 'POST' });
+          if (res.ok) showAlert('Success', 'Database seeded successfully!', 'success');
+          else showAlert('Error', 'Failed to seed database.', 'warning');
+        } catch (err) {
+          showAlert('Error', 'An error occurred while seeding database.', 'warning');
+        } finally {
+          setSeeding(false);
+        }
+      }
+    );
   };
 
   return (
@@ -375,6 +397,17 @@ export default function AdminDashboardPage() {
         description={modalConfig.description}
         type={modalConfig.type}
         confirmText="Got it"
+      />
+
+      <NiceModal
+        isOpen={confirmConfig.isOpen}
+        onClose={() => setConfirmConfig({ ...confirmConfig, isOpen: false })}
+        onConfirm={confirmConfig.onConfirm}
+        title={confirmConfig.title}
+        description={confirmConfig.description}
+        confirmText="Confirm Action"
+        cancelText="Cancel"
+        type="warning"
       />
     </div>
   );
