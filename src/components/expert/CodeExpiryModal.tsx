@@ -21,11 +21,17 @@ const EXPIRY_OPTIONS = [
 
 export function CodeExpiryModal({ isOpen, onClose, onGenerate, isGenerating }: CodeExpiryModalProps) {
   const [selectedExpiry, setSelectedExpiry] = useState(24);
-  const [customExpiry, setCustomExpiry] = useState('');
+  const [hours, setHours] = useState('0');
+  const [minutes, setMinutes] = useState('0');
+  const [seconds, setSeconds] = useState('0');
   const [usageLimit, setUsageLimit] = useState(0);
   const [isCustom, setIsCustom] = useState(false);
 
-  const finalExpiry = isCustom ? (parseInt(customExpiry) || 1) : selectedExpiry;
+  const finalExpiry = isCustom 
+    ? (parseInt(hours) || 0) + (parseInt(minutes) || 0) / 60 + (parseInt(seconds) || 0) / 3600
+    : selectedExpiry;
+
+  const isButtonDisabled = isGenerating || (isCustom && parseInt(hours) === 0 && parseInt(minutes) === 0 && parseInt(seconds) === 0);
 
   if (!isOpen) return null;
 
@@ -118,16 +124,44 @@ export function CodeExpiryModal({ isOpen, onClose, onGenerate, isGenerating }: C
                   exit={{ height: 0, opacity: 0 }}
                   className="overflow-hidden"
                 >
-                  <div className="p-1">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2 block">Lifespan (Hours)</label>
-                    <input 
-                      type="number" 
-                      min="1"
-                      value={customExpiry}
-                      onChange={(e) => setCustomExpiry(e.target.value)}
-                      className="w-full px-5 py-4 bg-white dark:bg-slate-950 border border-indigo-500/30 rounded-2xl text-sm font-black text-indigo-600 dark:text-indigo-400 outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all"
-                      placeholder="e.g. 48"
-                    />
+                  <div className="p-4 bg-slate-50 dark:bg-slate-950/50 rounded-3xl border border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center justify-center gap-4 py-2">
+                      <div className="flex flex-col items-center gap-2">
+                        <input
+                          type="number"
+                          min="0"
+                          max="999"
+                          value={hours}
+                          onChange={(e) => setHours(e.target.value)}
+                          className="w-16 h-16 text-2xl font-black text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 outline-none"
+                        />
+                        <span className="text-[8px] font-black uppercase text-slate-400">Hours</span>
+                      </div>
+                      <span className="text-2xl font-black text-slate-300 mb-6">:</span>
+                      <div className="flex flex-col items-center gap-2">
+                        <input
+                          type="number"
+                          min="0"
+                          max="59"
+                          value={minutes}
+                          onChange={(e) => setMinutes(e.target.value)}
+                          className="w-16 h-16 text-2xl font-black text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 outline-none"
+                        />
+                        <span className="text-[8px] font-black uppercase text-slate-400">Minutes</span>
+                      </div>
+                      <span className="text-2xl font-black text-slate-300 mb-6">:</span>
+                      <div className="flex flex-col items-center gap-2">
+                        <input
+                          type="number"
+                          min="0"
+                          max="59"
+                          value={seconds}
+                          onChange={(e) => setSeconds(e.target.value)}
+                          className="w-16 h-16 text-2xl font-black text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 outline-none"
+                        />
+                        <span className="text-[8px] font-black uppercase text-slate-400">Seconds</span>
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -168,12 +202,17 @@ export function CodeExpiryModal({ isOpen, onClose, onGenerate, isGenerating }: C
 
             <button
               onClick={() => onGenerate(finalExpiry, usageLimit)}
-              disabled={isGenerating || (isCustom && !customExpiry)}
+              disabled={isButtonDisabled}
               className="w-full py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-indigo-500/10 disabled:opacity-50"
             >
               {isGenerating ? 'Generating...' : 'Confirm & Generate'}
             </button>
           </div>
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+}
         </motion.div>
       </div>
     </AnimatePresence>
