@@ -22,6 +22,14 @@ export default function AdminDashboardPage() {
   const [selectedExpert, setSelectedExpert] = useState<UserProfile | null>(null);
   const [seeding, setSeeding] = useState(false);
   const [activeTab, setActiveTab] = useState<'verifications' | 'admins'>('verifications');
+  
+  // Create Admin Form State
+  const [showAddAddmin, setShowAddAddmin] = useState(false);
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPass, setAdminPass] = useState('');
+  const [adminName, setAdminName] = useState('');
+  const [creatingAdmin, setCreatingAdmin] = useState(false);
+
   const [modalConfig, setModalConfig] = useState<{
     isOpen: boolean;
     title: string;
