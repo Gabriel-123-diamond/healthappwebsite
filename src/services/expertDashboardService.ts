@@ -199,8 +199,14 @@ export async function verifyAccessCode(code: string): Promise<AccessCode | null>
     
     // Check usage limit
     if (data.usageLimit > 0 && data.usageCount >= data.usageLimit) {
+      console.warn("Access code usage limit reached");
       return null;
     }
+
+    // Increment usage count
+    await updateDoc(doc(db, ACCESS_CODES_COLLECTION, docSnap.id), {
+      usageCount: increment(1)
+    });
 
     return {
       ...data,

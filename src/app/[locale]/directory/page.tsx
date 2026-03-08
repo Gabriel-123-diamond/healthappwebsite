@@ -71,6 +71,7 @@ export default function DirectoryPage() {
           setVerifyingCode(false);
         }
       } else {
+        // If code is empty or not 6 digits, clear private expert and show normal results
         setPrivateExpert(null);
       }
     };
