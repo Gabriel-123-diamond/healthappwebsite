@@ -115,6 +115,8 @@ export default function ExpertDetailsPage() {
                   location={expert.location} 
                   expertId={expert.id} 
                   expertName={expert.name} 
+                  email={expert.email}
+                  phone={expert.phone}
                 />
               </div>
             </div>

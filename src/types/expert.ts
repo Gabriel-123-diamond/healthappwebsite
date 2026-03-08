@@ -90,6 +90,8 @@ export interface PublicExpert {
   rating: number;
   lat: number;
   lng: number;
+  email?: string;
+  phone?: string;
   imageUrl?: string;
   bio?: string;
   expertise?: string[];

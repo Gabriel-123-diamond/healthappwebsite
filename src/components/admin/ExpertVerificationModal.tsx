@@ -96,13 +96,24 @@ export default function ExpertVerificationModal({ expert, onClose, onVerify, onR
             <h3 className="text-xs font-black uppercase tracking-widest text-blue-600 flex items-center gap-2">
               <Shield className="w-4 h-4" /> 3. Verified Contact
             </h3>
-            <div className="flex items-center gap-4 p-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl border border-emerald-100 dark:border-emerald-900/20">
-              <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center text-emerald-600">
-                <CheckCircle size={20} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-4 p-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl border border-emerald-100 dark:border-emerald-900/20">
+                <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center text-emerald-600">
+                  <CheckCircle size={20} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Phone Number Verified</p>
+                  <p className="font-bold text-slate-900 dark:text-white">{expert.phone}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Phone Number Verified</p>
-                <p className="font-bold text-slate-900 dark:text-white">{expert.phone}</p>
+              <div className="flex items-center gap-4 p-4 bg-blue-50 dark:bg-blue-900/10 rounded-2xl border border-blue-100 dark:border-blue-900/20">
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600">
+                  <Mail size={20} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Encrypted Email</p>
+                  <p className="font-bold text-slate-900 dark:text-white">{expert.email}</p>
+                </div>
               </div>
             </div>
           </section>

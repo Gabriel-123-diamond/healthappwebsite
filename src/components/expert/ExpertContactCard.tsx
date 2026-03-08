@@ -6,9 +6,11 @@ interface ExpertContactCardProps {
   location: string;
   expertId: string;
   expertName: string;
+  email?: string;
+  phone?: string;
 }
 
-export default function ExpertContactCard({ location, expertId, expertName }: ExpertContactCardProps) {
+export default function ExpertContactCard({ location, expertId, expertName, email, phone }: ExpertContactCardProps) {
   return (
     <div className="bg-white dark:bg-slate-900 p-8 rounded-[32px] border border-slate-100 dark:border-slate-800 shadow-xl space-y-8">
       <div>
@@ -25,12 +27,12 @@ export default function ExpertContactCard({ location, expertId, expertName }: Ex
         <ContactItem 
           icon={<Phone className="w-5 h-5 text-blue-600 dark:text-blue-400" />} 
           label="Verification Phone" 
-          value="+1 (555) 123-4567" 
+          value={phone || "Verified on File"} 
         />
         <ContactItem 
           icon={<Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />} 
           label="Encrypted Email" 
-          value="expert.verified@ikike.ai" 
+          value={email || "expert.verified@ikike.ai"} 
         />
         <ContactItem 
           icon={<Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />} 

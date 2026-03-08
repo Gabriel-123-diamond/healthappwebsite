@@ -104,6 +104,8 @@ export const getExpertById = async (id: string): Promise<PublicExpert | undefine
           rating: ep.rating || userData.rating || 5.0,
           lat: ep.lat || userData.lat || 0,
           lng: ep.lng || userData.lng || 0,
+          email: ep.email || userData.email,
+          phone: ep.phone || userData.phone || userData.phoneNumber,
           imageUrl: ep.imageUrl || userData.imageUrl || userData.photoURL,
           bio: ep.bio || userData.bio,
           updatedAt: ep.updatedAt || userData.updatedAt || new Date().toISOString()
