@@ -2,14 +2,15 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Moon, Sun, LogIn, UserPlus, FileText, ChevronRight, User, Sparkles, Activity, LogOut, Globe, Check, Calendar, LayoutDashboard } from 'lucide-react';
+import { X, Moon, Sun, LogIn, UserPlus, ChevronRight, Activity, LogOut } from 'lucide-react';
 import { Link, useRouter, usePathname } from '@/i18n/routing';
 import { User as AuthUser, signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { NAVIGATION_LINKS } from '@/config/navigation';
 import { Variants } from 'framer-motion';
-import { userService } from '@/services/userService';
-import { isExpertRole, UserProfile } from '@/types/user';
+import { UserProfile } from '@/types/user';
+import { LanguageSelector } from './mobile/LanguageSelector';
+import { NavigationLinks } from './mobile/NavigationLinks';
+import { UtilityGrid } from './mobile/UtilityGrid';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -137,109 +138,19 @@ export default function MobileMenu({
               </motion.div>
             )}
 
-            {/* Language Toggle Toggle */}
-            <motion.div variants={itemVariants} className="space-y-4">
-               <button 
-                onClick={() => setShowLanguages(!showLanguages)}
-                className="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-white/[0.02] rounded-2xl border border-slate-100 dark:border-white/5 transition-all"
-               >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm">
-                      <Globe size={16} className="text-blue-500" />
-                    </div>
-                    <span className="font-bold text-slate-900 dark:text-white text-sm">Language</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{languages.find(l => l.code === locale)?.label}</span>
-                    <ChevronRight size={16} className={`text-slate-300 transition-transform duration-300 ${showLanguages ? 'rotate-90' : ''}`} />
-                  </div>
-               </button>
-
-               <AnimatePresence>
-                 {showLanguages && (
-                   <motion.div 
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="overflow-hidden grid grid-cols-2 gap-2"
-                   >
-                     {languages.map((lang) => (
-                       <button
-                        key={lang.code}
-                        onClick={() => handleLocaleChange(lang.code)}
-                        className={`flex items-center justify-between p-3 rounded-xl border text-xs font-bold transition-all ${
-                          locale === lang.code 
-                            ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-600/20' 
-                            : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-white/5 text-slate-600 dark:text-slate-400'
-                        }`}
-                       >
-                         <span>{lang.flag} {lang.label}</span>
-                         {locale === lang.code && <Check size={12} />}
-                       </button>
-                     ))}
-                   </motion.div>
-                 )}
-               </AnimatePresence>
+            <motion.div variants={itemVariants}>
+              <LanguageSelector 
+                showLanguages={showLanguages}
+                setShowLanguages={setShowLanguages}
+                locale={locale}
+                languages={languages}
+                handleLocaleChange={handleLocaleChange}
+              />
             </motion.div>
 
-            {/* Main Links */}
-            <div className="space-y-6">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Intelligence Grid</p>
-              <nav className="flex flex-col gap-1">
-                {NAVIGATION_LINKS.map((link) => (
-                  <motion.div key={link.href} variants={itemVariants}>
-                    <Link 
-                      href={link.href} 
-                      className="flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 group transition-all" 
-                      onClick={onClose}
-                    >
-                      <span className="text-xl font-black text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors tracking-tight">
-                        {t(link.labelKey) || link.defaultLabel}
-                      </span>
-                      <ChevronRight size={20} className="text-slate-200 group-hover:text-blue-500 transition-colors" />
-                    </Link>
-                  </motion.div>
-                ))}
-              </nav>
-            </div>
+            <NavigationLinks t={t} onClose={onClose} itemVariants={itemVariants} />
 
-            {/* Utility Grid */}
-            <div className="space-y-6">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Core Tools</p>
-              <div className="grid grid-cols-2 gap-4">
-                {userProfile && isExpertRole(userProfile.role) ? (
-                  <motion.div variants={itemVariants}>
-                    <Link href="/expert/dashboard" onClick={onClose} className="flex flex-col gap-3 p-5 bg-blue-600 dark:bg-blue-500 rounded-[32px] border border-blue-500/30 transition-all active:scale-95 shadow-xl shadow-blue-500/20 group">
-                      <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-white shadow-sm">
-                        <LayoutDashboard size={20} />
-                      </div>
-                      <span className="font-black text-white text-[10px] uppercase tracking-[0.2em]">{t('profile.menu.expertDashboard')}</span>
-                    </Link>
-                  </motion.div>
-                ) : (
-                  <motion.div variants={itemVariants}>
-                    <Link href="/profile" onClick={onClose} className="flex flex-col gap-3 p-5 bg-slate-50 dark:bg-white/[0.02] rounded-[32px] border border-slate-100 dark:border-white/5 transition-all hover:border-blue-500/30 group">
-                      <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-blue-600 shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-all">
-                        <User size={20} />
-                      </div>
-                      <span className="font-bold text-slate-900 dark:text-white text-sm">Profile</span>
-                    </Link>
-                  </motion.div>
-                )}
-                <motion.div variants={itemVariants}>
-                  <Link 
-                    href={userProfile && isExpertRole(userProfile.role) ? "/expert/appointments" : "/appointments"} 
-                    onClick={onClose} 
-                    className="flex flex-col gap-3 p-5 bg-slate-50 dark:bg-white/[0.02] rounded-[32px] border border-slate-100 dark:border-white/5 transition-all hover:border-blue-500/30 group"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-indigo-600 shadow-sm group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                      <Calendar size={20} />
-                    </div>
-                    <span className="font-bold text-slate-900 dark:text-white text-sm">Appointments</span>
-                  </Link>
-                </motion.div>
-              </div>
-            </div>
+            <UtilityGrid userProfile={userProfile} t={t} onClose={onClose} itemVariants={itemVariants} />
           </div>
 
           {/* Footer Controls */}

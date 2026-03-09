@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase';
 import { userService } from '@/services/userService';
-import { PhoneEntry } from '@/components/expert/ExpertPhoneManager';
+import { useExpertForm } from './expert-setup/useExpertForm';
 
 export const useExpertSetup = () => {
   const [step, setStep] = useState(1);
@@ -15,52 +15,13 @@ export const useExpertSetup = () => {
   const [userProfile, setUserProfile] = useState<any>(null);
   const router = useRouter();
 
-  const [formData, setFormData] = useState({
-    bio: '',
-    specialties: [] as { name: string, years: string }[],
-    phones: [] as PhoneEntry[],
-    languages: [] as string[],
-    expertType: 'doctor' as 'doctor' | 'herbal_practitioner' | 'hospital',
-    education: [{ degree: '', institution: '', year: '', certUrl: '' }],
-    kyc: {
-      idCardUrl: '',
-      selfieUrl: '',
-      passportPhotoUrl: '',
-      dob: '',
-      address: '',
-      idNumber: '',
-    },
-    license: {
-      licenseNumber: '',
-      issuanceYear: '',
-      expiryDate: '',
-      practicingStatus: 'active',
-      licenseCertUrl: '',
-      annualLicenseUrl: '',
-    },
-    practice: {
-      hospitalName: '',
-      hospitalAddress: '',
-      yearsExperience: '',
-      consultationType: 'both' as 'both' | 'physical' | 'telemedicine',
-      hospitalIdUrl: '',
-    },
-    profile: {
-      expertise: [] as string[],
-      consultationFee: '',
-      availability: '',
-    },
-    legal: {
-      tosAccepted: false,
-      privacyAccepted: false,
-      telemedicineAccepted: false,
-      conductAccepted: false,
-      signature: '',
-    },
-    yearsOfExperience: '', // Keep for aggregate/compatibility
-  });
-
-  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const {
+    formData,
+    setFormData,
+    validationErrors,
+    validateStep,
+    handleUpdate,
+  } = useExpertForm();
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -73,7 +34,6 @@ export const useExpertSetup = () => {
           if (profile?.expertProfile) {
             const ep = profile.expertProfile as any;
             
-            // Migrate legacy specialties data if needed
             let migratedSpecialties: { name: string, years: string }[] = [];
             if (Array.isArray(ep.specialties)) {
               migratedSpecialties = ep.specialties.map((s: any) => 
@@ -117,64 +77,7 @@ export const useExpertSetup = () => {
       }
     };
     loadProfile();
-  }, [router]);
-
-  const validateStep = useCallback((stepNumber: number) => {
-    const errors: Record<string, string> = {};
-    
-    if (stepNumber === 1) {
-      if (!formData.kyc.idCardUrl) errors.idCard = "ID Card is required.";
-      if (!formData.kyc.selfieUrl) errors.selfie = "Selfie is required.";
-      if (!formData.kyc.idNumber) errors.idNumber = "ID Number is required.";
-    }
-    
-    if (stepNumber === 2) {
-      if (!formData.kyc.dob) errors.dob = "Date of birth is required.";
-      if (!formData.kyc.address) errors.address = "Address is required.";
-      if (formData.specialties.length === 0) {
-        errors.specialties = "At least one specialty is required.";
-      } else if (formData.specialties.some(s => !s.years || parseInt(s.years) <= 0)) {
-        errors.specialties = "Specify years of experience (at least 1) for all specialties.";
-      }
-      if (formData.phones.length === 0 || !formData.phones[0].number) errors.phones = "Primary phone is required.";
-    }
-
-    if (stepNumber === 3) {
-      if (!formData.license.licenseNumber) errors.licenseNumber = "License number is required.";
-      if (!formData.license.licenseCertUrl) errors.licenseCert = "License certificate is required.";
-      if (!formData.license.annualLicenseUrl) errors.annualLicense = "Current annual license is required.";
-    }
-
-    if (stepNumber === 4) {
-      formData.education.forEach((edu, i) => {
-        if (!edu.degree || !edu.institution || !edu.year) errors[`edu-${i}`] = "Complete all fields.";
-      });
-    }
-
-    if (stepNumber === 5) {
-      if (!formData.practice.hospitalName) errors.hospitalName = "Clinic/Hospital name is required.";
-      if (!formData.practice.yearsExperience) errors.yearsExperience = "Experience is required.";
-    }
-
-    if (stepNumber === 6) {
-      if (formData.bio.length < 50) errors.bio = "Bio must be at least 50 characters.";
-      if (formData.profile.expertise.length === 0) errors.expertise = "List at least one area of expertise.";
-      if (formData.languages.length === 0) errors.languages = "Select at least one language.";
-      if (formData.expertType === 'doctor' && (!formData.profile.consultationFee || parseFloat(formData.profile.consultationFee) <= 0)) {
-        errors.consultationFee = "Doctors must set a consultation fee.";
-      }
-    }
-
-    if (stepNumber === 7) {
-      if (!formData.legal.tosAccepted || !formData.legal.privacyAccepted || !formData.legal.telemedicineAccepted || !formData.legal.conductAccepted) {
-        errors.agreements = "All policies must be accepted.";
-      }
-      if (!formData.legal.signature) errors.signature = "Digital signature is required.";
-    }
-
-    setValidationErrors(errors);
-    return Object.keys(errors).length === 0;
-  }, [formData]);
+  }, [router, setFormData]);
 
   const saveProgress = async (nextStep?: number) => {
     if (!validateStep(step)) return;
@@ -184,7 +87,6 @@ export const useExpertSetup = () => {
       const user = auth.currentUser;
       if (user) {
         const now = new Date().toISOString();
-        // Calculate total years as the maximum from any single specialty
         const maxYears = formData.specialties.reduce((max, s) => Math.max(max, parseInt(s.years) || 0), 0).toString();
 
         const expertUpdate: any = {
@@ -196,7 +98,7 @@ export const useExpertSetup = () => {
           phones: formData.phones.map(p => ({ ...p, number: p.number.replace(/\s/g, '') })),
           type: formData.expertType,
           specialties: formData.specialties,
-          specialty: formData.specialties[0]?.name || '', // Primary for compatibility
+          specialty: formData.specialties[0]?.name || '',
           yearsOfExperience: maxYears,
           verificationStatus: nextStep === undefined ? 'pending' : (userProfile?.verificationStatus || 'unverified'),
           country: userProfile?.country || '',
@@ -235,7 +137,6 @@ export const useExpertSetup = () => {
             specialty: formData.specialties[0]?.name || '',
             yearsOfExperience: maxYears,
             licenseNumber: formData.license.licenseNumber,
-            // verificationStatus stays the same as current
           });
           setStep(nextStep);
         }
@@ -259,17 +160,6 @@ export const useExpertSetup = () => {
       setError("Failed to reset onboarding. Please try again.");
     } finally {
       setIsReverting(false);
-    }
-  };
-
-  const handleUpdate = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (validationErrors[field]) {
-      setValidationErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
-      });
     }
   };
 

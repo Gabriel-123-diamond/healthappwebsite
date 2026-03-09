@@ -1,46 +1,35 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { createLearningPath, Module, Lesson } from '@/services/learningService';
-import { ArrowLeft, Plus, Trash2, Save, Loader2, BookOpen, Activity, Leaf, Moon, Sparkles } from 'lucide-react';
+import React from 'react';
+import { ArrowLeft, Plus, Save, Loader2, BookOpen, Activity, Leaf, Moon, Sparkles } from 'lucide-react';
 import { Link } from '@/i18n/routing';
-import { useAdminAuth } from '@/hooks/useAdminAuth';
 import NiceModal from '@/components/common/NiceModal';
+import { useCreateLearningPath } from '@/hooks/useCreateLearningPath';
+import { CurriculumModule } from '@/components/admin/learning/CurriculumModule';
 
 export default function CreateLearningPathPage() {
-  const router = useRouter();
-  const { isLoading: authLoading } = useAdminAuth();
-  const [loading, setLoading] = useState(false);
-  const [modalConfig, setModalConfig] = useState<{
-    isOpen: boolean;
-    title: string;
-    description: string;
-    type: 'success' | 'warning' | 'info';
-  }>({
-    isOpen: false,
-    title: '',
-    description: '',
-    type: 'info'
-  });
-
-  const showAlert = (title: string, description: string, type: 'info' | 'warning' | 'success' = 'info') => {
-    setModalConfig({
-      isOpen: true,
-      title,
-      description,
-      type
-    });
-  };
-  
-  // Form State
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState<'Medical' | 'Herbal' | 'Lifestyle'>('Medical');
-  const [icon, setIcon] = useState('BookOpen');
-  const [modules, setModules] = useState<Module[]>([
-    { id: 'm1', title: 'Introduction', lessons: [{ id: 'l1', title: 'Welcome', duration: '5 min', type: 'article' }] }
-  ]);
+  const {
+    authLoading,
+    loading,
+    modalConfig,
+    setModalConfig,
+    title,
+    setTitle,
+    description,
+    setDescription,
+    category,
+    setCategory,
+    icon,
+    setIcon,
+    modules,
+    addModule,
+    removeModule,
+    updateModuleTitle,
+    addLesson,
+    removeLesson,
+    updateLesson,
+    handleSave,
+  } = useCreateLearningPath();
 
   if (authLoading) {
     return (
@@ -49,79 +38,6 @@ export default function CreateLearningPathPage() {
       </div>
     );
   }
-
-  const addModule = () => {
-    const newModule: Module = {
-      id: `m${modules.length + 1}`,
-      title: '',
-      lessons: [{ id: `l1`, title: '', duration: '5 min', type: 'article' }]
-    };
-    setModules([...modules, newModule]);
-  };
-
-  const removeModule = (index: number) => {
-    if (modules.length > 1) {
-      setModules(modules.filter((_, i) => i !== index));
-    }
-  };
-
-  const updateModuleTitle = (index: number, val: string) => {
-    const newModules = [...modules];
-    newModules[index].title = val;
-    setModules(newModules);
-  };
-
-  const addLesson = (moduleIndex: number) => {
-    const newModules = [...modules];
-    const newLesson: Lesson = {
-      id: `l${newModules[moduleIndex].lessons.length + 1}`,
-      title: '',
-      duration: '5 min',
-      type: 'article'
-    };
-    newModules[moduleIndex].lessons.push(newLesson);
-    setModules(newModules);
-  };
-
-  const removeLesson = (moduleIndex: number, lessonIndex: number) => {
-    const newModules = [...modules];
-    if (newModules[moduleIndex].lessons.length > 1) {
-      newModules[moduleIndex].lessons = newModules[moduleIndex].lessons.filter((_, i) => i !== lessonIndex);
-      setModules(newModules);
-    }
-  };
-
-  const updateLesson = (moduleIndex: number, lessonIndex: number, field: keyof Lesson, val: string) => {
-    const newModules = [...modules];
-    (newModules[moduleIndex].lessons[lessonIndex] as any)[field] = val;
-    setModules(newModules);
-  };
-
-  const handleSave = async () => {
-    if (!title || !description) {
-      showAlert('Missing Information', 'Please provide a valid course title and description.', 'warning');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await createLearningPath({
-        title,
-        description,
-        category,
-        icon,
-        totalModules: modules.length,
-        modules
-      });
-      showAlert('Course Created', 'The new curriculum has been synchronized with the learning nodes.', 'success');
-      setTimeout(() => router.push('/admin/dashboard'), 2000);
-    } catch (error) {
-      console.error(error);
-      showAlert('Action Failed', 'We could not synchronize the new course. Please check your network.', 'warning');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 transition-colors pt-16">
@@ -185,71 +101,16 @@ export default function CreateLearningPathPage() {
               </div>
 
               {modules.map((module, mIdx) => (
-                <div key={module.id} className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-white/5 overflow-hidden transition-colors">
-                  <div className="p-4 bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/5 flex items-center justify-between transition-colors">
-                    <div className="flex items-center gap-3 flex-1 mr-4">
-                      <span className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs font-bold transition-colors">
-                        {mIdx + 1}
-                      </span>
-                      <input 
-                        type="text"
-                        value={module.title}
-                        onChange={(e) => updateModuleTitle(mIdx, e.target.value)}
-                        placeholder="Module Title"
-                        className="bg-transparent border-none font-bold text-slate-900 dark:text-white focus:ring-0 p-0 flex-1 outline-none"
-                      />
-                    </div>
-                    <button 
-                      onClick={() => removeModule(mIdx)}
-                      className="text-slate-400 dark:text-slate-500 hover:text-red-500 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <div className="p-4 space-y-3">
-                    {module.lessons.map((lesson, lIdx) => (
-                      <div key={lesson.id} className="flex items-center gap-3 bg-slate-50 dark:bg-white/5 p-3 rounded-xl border border-slate-100 dark:border-white/5 transition-colors">
-                        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
-                          <input 
-                            type="text"
-                            value={lesson.title}
-                            onChange={(e) => updateLesson(mIdx, lIdx, 'title', e.target.value)}
-                            placeholder="Lesson Title"
-                            className="bg-white dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none transition-all"
-                          />
-                          <input 
-                            type="text"
-                            value={lesson.duration}
-                            onChange={(e) => updateLesson(mIdx, lIdx, 'duration', e.target.value)}
-                            placeholder="Duration (e.g. 5 min)"
-                            className="bg-white dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none transition-all"
-                          />
-                          <select
-                            value={lesson.type}
-                            onChange={(e) => updateLesson(mIdx, lIdx, 'type', e.target.value as any)}
-                            className="bg-white dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:border-blue-500 outline-none transition-all cursor-pointer"
-                          >
-                            <option value="article" className="dark:bg-slate-900">Article</option>
-                            <option value="video" className="dark:bg-slate-900">Video</option>
-                            <option value="quiz" className="dark:bg-slate-900">Quiz</option>
-                          </select>
-                        </div>
-                        <button 
-                          onClick={() => removeLesson(mIdx, lIdx)}
-                          className="text-slate-300 dark:text-slate-600 hover:text-red-500 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ))}
-                    <button 
-                      onClick={() => addLesson(mIdx)}
-                      className="w-full py-2 border-2 border-dashed border-slate-200 dark:border-white/10 rounded-xl text-slate-400 dark:text-slate-500 text-xs font-bold hover:border-blue-300 dark:hover:border-blue-500 hover:text-blue-500 transition-all flex items-center justify-center gap-1"
-                    >
-                      <Plus className="w-3 h-3" /> Add Lesson
-                    </button>
-                  </div>
-                </div>
+                <CurriculumModule 
+                  key={module.id}
+                  module={module}
+                  index={mIdx}
+                  updateModuleTitle={updateModuleTitle}
+                  removeModule={removeModule}
+                  addLesson={addLesson}
+                  removeLesson={removeLesson}
+                  updateLesson={updateLesson}
+                />
               ))}
             </section>
           </div>
