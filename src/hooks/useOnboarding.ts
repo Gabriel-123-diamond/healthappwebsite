@@ -12,13 +12,14 @@ import { useOnboardingLocation } from './useOnboardingLocation';
 import { useOnboardingPersistence } from './useOnboardingPersistence';
 
 /**
- * SIMPLIFIED ONBOARDING FLOW (6 STABLE STEPS)
+ * SIMPLIFIED ONBOARDING FLOW (7 STABLE STEPS)
  * 1. Referral (Optional)
  * 2. Identity (Basic Info)
  * 3. Security (OTP Verification)
  * 4. Your Base (Location)
  * 5. Platform Role (User Selection)
- * 6. Interests (Topic Selection) - Skipped for Hospitals
+ * 6. KYC (Expert Documentation - Conditional)
+ * 7. Interests (Topic Selection) - Skipped for Hospitals
  */
 
 export const useOnboarding = () => {
@@ -189,16 +190,32 @@ export const useOnboarding = () => {
           return;
         }
 
-        if (formData.role === 'hospital') {
-          await completeOnboarding();
-        } else {
+        if (formData.role !== 'user') {
           await saveAndGoTo(6);
+        } else {
+          await saveAndGoTo(7); // Jump to interests for users
         }
         return;
       }
 
-      // Step 6: Interests
+      // Step 6: KYC (Expert Only)
       if (step === 6) {
+        if (!formData.kyc.documentUrl || !formData.kyc.documentType) {
+          setFieldErrors(["Please upload the required professional documentation."]);
+          setIsLoading(false);
+          return;
+        }
+        
+        if (formData.role === 'hospital') {
+          await completeOnboarding();
+        } else {
+          await saveAndGoTo(7);
+        }
+        return;
+      }
+
+      // Step 7: Interests
+      if (step === 7) {
         if (formData.interests.length === 0) {
           setFieldErrors(["Please select at least one health interest."]);
           setIsLoading(false);
@@ -229,7 +246,7 @@ export const useOnboarding = () => {
         ]);
 
         localStorage.removeItem('onboarding_data');
-        router.push('/');
+        router.push(formData.role === 'user' ? '/' : '/expert/dashboard');
       }
     } catch (err) {
       console.error("Failed to complete onboarding:", err);
@@ -244,6 +261,8 @@ export const useOnboarding = () => {
     try {
       if (step === 1) {
         router.push('/auth/signup');
+      } else if (step === 7 && formData.role === 'user') {
+        await saveAndGoTo(5); // Users skip KYC, so go back to Role selection
       } else {
         await saveAndGoTo(step - 1);
       }

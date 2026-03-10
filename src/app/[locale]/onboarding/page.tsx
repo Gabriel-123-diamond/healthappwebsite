@@ -13,6 +13,7 @@ import VerificationStep from '@/components/onboarding/steps/VerificationStep';
 import InterestsStep from '@/components/onboarding/steps/InterestsStep';
 import RoleStep from '@/components/onboarding/steps/RoleStep';
 import LocationStep from '@/components/onboarding/steps/LocationStep';
+import KYCStep from '@/components/onboarding/steps/KYCStep';
 import { ErrorBanner } from '@/components/onboarding/ErrorBanner';
 
 export default function OnboardingPage() {
@@ -51,7 +52,8 @@ export default function OnboardingPage() {
     3: t('steps.security'),
     4: t('steps.location'),
     5: t('steps.role'),
-    6: t('steps.interests'),
+    6: 'KYC Verification',
+    7: t('steps.interests'),
   };
 
   const renderStep = () => {
@@ -61,13 +63,14 @@ export default function OnboardingPage() {
       case 3: return <VerificationStep formData={formData} setFormData={setFormData} />;
       case 4: return <LocationStep formData={formData} setFormData={setFormData} countries={allCountries} allStates={allStates} />;
       case 5: return <RoleStep formData={formData} setFormData={setFormData} />;
-      case 6: return <InterestsStep formData={formData} toggleInterest={toggleInterest} />;
+      case 6: return <KYCStep formData={formData} setFormData={setFormData} />;
+      case 7: return <InterestsStep formData={formData} toggleInterest={toggleInterest} />;
       default: return null;
     }
   };
 
-  const totalSteps = formData.role === 'hospital' ? 5 : 6;
-  const progress = (step / 6) * 100; // Keep 6 as the base for progress consistency or adjust to totalSteps
+  const totalSteps = formData.role === 'hospital' ? 6 : 7;
+  const progress = (step / 7) * 100; // Keep 7 as the base for progress consistency
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors py-12 pt-32 sm:pt-40 px-4 sm:px-6 lg:px-8 relative overflow-hidden flex items-center justify-center">

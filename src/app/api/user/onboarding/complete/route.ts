@@ -31,8 +31,12 @@ export async function POST(req: NextRequest) {
     const fullName = `${formData.firstName || ''} ${formData.lastName || ''}`.toLowerCase().trim();
     const phone = formData.phone ? `${formData.countryCode || ''}${formData.phone.replace(/\s/g, '')}` : '';
     
+    const ALLOWED_ROLES = ['user', 'doctor', 'herbal_practitioner', 'hospital', 'expert'];
+    const requestedRole = (formData.role || 'user').toLowerCase();
+    const finalRole = ALLOWED_ROLES.includes(requestedRole) ? requestedRole : 'user';
+
     // Explicitly select only allowed fields. NEVER spread (...formData) directly into the database.
-    const updateData = {
+    const updateData: any = {
       firstName: formData.firstName || '',
       lastName: formData.lastName || '',
       fullName: fullName,
@@ -53,9 +57,17 @@ export async function POST(req: NextRequest) {
       
       // Hardcode secure fields to prevent privilege escalation
       tier: 'basic',
-      role: 'user', // Force 'user' role. Expert roles require a separate, verified pipeline.
+      role: finalRole,
       updatedAt: new Date().toISOString()
     };
+
+    // Include KYC if it's an expert role
+    if (finalRole !== 'user' && formData.kyc) {
+      updateData.verificationStatus = 'pending';
+      updateData.kycStatus = 'pending';
+      updateData.kycDocument = formData.kyc.documentUrl || '';
+      updateData.kycDocType = formData.kyc.documentType || '';
+    }
 
     await adminDb.collection("users").doc(uid).set(updateData, { merge: true });
 

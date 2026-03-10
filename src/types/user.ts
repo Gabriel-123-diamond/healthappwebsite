@@ -4,7 +4,8 @@ export type UserRole = 'user' | 'doctor' | 'herbal_practitioner' | 'hospital' | 
 
 export const EXPERT_ROLES: UserRole[] = ['doctor', 'herbal_practitioner', 'hospital', 'expert'];
 
-export const isExpertRole = (role: string): boolean => {
+export const isExpertRole = (role: string | undefined | null): boolean => {
+  if (!role) return false;
   return EXPERT_ROLES.includes(role as UserRole);
 };
 
