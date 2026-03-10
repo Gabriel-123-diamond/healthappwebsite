@@ -1,7 +1,8 @@
 import { db } from "@/lib/firebase";
 import { 
   collection, getDocs, doc, getDoc, query, where, orderBy, 
-  serverTimestamp, Timestamp, addDoc, limit, deleteDoc, updateDoc, increment 
+  serverTimestamp, Timestamp, addDoc, limit, deleteDoc, updateDoc, increment,
+  onSnapshot
 } from "firebase/firestore";
 
 export interface ExpertStats {
@@ -128,6 +129,36 @@ export async function getExpertAccessCodes(expertId: string): Promise<AccessCode
     console.error("Error fetching access codes:", error);
     return [];
   }
+}
+
+export function subscribeToExpertAccessCodes(expertId: string, callback: (codes: AccessCode[]) => void): () => void {
+  const q = query(
+    collection(db, ACCESS_CODES_COLLECTION),
+    where('expertId', '==', expertId)
+  );
+
+  return onSnapshot(q, (snapshot) => {
+    const codes = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        ...data,
+        id: doc.id,
+        createdAt: data.createdAt?.toDate?.() || new Date(),
+        expiresAt: data.expiresAt?.toDate?.() || new Date()
+      } as AccessCode;
+    });
+    
+    // Sort manually by createdAt desc
+    const sortedCodes = codes.sort((a, b) => {
+      const timeA = a.createdAt instanceof Date ? a.createdAt.getTime() : new Date(a.createdAt).getTime();
+      const timeB = b.createdAt instanceof Date ? b.createdAt.getTime() : new Date(b.createdAt).getTime();
+      return timeB - timeA;
+    });
+
+    callback(sortedCodes);
+  }, (error) => {
+    console.error("Error subscribing to access codes:", error);
+  });
 }
 
 export async function deleteAccessCode(codeId: string): Promise<void> {

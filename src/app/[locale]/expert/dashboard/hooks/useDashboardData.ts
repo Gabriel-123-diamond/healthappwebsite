@@ -3,7 +3,13 @@ import { auth } from '@/lib/firebase';
 import { userService } from '@/services/userService';
 import { contentService } from '@/services/contentService';
 import { appointmentService } from '@/services/appointmentService';
-import { getExpertAccessCodes, generateAccessCode, deleteAccessCode, AccessCode } from '@/services/expertDashboardService';
+import { 
+  getExpertAccessCodes, 
+  generateAccessCode, 
+  deleteAccessCode, 
+  AccessCode,
+  subscribeToExpertAccessCodes 
+} from '@/services/expertDashboardService';
 import { useExpertDashboard } from '@/context/ExpertDashboardContext';
 
 export function useDashboardData() {
@@ -57,15 +63,19 @@ export function useDashboardData() {
   };
 
   useEffect(() => {
-    const fetchAccessCodes = async () => {
-      const user = auth.currentUser;
-      if (user) {
-        const codes = await getExpertAccessCodes(user.uid);
+    let unsubscribe: () => void;
+    
+    const user = auth.currentUser;
+    if (user) {
+      unsubscribe = subscribeToExpertAccessCodes(user.uid, (codes) => {
         setAccessCodes(codes);
         setLoadingCodes(false);
-      }
+      });
+    }
+
+    return () => {
+      if (unsubscribe) unsubscribe();
     };
-    fetchAccessCodes();
   }, []);
 
   useEffect(() => {
