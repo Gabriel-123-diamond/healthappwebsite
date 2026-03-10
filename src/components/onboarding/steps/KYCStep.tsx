@@ -35,7 +35,7 @@ export default function KYCStep({ formData, setFormData }: KYCStepProps) {
       <div className="space-y-4">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.2em] border border-blue-500/20 shadow-sm">
           <Shield size={12} />
-          {t('title')}
+          {t('title')} (Optional)
         </div>
         
         <div className="space-y-1">
@@ -43,13 +43,13 @@ export default function KYCStep({ formData, setFormData }: KYCStepProps) {
             Trust <span className="text-blue-600">&</span> Safety.
           </h3>
           <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-xl">
-            {t('subtitle')}
+            You can verify your professional credentials now to unlock full platform features, or skip this step and do it later from your dashboard.
           </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-8">
-        <FormFieldWrapper label="Document Type" icon={<FileText size={14} />} isRequired>
+        <FormFieldWrapper label="Document Type" icon={<FileText size={14} />}>
           <CustomSelect
             value={formData.kyc?.documentType}
             onChange={(val) => setFormData({ ...formData, kyc: { ...formData.kyc, documentType: val } })}
@@ -58,14 +58,14 @@ export default function KYCStep({ formData, setFormData }: KYCStepProps) {
               { value: 'passport', label: 'Passport' },
               { value: 'license', label: 'Medical License' },
             ]}
-            placeholder="Select document type"
+            placeholder="Select document type (Optional)"
             className="!rounded-2xl !py-4"
           />
         </FormFieldWrapper>
 
         <div className="space-y-4">
           <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest flex items-center gap-1">
-            <Upload size={14} /> Upload Document <span className="text-red-500">*</span>
+            <Upload size={14} /> Upload Document (Optional)
           </label>
           
           <div className="relative">

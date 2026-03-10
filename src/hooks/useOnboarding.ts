@@ -198,14 +198,9 @@ export const useOnboarding = () => {
         return;
       }
 
-      // Step 6: KYC (Expert Only)
+      // Step 6: KYC (Expert Only - Optional)
       if (step === 6) {
-        if (!formData.kyc.documentUrl || !formData.kyc.documentType) {
-          setFieldErrors(["Please upload the required professional documentation."]);
-          setIsLoading(false);
-          return;
-        }
-        
+        // Validation removed to make it optional
         if (formData.role === 'hospital') {
           await completeOnboarding();
         } else {
