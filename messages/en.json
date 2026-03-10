@@ -658,8 +658,7 @@
       "placeholderUsername": "unique_id",
       "placeholderPhone": "800 000 0000",
       "nameError": "No spaces allowed, only hyphens (-)",
-      "usernameError": "No spaces, only alphanumeric and hyphens (-)"
-    },
+      "usernameError": "No spaces allowed between characters"    },
     "security": {
       "title": "Verify Identity.",
       "subtitle": "Complete security checks to enable encrypted platform access.",
