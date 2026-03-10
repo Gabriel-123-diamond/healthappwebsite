@@ -18,12 +18,13 @@ export async function POST(req: NextRequest) {
     if (adminSession) {
       try {
         const decoded = atob(adminSession);
-        const [version, date, signature] = decoded.split(':');
+        const [version, date, role, hmacSig] = decoded.split(':');
         
-        if (version === 'ikike_admin_v2') {
+        if (version === 'ikike_admin_v4') {
+          const data = `${version}:${date}:${role}`;
           const hmac = crypto.createHmac('sha256', adminPassword);
-          hmac.update(date);
-          if (signature === hmac.digest('hex')) {
+          hmac.update(data);
+          if (hmacSig === hmac.digest('hex')) {
             isAuthenticated = true;
           }
         }

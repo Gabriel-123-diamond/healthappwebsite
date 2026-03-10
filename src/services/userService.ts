@@ -91,13 +91,13 @@ export const userService = {
   },
 
   /**
-   * Fetches all admin users.
+   * Fetches all admin users via secure server-side API.
    */
   getAdmins: async (): Promise<UserProfile[]> => {
     try {
-      const q = query(collection(db, 'users'), where('role', '==', 'admin'));
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() } as UserProfile));
+      const response = await fetch('/api/admin/list');
+      if (!response.ok) throw new Error('Failed to fetch admins');
+      return await response.json();
     } catch (error) {
       console.error('Error fetching admins:', error);
       throw error;
@@ -105,13 +105,13 @@ export const userService = {
   },
 
   /**
-   * Fetches pending experts for admin verification.
+   * Fetches pending experts for admin verification via secure server-side API.
    */
   getPendingExperts: async (): Promise<UserProfile[]> => {
     try {
-      const q = query(collection(db, 'users'), where('verificationStatus', '==', 'pending'));
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() } as UserProfile));
+      const response = await fetch('/api/admin/experts/pending');
+      if (!response.ok) throw new Error('Failed to fetch pending experts');
+      return await response.json();
     } catch (error) {
       console.error('Error fetching pending experts:', error);
       throw error;
