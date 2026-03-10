@@ -5,13 +5,16 @@ const API_KEY = process.env.CSC_API_KEY;
 const BASE_URL = 'https://api.countrystatecity.in/v1';
 
 export async function GET(req: NextRequest) {
-  const { error } = await verifyAuth(req);
-  if (error) return error;
-
   const { searchParams } = new URL(req.url);
   const type = searchParams.get('type');
   const countryIso = searchParams.get('countryIso');
   const stateIso = searchParams.get('stateIso');
+
+  // Verify auth for states and cities, but allow countries to be public for onboarding initialization
+  if (type !== 'countries') {
+    const { error } = await verifyAuth(req);
+    if (error) return error;
+  }
 
   if (!API_KEY) {
     return NextResponse.json({ error: 'CSC API Key missing' }, { status: 500 });
