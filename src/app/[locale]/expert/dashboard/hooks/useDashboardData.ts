@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { auth } from '@/lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import { userService } from '@/services/userService';
 import { contentService } from '@/services/contentService';
 import { appointmentService } from '@/services/appointmentService';
@@ -63,25 +64,33 @@ export function useDashboardData() {
   };
 
   useEffect(() => {
-    let unsubscribe: () => void;
+    let unsubscribeAccessCodes: (() => void) | undefined;
     
-    const user = auth.currentUser;
-    if (user) {
-      unsubscribe = subscribeToExpertAccessCodes(user.uid, (codes) => {
-        setAccessCodes(codes);
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        unsubscribeAccessCodes = subscribeToExpertAccessCodes(user.uid, (codes) => {
+          setAccessCodes(codes);
+          setLoadingCodes(false);
+        });
+      } else {
+        if (unsubscribeAccessCodes) unsubscribeAccessCodes();
+        setAccessCodes([]);
         setLoadingCodes(false);
-      });
-    }
+      }
+    });
 
     return () => {
-      if (unsubscribe) unsubscribe();
+      unsubscribeAuth();
+      if (unsubscribeAccessCodes) unsubscribeAccessCodes();
     };
   }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const user = auth.currentUser;
-      if (!user) return;
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        dispatch({ type: 'SET_LOADING', payload: false });
+        return;
+      }
 
       try {
         const [profileData, articlesData, coursesData] = await Promise.all([
@@ -102,9 +111,9 @@ export function useDashboardData() {
       } finally {
         dispatch({ type: 'SET_LOADING', payload: false });
       }
-    };
+    });
 
-    fetchData();
+    return () => unsubscribeAuth();
   }, [dispatch]);
 
   const handleGenerateCode = async (expiryHours: number = 24, usageLimit: number = 0) => {

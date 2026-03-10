@@ -42,6 +42,12 @@ function DashboardContent() {
 
   const { articles, courses, appointments, profile, loading, activeTab } = state;
 
+  React.useEffect(() => {
+    if (!loading && !profile) {
+      router.push('/onboarding');
+    }
+  }, [loading, profile, router]);
+
   const handleCopyCode = (code: string) => {
     navigator.clipboard.writeText(code);
   };
@@ -61,6 +67,16 @@ function DashboardContent() {
          <Activity className="w-12 h-12 text-indigo-600 animate-pulse" />
        </div>
      );
+  }
+
+  if (!profile) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 p-4 text-center">
+        <Activity className="w-12 h-12 text-indigo-600 animate-pulse mb-4" />
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Profile Not Found</h2>
+        <p className="text-slate-500 dark:text-slate-400">Redirecting to onboarding...</p>
+      </div>
+    );
   }
 
   return (

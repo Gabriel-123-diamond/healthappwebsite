@@ -66,8 +66,12 @@ export const useOnboardingValidation = (formData: OnboardingFormData) => {
       return;
     }
 
-    // New space/hyphen validation for username
-    const usernameRegex = /^[a-zA-Z0-9-]+$/;
+    // Updated validation for username: Allow all symbols and characters (except maybe spaces if desired, but user said ALL symbols)
+    // If you want to strictly allow everything including spaces:
+    const usernameRegex = /^.+$/; 
+    // If you want to allow everything except spaces (common for usernames):
+    // const usernameRegex = /^\S+$/;
+    
     if (!usernameRegex.test(username)) {
       setValidationStatus(prev => 
         prev.username === "invalid" ? prev : { ...prev, username: "invalid" }
