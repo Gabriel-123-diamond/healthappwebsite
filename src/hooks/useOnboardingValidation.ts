@@ -66,11 +66,8 @@ export const useOnboardingValidation = (formData: OnboardingFormData) => {
       return;
     }
 
-    // Updated validation for username: Allow all symbols and characters (except maybe spaces if desired, but user said ALL symbols)
-    // If you want to strictly allow everything including spaces:
-    const usernameRegex = /^.+$/; 
-    // If you want to allow everything except spaces (common for usernames):
-    // const usernameRegex = /^\S+$/;
+    // Updated validation for username: Allow all symbols and characters but DISALLOW spaces
+    const usernameRegex = /^\S+$/; 
     
     if (!usernameRegex.test(username)) {
       setValidationStatus(prev => 
