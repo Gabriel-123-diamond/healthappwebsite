@@ -23,6 +23,7 @@ export interface LearningPath {
   authorId: string;
   authorName: string;
   progress?: number;
+  enrolledCount?: number;
   totalModules: number;
   modules: Module[];
   status: 'draft' | 'published';

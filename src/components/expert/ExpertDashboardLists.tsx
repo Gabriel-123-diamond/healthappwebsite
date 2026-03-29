@@ -143,7 +143,12 @@ export const CourseList = ({ courses, onCreationAttempt }: { courses: LearningPa
         <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-slate-800">
           <BookOpen className="text-blue-600 dark:text-blue-400 w-5 h-5" />
         </div>
-        <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">My Courses</h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">My Courses</h2>
+          <Link href="/expert/courses" className="text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 hover:underline">
+            View All
+          </Link>
+        </div>
       </div>
       <button 
         onClick={(e) => onCreationAttempt?.(e, 'course')}
@@ -182,12 +187,12 @@ export const CourseList = ({ courses, onCreationAttempt }: { courses: LearningPa
             </div>
             <div className="flex items-center gap-3">
               <Link 
-                href={`/expert/courses/${course.id}/progress`}
+                href={`/expert/courses/${course.id}`}
                 className="hidden sm:flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
               >
-                View Progress
+                Manage Course
               </Link>
-              <Link href={`/learning/${course.id}`} className="p-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl text-slate-400 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-400 transition-all shadow-sm active:scale-90">
+              <Link href={`/learning/${course.id}`} className="p-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl text-slate-400 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-400 transition-all shadow-sm active:scale-90" title="Preview Course">
                 <ExternalLink className="w-5 h-5" />
               </Link>
             </div>
