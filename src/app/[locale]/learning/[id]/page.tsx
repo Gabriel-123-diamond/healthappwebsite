@@ -167,12 +167,17 @@ export default function CourseDetailPage() {
                             </div>
                           </div>
 
-                          <div className="text-slate-300 dark:text-slate-700 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors">
-                            {lesson.isCompleted ? (
-                              <CheckCircle className="w-7 h-7 text-emerald-500" />
-                            ) : (
-                              <Circle className="w-7 h-7" />
-                            )}
+                          <div className="flex items-center gap-6">
+                            <div className="px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 dark:group-hover:bg-blue-500 dark:group-hover:border-blue-500 transition-all flex items-center gap-1 shadow-sm">
+                              {lesson.type === 'video' ? 'WATCH' : 'READ'}
+                            </div>
+                            <div className="text-slate-300 dark:text-slate-700 transition-colors">
+                              {lesson.isCompleted ? (
+                                <CheckCircle className="w-7 h-7 text-emerald-500" />
+                              ) : (
+                                <Circle className="w-7 h-7" />
+                              )}
+                            </div>
                           </div>
                         </Link>
                       ))}
