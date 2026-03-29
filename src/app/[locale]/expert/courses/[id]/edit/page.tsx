@@ -162,7 +162,7 @@ export default function EditCoursePage() {
               className="px-8 py-3 text-[10px] font-black uppercase tracking-widest text-white bg-blue-600 rounded-2xl hover:bg-blue-700 shadow-xl shadow-blue-500/20 transition-all active:scale-95 flex items-center gap-2"
             >
               {loading ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
-              Publish Changes
+              Publish Course
             </button>
           </div>
         </div>
