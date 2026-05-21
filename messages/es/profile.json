@@ -1,0 +1,145 @@
+{
+  "profile": {
+    "intelligence": "Inteligencia",
+    "knowledgeStream": "Flujo de Conocimiento",
+    "explore": "Explorar",
+    "progress": "Progreso",
+    "syncingIdentity": "Sincronizando Identidad...",
+    "header": {
+      "clinicalIdentity": "Identidad Clínica",
+      "settings": "Ajustes",
+      "registryVerified": "Registro Verificado",
+      "noPhone": "Sin teléfono"
+    },
+    "stats": {
+      "referralNode": "Nodo de Referencia",
+      "dataVault": "Bóveda de Datos",
+      "evolution": "Evolución",
+      "points": "Puntos",
+      "rank": "Rango",
+      "initializeExtraction": "Iniciar Extracción",
+      "dataVaultDesc": "Extracción de su inteligencia de red y registros de salud cifrados.",
+      "copyCode": "¡Código de referencia copiado!",
+      "copyLink": "¡Enlace de referencia copiado!",
+      "initialize": "Iniciar",
+      "share": "Compartir",
+      "active": "Activo"
+    },
+    "menu": {
+      "controlSystem": "Sistema de Control",
+      "adminDashboard": "Panel de Admin",
+      "expertConsole": "Consola de Experto",
+      "upgradeTier": "Subir de Nivel",
+      "verificationPending": "Verificación Pendiente",
+      "network": "Red",
+      "developer": "Desarrollador",
+      "exportData": "Exportar Datos",
+      "assistance": "Asistencia",
+      "terminateAccount": "Eliminar Cuenta",
+      "signOut": "Cerrar Sesión",
+      "deleteConfirm": "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.",
+      "expertDashboard": "Expert Dashboard",
+      "appointments": "Appointments",
+      "institutionalConsole": "Institutional Console"
+    }
+  },
+  "transactions": {
+    "title": "Historial de Facturación",
+    "subtitle": "Gestione su historial de suscripción clínica y nodos financieros de forma segura.",
+    "ledger": "Libro Mayor Financiero",
+    "filters": "Filtros",
+    "statusFilter": "Estado del Protocolo",
+    "dateFilter": "Nodo Temporal",
+    "resetFilter": "Reiniciar Nodo",
+    "noHistory": "No se encontraron ciclos",
+    "noHistoryDesc": "Refine sus filtros o inicie su primera actualización de inteligencia.",
+    "syncing": "Sincronizando Nodos de Facturación",
+    "viewInvoice": "Ver Factura",
+    "amountSettled": "Monto Liquidado",
+    "ref": "Ref",
+    "explorePlans": "Explorar Planes"
+  },
+  "invoice": {
+    "receipt": "Recibo",
+    "clinicalColor": "Color Clínico",
+    "noirArchive": "Archivo Noir",
+    "printReceipt": "Imprimir Recibo",
+    "intelNode": "Nodo de Inteligencia Clínica",
+    "billTo": "Facturar a",
+    "issuedOn": "Emitido el",
+    "protocol": "Protocolo de Inteligencia",
+    "amount": "Monto Liquidado",
+    "cycle": "Ciclo de Inteligencia Clínica de 30 Días",
+    "total": "Total Final",
+    "synchronized": "Protocolo Sincronizado",
+    "footerDesc": "Este documento sirve como registro clínico oficial de sincronización del nodo financiero con la red Ikiké Health AI.",
+    "standard": "Estándar de Inteligencia Clínica",
+    "authorizedMember": "Miembro Autorizado"
+  },
+  "upgrade": {
+    "title": "Upgrade Your Plan.",
+    "subtitle": "Unlock advanced health insights and personalized tracking.",
+    "currentTier": "Current Plan",
+    "monthly": "Monthly",
+    "activeNode": "Active Plan",
+    "standardProtocol": "Features",
+    "fullAccess": "Full Health Access",
+    "confirmAcquisition": "Confirm Upgrade",
+    "confirmAcquisitionDesc": "You are about to upgrade your account to IKIKE {tier} for ₦{amount} per month.",
+    "initializePayment": "Proceed to Payment",
+    "matrixTitle": "Plan Comparison.",
+    "matrixSubtitle": "A detailed breakdown of every benefit across our network.",
+    "protocolNode": "Feature",
+    "technicalSpecification": "Details",
+    "securedProtocol": "Secure Health Data",
+    "securedProtocolDesc": "All plans include high-level encryption. Your records remain private and secure.",
+    "securitySpecs": "Security Details",
+    "free": "Free",
+    "tierBasic": "IKIKE Basic",
+    "tierPlus": "IKIKE Plus",
+    "tierPremium": "IKIKE Premium",
+    "backToProfile": "Back to Profile",
+    "includedInPlan": "Included in Plan"
+  },
+  "referralsPage": {
+    "title": "Nodo de Inteligencia",
+    "subtitle": "Expanda la red. Gane {points} créditos por cada adquisición de pares verificada.",
+    "networkAuthority": "Autoridad de Red",
+    "rank": "RANGO",
+    "level": "Nivel",
+    "viewTiers": "Ver Niveles",
+    "ptsToEvolve": "{pts} PTS PARA EVOLUCIONAR",
+    "currentMilestone": "Hito Actual",
+    "nextEvolution": "Próxima Evolución",
+    "networkTracker": "Rastreador de Red",
+    "trackerSubtitle": "Historial de Adquisición en Tiempo Real",
+    "selectionResult": "Resultado de Selección",
+    "displayingFiltered": "Mostrando Datos Filtrados",
+    "rewardsInSelection": "Recompensas en selección",
+    "authorityTiers": "Niveles de Autoridad",
+    "evolutionPath": "Ruta de Evolución de la Red",
+    "active": "Activo",
+    "tiers": [
+      {
+        "name": "Nodo Inicial",
+        "desc": "Su identidad clínica ha sido inicializada."
+      },
+      {
+        "name": "Par de Red",
+        "desc": "Contribuyendo activamente a la expansión de la red."
+      },
+      {
+        "name": "Hub de Inteligencia",
+        "desc": "Un punto central para la distribución de conocimientos de salud."
+      },
+      {
+        "name": "Guardián del Protocolo",
+        "desc": "Garantizando conexiones clínicas de alta integridad."
+      },
+      {
+        "name": "Arquitecto Clínico",
+        "desc": "Autoridad de nivel maestro en la red de salud."
+      }
+    ]
+  }
+}

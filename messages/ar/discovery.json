@@ -1,0 +1,53 @@
+{
+  "search": {
+    "medical": "العلوم الطبية",
+    "herbal": "الحكمة العشبية",
+    "both": "مشترك",
+    "limitReached": "Intelligence Limit Reached",
+    "limitDesc": "Daily intelligence synthesis limit reached. Scale your node to ELITE to unlock unlimited clinical search capacity.",
+    "upgradeNode": "Upgrade Node",
+    "maybeLater": "Maybe Later",
+    "unlimitedAi": "Unlimited AI Synthesis",
+    "priorityQueue": "Priority Compute Queue",
+    "globalArchives": "Access to Global Archives",
+    "explainableAi": "Explainable AI Reasoning"
+  },
+  "searchPage": {
+    "initTitle": "تهيئة الذكاء",
+    "initSubtitle": "أدخل موضوعًا صحيًا أعلاه لبدء التوليف السريري.",
+    "loadingTitle": "Ikiké يقوم بالتوليف...",
+    "loadingSubtitle": "جاري مسح الأرشيف بحثًا عن \"{query}\"",
+    "failedTitle": "فشل البحث",
+    "failedRetry": "إعادة المحاولة",
+    "showing": "عرض من",
+    "to": "إلى",
+    "of": "من أصل",
+    "results": "نتائج",
+    "goToPage": "الذهاب إلى صفحة",
+    "noResults": "لم يتم العثور على نتائج",
+    "noResultsDesc": "حاول تعديل استعلام البحث أو الفلاتر.",
+    "clinicalSynthesis": "التوليف السريري",
+    "expertsFound": "تم العثور على خبراء موثقين",
+    "articlesFound": "المصادر السريرية"
+  },
+  "discovery": {
+    "title": "Health Discovery",
+    "subtitle": "Adaptive reasoning to guide your wellness path.",
+    "aiEngine": "AI Reasoning Engine",
+    "welcome": "Hello! I'm the IKIKE Health Discovery Engine. How are you feeling today? Please describe any symptoms or discomfort you're experiencing.",
+    "reasoning": "Reasoning...",
+    "summary": "Intelligence Summary",
+    "disclaimer": "Important: This is not a medical diagnosis. It is an educational discovery tool. Always seek professional advice for health concerns.",
+    "consult": "Consult {specialty}",
+    "specialist": "a Specialist",
+    "startNew": "Start New Discovery",
+    "placeholder": "Describe your symptoms in detail...",
+    "complete": "Discovery Complete",
+    "error": "I encountered a synchronization error. Could you repeat that?"
+  },
+  "trends": {
+    "menuLabel": "الاتجاهات",
+    "title": "اتجاهات أبحاث الصحة",
+    "subtitle": "بيانات البحث العالمية المجهولة التي تكشف عن المواضيع الصحية الأكثر تداولاً والعلاجات العشبية."
+  }
+}

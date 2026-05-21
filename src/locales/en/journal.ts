@@ -1,0 +1,20 @@
+export const journal = {
+    title: "Health Journal",
+    subtitle: "Track your daily symptoms and health observations to get better insights over time.",
+    newEntry: "New Entry",
+    lockedTitle: "Journal Locked.",
+    lockedDesc: "The Health Journal is reserved for PLUS and ELITE members. Upgrade to track your health history.",
+    emptyTitle: "No Entries Yet",
+    emptyDesc: "Start logging your symptoms to build a health timeline.",
+    formSymptoms: "Symptoms (Comma Separated)",
+    formSymptomsPlaceholder: "e.g. Headache, Nausea, Fatigue",
+    formSeverity: "Severity Level (1-5)",
+    formNotes: "Notes (Optional)",
+    formNotesPlaceholder: "Add more details about how you feel...",
+    formSubmit: "Log Symptoms",
+    formSubmitting: "Logging...",
+    formCancel: "Cancel",
+    severityLabel: "Severity",
+    noNotes: "No additional notes provided.",
+    initialPhase: "Initial Phase"
+  };

@@ -1,0 +1,18 @@
+export const learningPage = {
+    title: "Learning Center",
+    subtitle: "Learn health steps through evidence-based paths.",
+    loading: "LOADING...",
+    recommended: "RECOMMENDED FOR YOU",
+    allCourses: "ALL COURSES",
+    allPaths: "ALL COURSES",
+    noPaths: "No courses found.",
+    modules: "Modules",
+    lessons: "Lessons",
+    startPath: "Start Course",
+    continuePath: "Continue",
+    completePath: "Course Completed",
+    download: "Download",
+    claimCert: "Get Certificate",
+    curatedBy: "By",
+    enrollmentSuccess: "Successfully enrolled."
+  };

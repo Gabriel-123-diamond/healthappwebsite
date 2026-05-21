@@ -1,0 +1,25 @@
+{
+  "community": {
+    "title": "Health Community",
+    "subtitle": "Ask questions, share experiences, and get verified answers.",
+    "askQuestion": "Ask a Question",
+    "searchPlaceholder": "Search for topics or discussions...",
+    "answers": "Answers",
+    "expertAnswered": "Expert Answered"
+  },
+  "communityPage": {
+    "title": "社区网格",
+    "subtitle": "与全球健康网络分享见解和经验。",
+    "createPost": "与网络分享",
+    "topics": "智能流",
+    "noPosts": "该流中暂无帖子。",
+    "postPlaceholder": "关于 {topic}，您有什么想法？",
+    "postBtn": "初始化帖子",
+    "report": "举报内容",
+    "reportSuccess": "情报报告已提交。",
+    "comment": "评论",
+    "comments": "评论",
+    "like": "支持",
+    "all": "所有流"
+  }
+}

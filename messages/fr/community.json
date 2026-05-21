@@ -1,0 +1,25 @@
+{
+  "community": {
+    "title": "Communauté Santé",
+    "subtitle": "Posez des questions, partagez des expériences et obtenez des réponses vérifiées.",
+    "askQuestion": "Poser une Question",
+    "searchPlaceholder": "Rechercher des sujets, symptômes ou discussions...",
+    "answers": "Réponses",
+    "expertAnswered": "Répondu par un Expert"
+  },
+  "communityPage": {
+    "title": "Grille Communautaire",
+    "subtitle": "Partagez des idées et des expériences avec le réseau mondial de santé.",
+    "createPost": "Partager avec le Réseau",
+    "topics": "Flux d'Intelligence",
+    "noPosts": "Aucun message dans ce flux pour le moment.",
+    "postPlaceholder": "Qu'avez-vous à l'esprit concernant {topic} ?",
+    "postBtn": "Initialiser le Message",
+    "report": "Signaler le Contenu",
+    "reportSuccess": "Rapport d'intelligence soumis.",
+    "comment": "Commenter",
+    "comments": "Commentaires",
+    "like": "Soutenir",
+    "all": "Tous les flux"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "search": {
+    "medical": "Medizinische Wissenschaft",
+    "herbal": "Kräuterweisheit",
+    "both": "Kombiniert",
+    "limitReached": "Intelligence Limit Reached",
+    "limitDesc": "Daily intelligence synthesis limit reached. Scale your node to ELITE to unlock unlimited clinical search capacity.",
+    "upgradeNode": "Upgrade Node",
+    "maybeLater": "Maybe Later",
+    "unlimitedAi": "Unlimited AI Synthesis",
+    "priorityQueue": "Priority Compute Queue",
+    "globalArchives": "Access to Global Archives",
+    "explainableAi": "Explainable AI Reasoning"
+  },
+  "searchPage": {
+    "initTitle": "Intelligenz initialisieren",
+    "initSubtitle": "Geben Sie oben ein Gesundheitsthema ein, um die klinische Synthese zu starten.",
+    "loadingTitle": "Ikiké synthetisiert...",
+    "loadingSubtitle": "Archive werden nach \"{query}\" durchsucht",
+    "failedTitle": "Suche fehlgeschlagen",
+    "failedRetry": "Erneut versuchen",
+    "showing": "Anzeige von",
+    "to": "bis",
+    "of": "von",
+    "results": "Ergebnissen",
+    "goToPage": "Gehe zu Seite",
+    "noResults": "Keine Ergebnisse gefunden",
+    "noResultsDesc": "Versuchen Sie, Ihre Suchanfrage oder Filter anzupassen.",
+    "clinicalSynthesis": "Klinische Synthese",
+    "expertsFound": "Verifizierte Experten gefunden",
+    "articlesFound": "Klinische Quellen"
+  },
+  "discovery": {
+    "title": "Health Discovery",
+    "subtitle": "Adaptive reasoning to guide your wellness path.",
+    "aiEngine": "AI Reasoning Engine",
+    "welcome": "Hello! I'm the IKIKE Health Discovery Engine. How are you feeling today? Please describe any symptoms or discomfort you're experiencing.",
+    "reasoning": "Reasoning...",
+    "summary": "Intelligence Summary",
+    "disclaimer": "Important: This is not a medical diagnosis. It is an educational discovery tool. Always seek professional advice for health concerns.",
+    "consult": "Consult {specialty}",
+    "specialist": "a Specialist",
+    "startNew": "Start New Discovery",
+    "placeholder": "Describe your symptoms in detail...",
+    "complete": "Discovery Complete",
+    "error": "I encountered a synchronization error. Could you repeat that?"
+  },
+  "trends": {
+    "menuLabel": "Trends",
+    "title": "Trends in der Gesundheitsforschung",
+    "subtitle": "Anonymisierte globale Suchdaten, die die am häufigsten diskutierten Gesundheitsthemen und pflanzlichen Heilmittel zeigen."
+  }
+}

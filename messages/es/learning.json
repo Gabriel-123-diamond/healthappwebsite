@@ -1,0 +1,25 @@
+{
+  "learningPage": {
+    "title": "Inteligencia de Aprendizaje",
+    "subtitle": "Domine los protocolos de salud a través de rutas estructuradas basadas en evidencia.",
+    "loading": "CARGANDO PROTOCOLOS...",
+    "recommended": "PROTOCOLOS RECOMENDADOS",
+    "allCourses": "TODAS LAS RUTAS DE INTELIGENCIA",
+    "allPaths": "TODAS LAS RUTAS DE INTELIGENCIA",
+    "noPaths": "No hay rutas que coincidan con sus criterios.",
+    "modules": "Módulos",
+    "lessons": "Lecciones",
+    "startPath": "Inicializar Ruta",
+    "continuePath": "Reanudar Protocolo",
+    "completePath": "Protocolo Dominado",
+    "download": "Descargar Protocolo",
+    "claimCert": "Reclamar Certificación",
+    "curatedBy": "Curado por",
+    "enrollmentSuccess": "Inscrito con éxito en la ruta.",
+    "backToAll": "Back to All",
+    "availableOffline": "Available Offline",
+    "complete": "Complete",
+    "claimCertificate": "Claim Certification",
+    "modulesComingSoon": "Modules coming soon."
+  }
+}

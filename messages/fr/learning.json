@@ -1,0 +1,25 @@
+{
+  "learningPage": {
+    "title": "Intelligence d'Apprentissage",
+    "subtitle": "Maîtrisez les protocoles de santé grâce à des parcours structurés fondés sur des preuves.",
+    "loading": "CHARGEMENT DES PROTOCOLES...",
+    "recommended": "PROTOCOLES RECOMMANDÉS",
+    "allCourses": "TOUS LES COURS",
+    "allPaths": "TOUS LES COURS",
+    "noPaths": "Aucun cours ne correspond à vos critères.",
+    "modules": "Modules",
+    "lessons": "Leçons",
+    "startPath": "Commencer le cours",
+    "continuePath": "Continuer",
+    "completePath": "Cours terminé",
+    "download": "Télécharger le cours",
+    "claimCert": "Réclamer la Certification",
+    "curatedBy": "Élaboré par",
+    "enrollmentSuccess": "Inscription au parcours réussie.",
+    "backToAll": "Back to All",
+    "availableOffline": "Available Offline",
+    "complete": "Complete",
+    "claimCertificate": "Claim Certification",
+    "modulesComingSoon": "Modules coming soon."
+  }
+}

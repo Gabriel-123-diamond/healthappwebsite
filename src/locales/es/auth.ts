@@ -1,0 +1,18 @@
+export const auth = {
+  welcome: 'Bienvenido de nuevo',
+  createAccount: 'Crear una cuenta',
+  signToAccess: 'Inicia sesión para acceder a tus temas de salud guardados y conexiones con expertos.',
+  joinToAccess: 'Únete a HealthAI para acceder a información de salud verificada y expertos.',
+  email: 'Correo electrónico',
+  password: 'Contraseña',
+  confirmPassword: 'Confirmar Contraseña',
+  signIn: 'Iniciar Sesión',
+  signUp: 'Registrarse',
+  orContinue: 'O continuar con',
+  alreadyHaveAccount: '¿Ya tienes una cuenta?',
+  dontHaveAccount: '¿No tienes una cuenta?',
+  passwordsNoMatch: 'Las contraseñas no coinciden',
+  failedCreate: 'Error al crear cuenta',
+  failedSignIn: 'Error al iniciar sesión',
+  appCheckError: 'Error de verificación App Check. Desarrolladores: Ver consola Firebase.',
+};

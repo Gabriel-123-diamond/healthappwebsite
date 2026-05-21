@@ -1,0 +1,25 @@
+{
+  "learningPage": {
+    "title": "ذكاء التعلم",
+    "subtitle": "إتقان البروتوكولات الصحية من خلال مسارات منظمة قائمة على الأدلة.",
+    "loading": "جارٍ تحميل البروتوكولات...",
+    "recommended": "البروتوكولات الموصى بها",
+    "allCourses": "جميع مسارات الذكاء",
+    "allPaths": "جميع مسارات الذكاء",
+    "noPaths": "لا توجد مسارات تطابق معاييرك.",
+    "modules": "الوحدات",
+    "lessons": "الدروس",
+    "startPath": "بدء المسار",
+    "continuePath": "استئناف البروتوكول",
+    "completePath": "تم إتقان البروتوكول",
+    "download": "تنزيل البروتوكول",
+    "claimCert": "طلب الشهادة",
+    "curatedBy": "بإشراف",
+    "enrollmentSuccess": "تم التسجيل في المسار بنجاح.",
+    "backToAll": "Back to All",
+    "availableOffline": "Available Offline",
+    "complete": "Complete",
+    "claimCertificate": "Claim Certification",
+    "modulesComingSoon": "Modules coming soon."
+  }
+}

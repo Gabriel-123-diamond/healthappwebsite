@@ -1,0 +1,53 @@
+{
+  "search": {
+    "medical": "Medical Science",
+    "herbal": "Wellness Wisdom",
+    "both": "Combined",
+    "limitReached": "Intelligence Limit Reached",
+    "limitDesc": "Daily intelligence synthesis limit reached. Scale your node to ELITE to unlock unlimited clinical search capacity.",
+    "upgradeNode": "Upgrade Node",
+    "maybeLater": "Maybe Later",
+    "unlimitedAi": "Unlimited AI Synthesis",
+    "priorityQueue": "Priority Compute Queue",
+    "globalArchives": "Access to Global Archives",
+    "explainableAi": "Explainable AI Reasoning"
+  },
+  "searchPage": {
+    "initTitle": "Start Searching",
+    "initSubtitle": "Enter a health topic to get started.",
+    "loadingTitle": "Searching...",
+    "loadingSubtitle": "Scanning research for \"{query}\"",
+    "failedTitle": "Search Failed",
+    "failedRetry": "Try Again",
+    "showing": "Showing",
+    "to": "to",
+    "of": "of",
+    "results": "results",
+    "goToPage": "Go to page",
+    "noResults": "No Results Found",
+    "noResultsDesc": "Try adjusting your search or filters.",
+    "clinicalSynthesis": "Research Summary",
+    "expertsFound": "Verified Experts Found",
+    "articlesFound": "Clinical Sources"
+  },
+  "discovery": {
+    "title": "Health Discovery",
+    "subtitle": "Adaptive reasoning to guide your wellness path.",
+    "aiEngine": "AI Reasoning Engine",
+    "welcome": "Hello! I'm the IKIKE Health Discovery Engine. How are you feeling today? Please describe any symptoms or discomfort you're experiencing.",
+    "reasoning": "Reasoning...",
+    "summary": "Intelligence Summary",
+    "disclaimer": "Important: This is not a medical diagnosis. It is an educational discovery tool. Always seek professional advice for health concerns.",
+    "consult": "Consult {specialty}",
+    "specialist": "a Specialist",
+    "startNew": "Start New Discovery",
+    "placeholder": "Describe your symptoms in detail...",
+    "complete": "Discovery Complete",
+    "error": "I encountered a synchronization error. Could you repeat that?"
+  },
+  "trends": {
+    "menuLabel": "Trends",
+    "title": "Health Trends",
+    "subtitle": "Most discussed health topics and remedies."
+  }
+}

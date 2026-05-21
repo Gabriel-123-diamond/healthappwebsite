@@ -1,0 +1,25 @@
+{
+  "learningPage": {
+    "title": "学习智能",
+    "subtitle": "通过结构化的循证路径掌握健康方案。",
+    "loading": "正在加载方案...",
+    "recommended": "推荐方案",
+    "allCourses": "所有智能路径",
+    "allPaths": "所有智能路径",
+    "noPaths": "没有符合您条件的路径。",
+    "modules": "模块",
+    "lessons": "课程",
+    "startPath": "初始化路径",
+    "continuePath": "恢复方案",
+    "completePath": "掌握方案",
+    "download": "下载方案",
+    "claimCert": "索取认证",
+    "curatedBy": "由...策划",
+    "enrollmentSuccess": "成功加入路径。",
+    "backToAll": "Back to All",
+    "availableOffline": "Available Offline",
+    "complete": "Complete",
+    "claimCertificate": "Claim Certification",
+    "modulesComingSoon": "Modules coming soon."
+  }
+}

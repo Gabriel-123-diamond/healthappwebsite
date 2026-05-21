@@ -1,0 +1,145 @@
+{
+  "profile": {
+    "intelligence": "الذكاء",
+    "knowledgeStream": "تدفق المعرفة",
+    "explore": "استكشاف",
+    "progress": "التقدم",
+    "syncingIdentity": "جاري مزامنة الهوية...",
+    "header": {
+      "clinicalIdentity": "الهوية السريرية",
+      "settings": "الإعدادات",
+      "registryVerified": "سجل معتمد",
+      "noPhone": "لا يوجد هاتف"
+    },
+    "stats": {
+      "referralNode": "عقدة الإحالة",
+      "dataVault": "خزنة البيانات",
+      "evolution": "التطور",
+      "points": "نقاط",
+      "rank": "رتبة",
+      "initializeExtraction": "بدء الاستخراج",
+      "dataVaultDesc": "استخراج ذكاء الشبكة الخاص بك وسجلاتك الصحية المشفرة.",
+      "copyCode": "تم نسخ رمز الإحالة!",
+      "copyLink": "تم نسخ رابط الإحالة!",
+      "initialize": "بدء",
+      "share": "مشاركة",
+      "active": "نشط"
+    },
+    "menu": {
+      "controlSystem": "نظام التحكم",
+      "adminDashboard": "لوحة تحكم المسؤول",
+      "expertConsole": "وحدة تحكم الخبير",
+      "upgradeTier": "ترقية المستوى",
+      "verificationPending": "التحقق قيد الانتظار",
+      "network": "الشبكة",
+      "developer": "المطور",
+      "exportData": "تصدير البيانات",
+      "assistance": "المساعدة",
+      "terminateAccount": "إنهاء الحساب",
+      "signOut": "تسجيل الخروج",
+      "deleteConfirm": "هل أنت متأكد أنك تريد حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.",
+      "expertDashboard": "Expert Dashboard",
+      "appointments": "Appointments",
+      "institutionalConsole": "Institutional Console"
+    }
+  },
+  "transactions": {
+    "title": "Billing History",
+    "subtitle": "Manage your clinical subscription history and financial nodes securely.",
+    "ledger": "Financial Ledger",
+    "filters": "Filters",
+    "statusFilter": "Protocol Status",
+    "dateFilter": "Temporal Node",
+    "resetFilter": "Reset Node",
+    "noHistory": "No Cycles Found",
+    "noHistoryDesc": "Refine your filters or initialize your first intelligence upgrade.",
+    "syncing": "Syncing Billing Nodes",
+    "viewInvoice": "View Invoice",
+    "amountSettled": "Amount Settled",
+    "ref": "Ref",
+    "explorePlans": "Explore Plans"
+  },
+  "invoice": {
+    "receipt": "Receipt",
+    "clinicalColor": "Clinical Color",
+    "noirArchive": "Noir Archive",
+    "printReceipt": "Print Receipt",
+    "intelNode": "Clinical Intel Node",
+    "billTo": "Bill To",
+    "issuedOn": "Issued On",
+    "protocol": "Intelligence Protocol",
+    "amount": "Settled Amount",
+    "cycle": "30-Day Clinical Intelligence Cycle",
+    "total": "Final Total",
+    "synchronized": "Protocol Synchronized",
+    "footerDesc": "This document serves as an official clinical record of financial node synchronization with the Ikiké Health AI network. All transactions are cryptographically verified and recorded in the global ledger.",
+    "standard": "Clinical Intelligence Standard",
+    "authorizedMember": "Authorized Member"
+  },
+  "upgrade": {
+    "title": "Upgrade Your Plan.",
+    "subtitle": "Unlock advanced health insights and personalized tracking.",
+    "currentTier": "Current Plan",
+    "monthly": "Monthly",
+    "activeNode": "Active Plan",
+    "standardProtocol": "Features",
+    "fullAccess": "Full Health Access",
+    "confirmAcquisition": "Confirm Upgrade",
+    "confirmAcquisitionDesc": "You are about to upgrade your account to IKIKE {tier} for ₦{amount} per month.",
+    "initializePayment": "Proceed to Payment",
+    "matrixTitle": "Plan Comparison.",
+    "matrixSubtitle": "A detailed breakdown of every benefit across our network.",
+    "protocolNode": "Feature",
+    "technicalSpecification": "Details",
+    "securedProtocol": "Secure Health Data",
+    "securedProtocolDesc": "All plans include high-level encryption. Your records remain private and secure.",
+    "securitySpecs": "Security Details",
+    "free": "Free",
+    "tierBasic": "IKIKE Basic",
+    "tierPlus": "IKIKE Plus",
+    "tierPremium": "IKIKE Premium",
+    "backToProfile": "Back to Profile",
+    "includedInPlan": "Included in Plan"
+  },
+  "referralsPage": {
+    "title": "عقدة الذكاء",
+    "subtitle": "وسع شبكة الاتصال. اربح {points} نقطة مقابل كل انضمام زميل تم التحقق منه.",
+    "networkAuthority": "سلطة الشبكة",
+    "rank": "الرتبة",
+    "level": "المستوى",
+    "viewTiers": "عرض المستويات",
+    "ptsToEvolve": "متبقي {pts} نقطة للتطور",
+    "currentMilestone": "المرحلة الحالية",
+    "nextEvolution": "التطور القادم",
+    "networkTracker": "متتبع الشبكة",
+    "trackerSubtitle": "سجل الانضمام في الوقت الفعلي",
+    "selectionResult": "نتيجة التصفية",
+    "displayingFiltered": "عرض البيانات المصفاة",
+    "rewardsInSelection": "المكافآت في التصفية",
+    "authorityTiers": "مستويات السلطة",
+    "evolutionPath": "مسار تطور الشبكة",
+    "active": "نشط",
+    "tiers": [
+      {
+        "name": "عقدة البداية",
+        "desc": "تمت تهيئة هويتك السريرية."
+      },
+      {
+        "name": "زميل الشبكة",
+        "desc": "يساهم بنشاط في توسيع الشبكة."
+      },
+      {
+        "name": "مركز الذكاء",
+        "desc": "نقطة مركزية لتوزيع المعرفة الصحية."
+      },
+      {
+        "name": "حارس البروتوكول",
+        "desc": "ضمان اتصالات سريرية عالية النزاهة."
+      },
+      {
+        "name": "المهندس السريري",
+        "desc": "سلطة بمستوى خبير في الشبكة الصحية."
+      }
+    ]
+  }
+}

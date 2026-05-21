@@ -1,0 +1,145 @@
+{
+  "profile": {
+    "intelligence": "智能",
+    "knowledgeStream": "知识流",
+    "explore": "探索",
+    "progress": "进度",
+    "syncingIdentity": "正在同步身份...",
+    "header": {
+      "clinicalIdentity": "临床身份",
+      "settings": "设置",
+      "registryVerified": "注册已验证",
+      "noPhone": "未提供电话"
+    },
+    "stats": {
+      "referralNode": "推荐节点",
+      "dataVault": "数据保险库",
+      "evolution": "进化",
+      "points": "积分",
+      "rank": "排名",
+      "initializeExtraction": "初始化提取",
+      "dataVaultDesc": "提取您的网络智能和加密健康记录。",
+      "copyCode": "推荐码已复制！",
+      "copyLink": "推荐链接已复制！",
+      "initialize": "初始化",
+      "share": "分享",
+      "active": "活跃"
+    },
+    "menu": {
+      "controlSystem": "控制系统",
+      "adminDashboard": "管理员仪表板",
+      "expertConsole": "专家控制台",
+      "upgradeTier": "升级等级",
+      "verificationPending": "验证中",
+      "network": "网络",
+      "developer": "开发者",
+      "exportData": "导出数据",
+      "assistance": "协助",
+      "terminateAccount": "注销账户",
+      "signOut": "登出",
+      "deleteConfirm": "您确定要删除您的账户吗？此操作无法撤销。",
+      "expertDashboard": "Expert Dashboard",
+      "appointments": "Appointments",
+      "institutionalConsole": "Institutional Console"
+    }
+  },
+  "transactions": {
+    "title": "Billing History",
+    "subtitle": "Manage your clinical subscription history and financial nodes securely.",
+    "ledger": "Financial Ledger",
+    "filters": "Filters",
+    "statusFilter": "Protocol Status",
+    "dateFilter": "Temporal Node",
+    "resetFilter": "Reset Node",
+    "noHistory": "No Cycles Found",
+    "noHistoryDesc": "Refine your filters or initialize your first intelligence upgrade.",
+    "syncing": "Syncing Billing Nodes",
+    "viewInvoice": "View Invoice",
+    "amountSettled": "Amount Settled",
+    "ref": "Ref",
+    "explorePlans": "Explore Plans"
+  },
+  "invoice": {
+    "receipt": "Receipt",
+    "clinicalColor": "Clinical Color",
+    "noirArchive": "Noir Archive",
+    "printReceipt": "Print Receipt",
+    "intelNode": "Clinical Intel Node",
+    "billTo": "Bill To",
+    "issuedOn": "Issued On",
+    "protocol": "Intelligence Protocol",
+    "amount": "Settled Amount",
+    "cycle": "30-Day Clinical Intelligence Cycle",
+    "total": "Final Total",
+    "synchronized": "Protocol Synchronized",
+    "footerDesc": "This document serves as an official clinical record of financial node synchronization with the Ikiké Health AI network. All transactions are cryptographically verified and recorded in the global ledger.",
+    "standard": "Clinical Intelligence Standard",
+    "authorizedMember": "Authorized Member"
+  },
+  "upgrade": {
+    "title": "Upgrade Your Plan.",
+    "subtitle": "Unlock advanced health insights and personalized tracking.",
+    "currentTier": "Current Plan",
+    "monthly": "Monthly",
+    "activeNode": "Active Plan",
+    "standardProtocol": "Features",
+    "fullAccess": "Full Health Access",
+    "confirmAcquisition": "Confirm Upgrade",
+    "confirmAcquisitionDesc": "You are about to upgrade your account to IKIKE {tier} for ₦{amount} per month.",
+    "initializePayment": "Proceed to Payment",
+    "matrixTitle": "Plan Comparison.",
+    "matrixSubtitle": "A detailed breakdown of every benefit across our network.",
+    "protocolNode": "Feature",
+    "technicalSpecification": "Details",
+    "securedProtocol": "Secure Health Data",
+    "securedProtocolDesc": "All plans include high-level encryption. Your records remain private and secure.",
+    "securitySpecs": "Security Details",
+    "free": "Free",
+    "tierBasic": "IKIKE Basic",
+    "tierPlus": "IKIKE Plus",
+    "tierPremium": "IKIKE Premium",
+    "backToProfile": "Back to Profile",
+    "includedInPlan": "Included in Plan"
+  },
+  "referralsPage": {
+    "title": "智能节点",
+    "subtitle": "扩展网络网格。每获得一次经过验证的同行邀请，即可赚取 {points} 积分。",
+    "networkAuthority": "网络权威",
+    "rank": "等级",
+    "level": "级别",
+    "viewTiers": "查看等级",
+    "ptsToEvolve": "还需 {pts} 积分进化",
+    "currentMilestone": "当前里程碑",
+    "nextEvolution": "下一次进化",
+    "networkTracker": "网络追踪器",
+    "trackerSubtitle": "实时获取历史记录",
+    "selectionResult": "筛选结果",
+    "displayingFiltered": "显示筛选后的数据",
+    "rewardsInSelection": "筛选中的奖励",
+    "authorityTiers": "权威等级",
+    "evolutionPath": "网络进化路径",
+    "active": "活跃",
+    "tiers": [
+      {
+        "name": "初始节点",
+        "desc": "您的临床身份已初始化。"
+      },
+      {
+        "name": "网络同行",
+        "desc": "积极为网络扩展做出贡献。"
+      },
+      {
+        "name": "智能中心",
+        "desc": "健康知识传播的中心点。"
+      },
+      {
+        "name": "协议守护者",
+        "desc": "确保高完整性的临床连接。"
+      },
+      {
+        "name": "临床架构师",
+        "desc": "健康网络中的大师级权威。"
+      }
+    ]
+  }
+}

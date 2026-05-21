@@ -1,0 +1,226 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function userIsAdmin() {
+      return isSignedIn() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'user') == 'admin';
+    }
+
+    function userIsExpert() {
+      return isSignedIn() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'user') in ['doctor', 'wellness_practitioner', 'hospital'] &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('verificationStatus', 'unverified') == 'verified';
+    }
+
+    // Discovery collections (accessible by guests for public preview)
+    match /feed_items/{document=**} {
+      allow read: if true;
+      allow write: if false; 
+    }
+
+    match /experts/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /institutions/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /learningPaths/{document=**} {
+      allow read: if true;
+      allow create: if userIsExpert();
+      allow update, delete: if userIsAdmin() || (userIsExpert() && resource.data.authorId == request.auth.uid);
+    }
+
+    match /articles/{document=**} {
+      allow read: if true;
+      allow create: if userIsExpert();
+      allow update, delete: if userIsAdmin() || (userIsExpert() && resource.data.authorId == request.auth.uid);
+    }
+
+    match /community_posts/{postId} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
+      allow update: if isSignedIn() && (
+        (request.auth.uid == resource.data.authorId && request.resource.data.authorId == request.auth.uid) || 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'comments']) ||
+        userIsAdmin()
+      );
+      allow delete: if isSignedIn() && (request.auth.uid == resource.data.authorId || userIsAdmin());
+
+      match /answers/{answerId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
+        allow update, delete: if isSignedIn() && (request.auth.uid == resource.data.authorId || userIsAdmin());
+      }
+    }
+
+    match /reports/{reportId} {
+      allow read: if userIsAdmin();
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+
+    match /expert_requests/{requestId} {
+      allow read: if userIsAdmin();
+      allow create: if isSignedIn();
+      allow update, delete: if userIsAdmin();
+    }
+
+    match /expert_availability/{expertId} {
+      allow read: if true;
+      allow write: if isSignedIn() && request.auth.uid == expertId;
+    }
+
+    match /search_feedback/{docId} {
+      allow read: if userIsAdmin();
+      allow create: if true;
+      allow update, delete: if false;
+    }
+
+    match /polls/{docId} {
+      allow read: if isSignedIn();
+      allow write: if userIsAdmin();
+    }
+
+    match /users/{userId} {
+      allow get: if isSignedIn() || userIsAdmin();
+      allow list: if userIsAdmin();
+      
+      allow create: if isOwner(userId);
+        
+      allow update: if isOwner(userId) && (
+        // During onboarding, allow setting most fields
+        resource.data.get('onboardingComplete', false) == false ||
+        // After onboarding, protect sensitive fields
+        (!request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(['role', 'points', 'isBanned', 'verificationStatus', 'tier', 'vipTier', 'familySlots', 'vaultEnabled', 'subscriptionExpiry']) &&
+         request.resource.data.get('familyMembers', []).size() <= resource.data.get('familySlots', 0))
+      );
+
+      allow delete: if userIsAdmin();
+
+      match /bookmarks/{docId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      match /polls/{docId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      match /history/{docId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      match /searchHistory/{docId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      match /learning_progress/{docId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      match /notifications/{docId} {
+        allow read: if isOwner(userId);
+        allow write: if userIsAdmin();
+      }
+    }
+
+    match /referrals/{codeId} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
+    }
+
+    match /referral_codes/{codeId} {
+      allow read: if true;
+      allow create, update: if userIsAdmin();
+    }
+
+    match /clinical_trials/{docId} {
+      allow read: if true;
+      allow write: if userIsAdmin();
+    }
+
+    match /directory/{docId} {
+      allow read: if true;
+      allow write: if userIsAdmin();
+    }
+
+    match /appointments/{appointmentId} {
+      allow read: if isSignedIn() && (
+        resource.data.patientId == request.auth.uid || 
+        resource.data.expertId == request.auth.uid ||
+        userIsAdmin()
+      );
+      allow create: if isSignedIn() && request.resource.data.patientId == request.auth.uid;
+      allow update: if isSignedIn() && (
+        resource.data.patientId == request.auth.uid || 
+        resource.data.expertId == request.auth.uid ||
+        userIsAdmin()
+      );
+    }
+
+    match /specialties/{docId} {
+      allow read: if true;
+      allow write: if userIsAdmin();
+    }
+
+    match /global_history/{docId} {
+      allow read: if isSignedIn();
+      allow create: if false; // Logged only via Admin SDK (Search API)
+      allow write: if userIsAdmin();
+    }
+
+    match /access_codes/{codeId} {
+      allow read: if isSignedIn();
+      allow update: if isSignedIn() && !resource.data.used;
+      allow write: if userIsAdmin();
+    }
+
+    match /subscriptions/{subId} {
+      allow read: if isSignedIn() && (resource.data.uid == request.auth.uid || userIsAdmin());
+      allow write: if userIsAdmin();
+    }
+
+    match /audit_logs/{logId} {
+      allow read: if userIsAdmin();
+      allow write: if false; // System only
+    }
+
+    match /ai_analytics/{docId} {
+      allow read: if userIsAdmin();
+      allow write: if false; // System only
+    }
+
+    match /feed_interactions/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+    }
+
+    match /expert_verification_docs/{docId} {
+      allow read: if userIsAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if userIsAdmin();
+    }
+
+    match /payments/{paymentId} {
+      allow read: if isSignedIn() && (resource.data.uid == request.auth.uid || userIsAdmin());
+      allow write: if userIsAdmin();
+    }
+  }
+}

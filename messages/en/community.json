@@ -1,0 +1,25 @@
+{
+  "community": {
+    "title": "Health Community",
+    "subtitle": "Ask questions, share experiences, and get verified answers.",
+    "askQuestion": "Ask a Question",
+    "searchPlaceholder": "Search for topics or discussions...",
+    "answers": "Answers",
+    "expertAnswered": "Expert Answered"
+  },
+  "communityPage": {
+    "title": "Community",
+    "subtitle": "Share insights with the health network.",
+    "createPost": "Post Update",
+    "topics": "Topics",
+    "noPosts": "No posts yet.",
+    "postPlaceholder": "What's on your mind?...",
+    "postBtn": "Post Now",
+    "report": "Report",
+    "reportSuccess": "Report submitted.",
+    "comment": "Comment",
+    "comments": "Comments",
+    "like": "Support",
+    "all": "All Topics"
+  }
+}

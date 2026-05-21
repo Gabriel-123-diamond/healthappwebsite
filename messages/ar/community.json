@@ -1,0 +1,25 @@
+{
+  "community": {
+    "title": "Health Community",
+    "subtitle": "Ask questions, share experiences, and get verified answers.",
+    "askQuestion": "Ask a Question",
+    "searchPlaceholder": "Search for topics or discussions...",
+    "answers": "Answers",
+    "expertAnswered": "Expert Answered"
+  },
+  "communityPage": {
+    "title": "شبكة المجتمع",
+    "subtitle": "شارك الرؤى والتجارب مع شبكة الصحة العالمية.",
+    "createPost": "مشاركة مع الشبكة",
+    "topics": "تدفقات الذكاء",
+    "noPosts": "لا توجد منشورات في هذا التدفق بعد.",
+    "postPlaceholder": "ما الذي يدور في ذهنك بخصوص {topic}؟",
+    "postBtn": "بدء المنشور",
+    "report": "إبلاغ عن محتوى",
+    "reportSuccess": "تم تقديم تقرير الذكاء.",
+    "comment": "تعليق",
+    "comments": "تعليقات",
+    "like": "دعم",
+    "all": "جميع التدفقات"
+  }
+}

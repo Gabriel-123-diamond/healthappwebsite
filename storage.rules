@@ -1,0 +1,62 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function userIsAdmin() {
+      return isSignedIn() && 
+        firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function userIsPremium() {
+      return isSignedIn() &&
+        firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.tier in ['vip1', 'vip2', 'premium', 'elite', 'expert_pro'];
+    }
+
+    // Verification Documents (KYC)
+    match /verifications/{userId}/{allPaths=**} {
+      allow read: if isOwner(userId) || userIsAdmin();
+      allow create: if isOwner(userId) && 
+        request.resource.size > 0 &&
+        request.resource.size < 10 * 1024 * 1024 && // Max 10MB
+        request.resource.contentType.matches('application/pdf|image/.*');
+      allow update, delete: if userIsAdmin();
+    }
+
+    // Expert KYC specifically (matching the path used in IdentityVerificationStep)
+    match /users/{userId}/kyc/{allPaths=**} {
+      allow read: if isOwner(userId) || userIsAdmin();
+      allow create: if isOwner(userId) && 
+        request.resource.size > 0 &&
+        request.resource.size < 10 * 1024 * 1024 && // Max 10MB
+        request.resource.contentType.matches('application/pdf|image/.*');
+      allow update, delete: if userIsAdmin();
+    }
+
+    // Profile Images (Publicly readable, owner writable)
+    match /profiles/{userId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isOwner(userId) && 
+        request.resource.size < 5 * 1024 * 1024 && // Max 5MB
+        request.resource.contentType.matches('image/.*');
+    }
+
+    // Medical Vault (Private, owner only)
+    match /vault/{userId}/{allPaths=**} {
+      allow read: if isOwner(userId) || userIsAdmin();
+      allow write: if isOwner(userId) && 
+        (userIsPremium() || userIsAdmin()) &&
+        request.resource.size < 20 * 1024 * 1024 && // Max 20MB
+        request.resource.contentType.matches('application/pdf|image/.*');
+    }
+  }
+}

@@ -1,0 +1,20 @@
+export const auth = {
+    welcomeBack: "Welcome back",
+    signInSubtitle: "Sign in to access your health profile.",
+    emailLabel: "Email Address",
+    passwordLabel: "Password",
+    signInBtn: "Sign In",
+    noAccount: "New here?",
+    signUpLink: "Create an account",
+    signUpTitle: "Create Your Profile",
+    signUpSubtitle: "Join our global health community.",
+    firstNameLabel: "First Name",
+    lastNameLabel: "Last Name",
+    confirmPasswordLabel: "Confirm Password",
+    signUpBtn: "Get Started",
+    haveAccount: "Already a member?",
+    signInLink: "Sign In",
+    forgotPassword: "Forgot your password?",
+    emailPlaceholder: "name@domain.com",
+    passwordPlaceholder: "••••••••"
+  };

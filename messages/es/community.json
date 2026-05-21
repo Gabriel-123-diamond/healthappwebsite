@@ -1,0 +1,25 @@
+{
+  "community": {
+    "title": "Comunidad de Salud",
+    "subtitle": "Haga preguntas, comparta experiencias y obtenga respuestas verificadas.",
+    "askQuestion": "Hacer una Pregunta",
+    "searchPlaceholder": "Buscar temas, síntomas o discusiones...",
+    "answers": "Respuestas",
+    "expertAnswered": "Respondido por Experto"
+  },
+  "communityPage": {
+    "title": "Red Comunitaria",
+    "subtitle": "Comparta ideas y experiencias con la red de salud global.",
+    "createPost": "Compartir con la Red",
+    "topics": "Flujos de Inteligencia",
+    "noPosts": "Aún no hay publicaciones en este flujo.",
+    "postPlaceholder": "¿Qué tienes en mente sobre {topic}?",
+    "postBtn": "Inicializar Publicación",
+    "report": "Reportar Contenido",
+    "reportSuccess": "Informe de inteligencia enviado.",
+    "comment": "Comentar",
+    "comments": "Comentarios",
+    "like": "Apoyar",
+    "all": "Todos los flujos"
+  }
+}

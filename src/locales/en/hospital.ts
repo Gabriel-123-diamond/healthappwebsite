@@ -1,0 +1,9 @@
+export const hospital = {
+  registry: "Registry",
+  promote: "Promote",
+  staff: "Staff",
+  departments: "Departments",
+  settings: "Settings",
+  operations: "Operations",
+  management: "Management"
+};

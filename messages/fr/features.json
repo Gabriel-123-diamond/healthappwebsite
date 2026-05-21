@@ -1,0 +1,120 @@
+{
+  "journal": {
+    "title": "Health Journal",
+    "subtitle": "Track your daily symptoms and health observations to get better insights over time.",
+    "newEntry": "New Entry",
+    "lockedTitle": "Journal Locked.",
+    "lockedDesc": "The Health Journal is reserved for PLUS and ELITE members. Upgrade to track your health history.",
+    "emptyTitle": "No Entries Yet",
+    "emptyDesc": "Start logging your symptoms to build a health timeline.",
+    "formSymptoms": "Symptoms (Comma Separated)",
+    "formSymptomsPlaceholder": "e.g. Headache, Nausea, Fatigue",
+    "formSeverity": "Severity Level (1-5)",
+    "formNotes": "Notes (Optional)",
+    "formNotesPlaceholder": "Add more details about how you feel...",
+    "formSubmit": "Log Symptoms",
+    "formSubmitting": "Logging...",
+    "formCancel": "Cancel",
+    "severityLabel": "Severity",
+    "noNotes": "No additional notes provided.",
+    "initialPhase": "Initial Phase"
+  },
+  "vault": {
+    "title": "Medical Vault",
+    "subtitle": "Your records are secured with medical-grade encryption. Only you can access them.",
+    "sharedSubtitle": "You are viewing a shared record.",
+    "uploadRecord": "Upload Record",
+    "uploading": "Uploading...",
+    "searchPlaceholder": "Search records by name or date...",
+    "totalNodes": "Total Records",
+    "recordSecured": "Record Secured",
+    "recordSecuredDesc": "{name} has been encrypted and uploaded to your vault.",
+    "uploadFailed": "Upload Failed",
+    "lockedTitle": "Vault Locked.",
+    "lockedDesc": "The Medical Vault is reserved for PLUS and ELITE members. Upgrade to securely store your health records.",
+    "emptyTitle": "No Records Found",
+    "emptyDesc": "Your vault is empty. Upload your first medical report to begin.",
+    "scaleAuthority": "Upgrade Account"
+  },
+  "appointments": {
+    "title": "My Appointments",
+    "subtitle": "Manage your consultations and expert chats.",
+    "syncing": "Syncing Appointments...",
+    "authRequired": "Sign In Required",
+    "authRequiredDesc": "Please sign in to access your secure appointment history.",
+    "signInNow": "Sign In Now",
+    "noActiveSchedules": "No appointments found",
+    "noActiveSchedulesDesc": "Connect with verified doctors or praticiens du bien-être to start your health journey.",
+    "browseRegistry": "Browse Experts",
+    "chatError": "Chat Error",
+    "chatErrorDesc": "Could not start the secure chat. Please try again."
+  },
+  "feed": {
+    "recommended": "Recommandé pour vous",
+    "subtitle": "Des informations fondées sur des preuves adaptées à vos intérêts.",
+    "verified": "Preuve Vérifiée",
+    "community": "Contenu Communautaire"
+  },
+  "articles": {
+    "title": "Recherche & Articles",
+    "subtitle": "Explorez des informations fondées sur des preuves dans les disciplines de santé modernes et traditionnelles.",
+    "readMore": "Lire l'Article Complet",
+    "grade": "Note",
+    "back": "Retour à la Recherche",
+    "badge": "Research Archive",
+    "fetching": "Loading...",
+    "scientificData": "Loading Data...",
+    "documentationNotFound": "Not Found",
+    "returnToResearch": "Return",
+    "archiveResearch": "Archive",
+    "leadInvestigator": "Lead Researcher",
+    "publicationDate": "Date",
+    "researchIndexTags": "Tags",
+    "contentRestricted": "Content Restricted.",
+    "contentRestrictedDesc": "Full research is available to platform members.",
+    "unlockFullRecord": "Unlock Full Access",
+    "educationalProtocol": "Educational Only",
+    "educationalProtocolDesc": "This information is for educational purposes and does not replace professional medical advice."
+  },
+  "saved": {
+    "title": "Sujets Enregistrés",
+    "subtitle": "Accédez à vos informations de santé et recherches favorites.",
+    "noSaved": "Aucun élément enregistré",
+    "noSavedDesc": "Commencez à rechercher des sujets de santé et enregistrez-les ici pour un accès rapide.",
+    "remove": "Retirer des favoris",
+    "savedOn": "Enregistré le"
+  },
+  "history": {
+    "title": "Historique de Recherche",
+    "subtitle": "Consultez vos recherches passées et résumés IA.",
+    "noHistory": "Aucun historique trouvé",
+    "noHistoryDesc": "Les recherches que vous effectuez apparaîtront ici.",
+    "startDate": "Date de Début",
+    "endDate": "Date de Fin",
+    "clearConfirm": "Are you sure you want to clear your entire search history?"
+  },
+  "journalPage": {
+    "badge": "Journal Personnel",
+    "title": "Journal Clinique",
+    "subtitle": "Quantifiez votre bien-être grâce à l'enregistrement sécurisé des données.",
+    "history": "Historique",
+    "trends": "Tendances",
+    "decrypting": "Décryptage des Dossiers",
+    "noEntries": "Aucune entrée pour le moment",
+    "addEntry": "Ajouter une Nouvelle Entrée",
+    "form": {
+      "symptoms": "Symptômes",
+      "severity": "Niveau de Sévérité",
+      "notes": "Notes Additionnelles",
+      "submit": "Enregistrer l'Entrée",
+      "placeholderSymptoms": "ex: Mal de tête, fatigue...",
+      "placeholderNotes": "Décrivez comment vous vous sentez...",
+      "success": "Entrée enregistrée avec succès"
+    },
+    "trendsChart": {
+      "title": "Trajectoire de Santé",
+      "subtitle": "Sévérité des symptômes au fil du temps",
+      "severity": "Sévérité"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+export const hospital = {
+  registry: "登记",
+  promote: "推广",
+  staff: "员工",
+  departments: "科室",
+  settings: "设置",
+  operations: "运营",
+  management: "管理"
+};

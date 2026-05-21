@@ -1,0 +1,145 @@
+{
+  "profile": {
+    "intelligence": "Health Data",
+    "knowledgeStream": "Health Feed",
+    "explore": "Explore",
+    "progress": "Progress",
+    "syncingIdentity": "Syncing Profile...",
+    "header": {
+      "clinicalIdentity": "My Profile",
+      "settings": "Settings",
+      "registryVerified": "Verified",
+      "noPhone": "No phone"
+    },
+    "stats": {
+      "referralNode": "Invites",
+      "dataVault": "My Records",
+      "evolution": "Level",
+      "points": "Points",
+      "rank": "Rank",
+      "initializeExtraction": "Download Records",
+      "dataVaultDesc": "Download your health records and account data.",
+      "copyCode": "Invite code copied!",
+      "copyLink": "Invite link copied!",
+      "initialize": "Start",
+      "share": "Share",
+      "active": "Active"
+    },
+    "menu": {
+      "controlSystem": "Account Settings",
+      "adminDashboard": "Admin Dashboard",
+      "expertConsole": "Expert Console",
+      "expertDashboard": "Expert Dashboard",
+      "institutionalConsole": "Institutional Console",
+      "appointments": "Appointments",
+      "upgradeTier": "Upgrade Plan",
+      "verificationPending": "Verification Pending",
+      "network": "Network",
+      "developer": "Developer",
+      "exportData": "Export Data",
+      "assistance": "Help & Support",
+      "terminateAccount": "Delete Account",
+      "signOut": "Sign Out",
+      "deleteConfirm": "Are you sure you want to delete your account? This action cannot be undone."
+    }
+  },
+  "transactions": {
+    "title": "Billing History",
+    "subtitle": "Manage your clinical subscription history and financial nodes securely.",
+    "ledger": "Financial Ledger",
+    "filters": "Filters",
+    "statusFilter": "Protocol Status",
+    "dateFilter": "Temporal Node",
+    "resetFilter": "Reset Node",
+    "noHistory": "No Cycles Found",
+    "noHistoryDesc": "Refine your filters or initialize your first intelligence upgrade.",
+    "syncing": "Syncing Billing Nodes",
+    "viewInvoice": "View Invoice",
+    "amountSettled": "Amount Settled",
+    "ref": "Ref",
+    "explorePlans": "Explore Plans"
+  },
+  "invoice": {
+    "receipt": "Receipt",
+    "clinicalColor": "Clinical Color",
+    "noirArchive": "Noir Archive",
+    "printReceipt": "Print Receipt",
+    "intelNode": "Clinical Intel Node",
+    "billTo": "Bill To",
+    "issuedOn": "Issued On",
+    "protocol": "Intelligence Protocol",
+    "amount": "Settled Amount",
+    "cycle": "30-Day Clinical Intelligence Cycle",
+    "total": "Final Total",
+    "synchronized": "Protocol Synchronized",
+    "footerDesc": "This document serves as an official clinical record of financial node synchronization with the Ikiké Health AI network. All transactions are cryptographically verified and recorded in the global ledger.",
+    "standard": "Clinical Intelligence Standard",
+    "authorizedMember": "Authorized Member"
+  },
+  "upgrade": {
+    "title": "Upgrade Your Plan.",
+    "subtitle": "Unlock advanced health insights and personalized tracking.",
+    "currentTier": "Current Plan",
+    "monthly": "Monthly",
+    "activeNode": "Active Plan",
+    "includedInPlan": "Included in Plan",
+    "standardProtocol": "Features",
+    "fullAccess": "Full Health Access",
+    "confirmAcquisition": "Confirm Upgrade",
+    "confirmAcquisitionDesc": "You are about to upgrade your account to IKIKE {tier} for ₦{amount} per month.",
+    "initializePayment": "Proceed to Payment",
+    "matrixTitle": "Plan Comparison.",
+    "matrixSubtitle": "A detailed breakdown of every benefit across our network.",
+    "protocolNode": "Feature",
+    "technicalSpecification": "Details",
+    "securedProtocol": "Secure Health Data",
+    "securedProtocolDesc": "All plans include high-level encryption. Your records remain private and secure.",
+    "securitySpecs": "Security Details",
+    "free": "Free",
+    "tierBasic": "IKIKE Basic",
+    "tierPlus": "IKIKE Plus",
+    "tierPremium": "IKIKE Premium",
+    "backToProfile": "Back to Profile"
+  },
+  "referralsPage": {
+    "title": "Invites",
+    "subtitle": "Grow the network. Earn points for every friend who joins.",
+    "networkAuthority": "Account Level",
+    "rank": "RANK",
+    "level": "Level",
+    "viewTiers": "View Levels",
+    "ptsToEvolve": "{pts} PTS TO LEVEL UP",
+    "currentMilestone": "Current Level",
+    "nextEvolution": "Next Level",
+    "networkTracker": "Invite History",
+    "trackerSubtitle": "Real-time invite updates",
+    "selectionResult": "Result",
+    "displayingFiltered": "Filtered Data",
+    "rewardsInSelection": "Rewards",
+    "authorityTiers": "Account Levels",
+    "evolutionPath": "Growth Path",
+    "active": "Active",
+    "tiers": [
+      {
+        "name": "New Member",
+        "desc": "Your profile is active."
+      },
+      {
+        "name": "Network Peer",
+        "desc": "Contributing to network growth."
+      },
+      {
+        "name": "Health Hub",
+        "desc": "Helping distribute health knowledge."
+      },
+      {
+        "name": "Guardian",
+        "desc": "Ensuring safe connections."
+      },
+      {
+        "name": "Architect",
+        "desc": "Top-level member in the network."
+      }
+    ]
+  }
+}

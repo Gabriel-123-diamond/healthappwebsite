@@ -1,0 +1,53 @@
+{
+  "search": {
+    "medical": "现代医学",
+    "herbal": "草药智慧",
+    "both": "综合",
+    "limitReached": "Intelligence Limit Reached",
+    "limitDesc": "Daily intelligence synthesis limit reached. Scale your node to ELITE to unlock unlimited clinical search capacity.",
+    "upgradeNode": "Upgrade Node",
+    "maybeLater": "Maybe Later",
+    "unlimitedAi": "Unlimited AI Synthesis",
+    "priorityQueue": "Priority Compute Queue",
+    "globalArchives": "Access to Global Archives",
+    "explainableAi": "Explainable AI Reasoning"
+  },
+  "searchPage": {
+    "initTitle": "初始化智能",
+    "initSubtitle": "在上方输入健康主题以开始临床综合。",
+    "loadingTitle": "Ikiké 正在合成...",
+    "loadingSubtitle": "正在扫描关于“{query}”的档案",
+    "failedTitle": "搜索失败",
+    "failedRetry": "重试",
+    "showing": "显示第",
+    "to": "至",
+    "of": "项，共",
+    "results": "项结果",
+    "goToPage": "跳至页码",
+    "noResults": "未找到结果",
+    "noResultsDesc": "请尝试调整您的搜索查询或筛选条件。",
+    "clinicalSynthesis": "临床综合",
+    "expertsFound": "找到经过验证的专家",
+    "articlesFound": "临床来源"
+  },
+  "discovery": {
+    "title": "Health Discovery",
+    "subtitle": "Adaptive reasoning to guide your wellness path.",
+    "aiEngine": "AI Reasoning Engine",
+    "welcome": "Hello! I'm the IKIKE Health Discovery Engine. How are you feeling today? Please describe any symptoms or discomfort you're experiencing.",
+    "reasoning": "Reasoning...",
+    "summary": "Intelligence Summary",
+    "disclaimer": "Important: This is not a medical diagnosis. It is an educational discovery tool. Always seek professional advice for health concerns.",
+    "consult": "Consult {specialty}",
+    "specialist": "a Specialist",
+    "startNew": "Start New Discovery",
+    "placeholder": "Describe your symptoms in detail...",
+    "complete": "Discovery Complete",
+    "error": "I encountered a synchronization error. Could you repeat that?"
+  },
+  "trends": {
+    "menuLabel": "趋势",
+    "title": "健康研究趋势",
+    "subtitle": "匿名全球搜索数据揭示了最受讨论的健康话题和草药疗法。"
+  }
+}

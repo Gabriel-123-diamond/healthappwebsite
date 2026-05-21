@@ -1,0 +1,26 @@
+{
+  "tools": {
+    "title": "System Tools",
+    "subtitle": "Administrative tools for managing the application.",
+    "dbSeeding": "Database Seeding",
+    "dbSeedingDesc": "Securely seed the database with initial data."
+  },
+  "hospitalDashboard": {
+    "title": "Institution Console",
+    "managing": "Managing {name}",
+    "refresh": "Refresh Node",
+    "totalStaff": "Total Staff",
+    "registrySize": "Registry Size",
+    "verification": "Verification",
+    "growthScore": "Growth Score",
+    "quickActions": "Quick Actions",
+    "recentRegistry": "Recent Registry Activity",
+    "viewFullRegistry": "View Full Registry",
+    "noActivity": "No recent clinical engagements recorded.",
+    "clinicalGrowth": "Clinical Growth",
+    "boostProfile": "Boost Profile",
+    "promoteDesc": "Promote your facility and specialists to the top of the health discovery engine.",
+    "staffSnapshot": "Staff Snapshot",
+    "manageAllStaff": "Manage All Staff"
+  }
+}

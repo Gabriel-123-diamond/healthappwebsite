@@ -1,0 +1,203 @@
+import { db, auth } from '@/lib/firebase';
+import { 
+  collection, query, where, doc, 
+  getDoc, onSnapshot, QuerySnapshot, DocumentData, getDocs 
+} from 'firebase/firestore';
+
+// Default points, but this will be updated by fetching from the server config API.
+export let REWARD_POINTS = 150;
+
+// Internal function to sync configuration from server
+const syncConfig = async () => {
+  try {
+    const response = await fetch('/api/referral/points');
+    if (response.ok) {
+      const data = await response.json();
+      REWARD_POINTS = data.points;
+    }
+  } catch (e) {
+    console.error("Failed to sync reward configuration:", e);
+  }
+};
+
+// Start initial sync
+if (typeof window !== 'undefined') {
+  syncConfig();
+}
+
+const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
+  const user = auth.currentUser;
+  if (!user) throw new Error("Unauthorized");
+
+  let token = await user.getIdToken();
+  let response = await fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (response.status === 401) {
+    token = await user.getIdToken(true);
+    response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`
+      }
+    });
+  }
+
+  return response;
+};
+
+export const referralService = {
+  generateReferralCode: async (_uid: string, username: string, usageLimit?: number): Promise<string> => {
+    try {
+      const response = await fetchWithAuth('/api/referral/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, usageLimit })
+      });
+
+      if (!response.ok) throw new Error('Failed to generate code');
+      const data = await response.json();
+      return data.code;
+    } catch (e) {
+      console.error('Error generating referral code:', e);
+      throw e;
+    }
+  },
+
+  listReferralCodes: async (): Promise<any[]> => {
+    try {
+      const response = await fetchWithAuth('/api/referral/list');
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        const errorMessage = errorBody.details 
+          ? `${errorBody.error}: ${errorBody.details}` 
+          : (errorBody.error || errorBody.message || 'Unknown error');
+        throw new Error(`Failed to list codes: ${response.status} ${errorMessage}`);
+      }
+      const data = await response.json();
+      return data.codes || [];
+    } catch (e) {
+      console.error('Error listing referral codes:', e);
+      return [];
+    }
+  },
+
+  deleteReferralCode: async (code: string): Promise<void> => {
+    try {
+      const response = await fetchWithAuth('/api/referral/delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw new Error(`Failed to delete code: ${response.status} ${errorBody.error || errorBody.details || ''}`);
+      }
+    } catch (e) {
+      console.error('Error deleting referral code:', e);
+      throw e;
+    }
+  },
+
+  getReferralLink: (code: string): string => {
+    if (typeof window === 'undefined') return '';
+    const baseUrl = window.location.origin;
+    // Redirect to sign-up page so new users can register with the code auto-filled
+    return `${baseUrl}/auth/signup?ref=${code}`;
+  },
+
+  getExistingReferralCode: async (uid: string): Promise<string | null> => {
+    // For backward compatibility, fetch the first active code
+    try {
+      const codes = await referralService.listReferralCodes();
+      return codes.length > 0 ? codes[0].code : null;
+    } catch (e) {
+      console.error('Error getting existing referral code:', e);
+      return null;
+    }
+  },
+
+  validateReferralCode: async (code: string): Promise<string | null> => {
+    const normalizedCode = code.trim().toUpperCase();
+    if (!normalizedCode) return null;
+
+    // Validation still happens via public query for performance, 
+    // but creation and modification are restricted.
+    const q = query(collection(db, 'referral_codes'), where('code', '==', normalizedCode));
+    const snapshot = await getDocs(q);
+    
+    if (!snapshot.empty) {
+      const data = snapshot.docs[0].data();
+      if (data.usageLimit > 0 && data.usageCount >= data.usageLimit) {
+        throw new Error("limit-reached");
+      }
+      return data.ownerUid as string;
+    }
+    return null;
+  },
+
+  applyReferralCode: async (code: string, referrerUid: string, _inviteeUid: string, _inviteeEmail: string | null): Promise<void> => {
+    try {
+      const response = await fetchWithAuth('/api/referral/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, referrerUid })
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw new Error(`Failed to apply referral code: ${response.status} ${errorBody.error || errorBody.details || ''}`);
+      }
+    } catch (e) {
+      console.error('Error applying referral code:', e);
+      throw e;
+    }
+  },
+
+  completeReferral: async (_inviteeUid: string): Promise<void> => {
+    try {
+      const response = await fetchWithAuth('/api/referral/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw new Error(`Failed to complete referral securely: ${response.status} ${errorBody.error || errorBody.details || ''}`);
+      }
+    } catch (e) {
+      console.error('Error completing referral:', e);
+    }
+  },
+
+  getReferralTracker: (uid: string, callback: (snapshot: QuerySnapshot<DocumentData>) => void, onError?: (error: unknown) => void) => {
+    try {
+      const q = query(
+        collection(db, 'referrals'),
+        where('referrerUid', '==', uid)
+      );
+      return onSnapshot(q, {
+        next: (snapshot) => callback(snapshot),
+        error: (error) => {
+          console.error('Error in getReferralTracker snapshot:', error);
+          if (onError) onError(error);
+        }
+      });
+    } catch (e) {
+      console.error('Error getting referral tracker:', e);
+      if (onError) onError(e);
+      return () => {};
+    }
+  },
+
+  calculateReferralPoints: (referrals: { status: string }[]): number => {
+    return referrals.filter(r => r.status === 'completed').length * REWARD_POINTS;
+  }
+};

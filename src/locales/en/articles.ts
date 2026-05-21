@@ -1,0 +1,23 @@
+export const articles = {
+    title: "Research & Articles",
+    subtitle: "Explore insights across medical and traditional health.",
+    readMore: "Read Full Article",
+    grade: "Grade",
+    back: "Back",
+    badge: "Research Archive",
+    fetching: "Loading...",
+    scientificData: "Loading Data...",
+    documentationNotFound: "Not Found",
+    returnToResearch: "Return",
+    archiveResearch: "Archive",
+    leadInvestigator: "Lead Researcher",
+    publicationDate: "Date",
+    researchIndexTags: "Tags",
+    contentRestricted: "Content Restricted.",
+    contentRestrictedDesc: "Full research is available to platform members.",
+    unlockFullRecord: "Unlock Full Access",
+    educationalOnly: "Educational Only",
+    educationalOnlyDesc: "This information is for educational purposes and does not replace professional medical advice.",
+    educationalProtocol: "Educational Protocol",
+    educationalProtocolDesc: "Our intelligence engine uses clinical research and verified herbal wisdom to provide holistic insights."
+  };

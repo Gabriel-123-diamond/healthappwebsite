@@ -1,0 +1,73 @@
+import { en } from './en';
+import { hospital } from './ar/hospital';
+
+export const ar: any = {
+  common: {
+    searchPlaceholder: "الأعراض، الأعشاب، أو الأمراض...",
+    search: "بحث",
+    medical: "العلوم الطبية",
+    herbal: "الحكمة العشبية",
+    both: "مشترك",
+    getStarted: "ابدأ الآن",
+    signIn: "تسجيل الدخول",
+    signOut: "تسجيل الخروج",
+    profile: "الملف الشخصي",
+    community: "المجتمع",
+    directory: "الدليل",
+    saved: "المحفوظات",
+    chat: "Chat",
+    learn: "تعلم",
+    about: "حول",
+    viewAll: "عرض الكل",
+    syncInterrupted: 'Sync Interrupted',
+    syncInterruptedSubtitle: "نحن نواجه مشكلة في الاتصال بشبكة الصحة.",
+    retryConnection: 'إعادة محاولة الاتصال',
+    intelligenceDiscovery: 'اكتشاف الصحة',
+    noActiveInsights: 'لم يتم العثور على نتائج نشطة',
+    reSyncFeed: 'إعادة مزامنة الموجز',
+  },
+  search: {
+    medical: 'العلوم الطبية',
+    herbal: 'الحكمة العشبية',
+    both: 'مشترك'
+  },
+  home: {
+    heroTag: "اكتشاف الصحة المدعوم بالذكاء الاصطناعي",
+    heroTitle: "كيف يمكننا مساعدتك",
+    heroTitleSpan: "اليوم؟",
+    heroSubtitle: "ابحث عن المواضيع الصحية عبر العلوم الطبية الحديثة والحكمة العشبية التقليدية.",
+    featuresTitle: "نهج شامل للصحة",
+    featuresSubtitle: "نحن نسد الفجوة بين العلوم الطبية الحديثة والمعرفة العشبية التي أثبتت جدواها عبر الزمن.",
+    feature1Title: "معلومات موثقة",
+    feature1Desc: "تم تدريب الذاء الاصطناعي لدينا على إعطاء الأولوية للمصادر الطبية الموثوقة والدراسات العشبية الموثقة.",
+    feature2Title: "محتوى الخبراء",
+    feature2Desc: "الوصول إلى مقاطع فيديو ومقالات منسقة من متخصصي الصحة وممارسي العافية الطبيعية المعتمدين.",
+    feature3Title: "دليل الخبراء",
+    feature3Desc: "ابحث وتواصل مع الأطباء والعيادات وممارسي العافية الطبيعية المعتمدين بالقرب منك.",
+    feature4Title: "تدوين الأعراض",
+    feature4Desc: "تتبع أعراضك وحالتك المزاجية وأنماطك الصحية بخصوصية لتحديد الاتجاهات بمرور الوقت.",
+    feature5Title: "للتثقيف فقط",
+    feature5Desc: "نحن نركز على تمكينك بالمعرفة، مع الحفاظ على سياسة صارمة بعدم التشخيص من أجل سلامتك.",
+    ctaTitle: "هل تبحث عن نصيحة مهنية؟ تصفح دليلنا.",
+    ctaSubtitle: "تواصل مع الخبراء الطبيين والمستشفيات وممارسي العافية الطبيعية المعتمدين. قم بالتصفية حسب التخصص والموقع والاعتمادات.",
+    ctaButton: "ابحث عن خبير",
+    ctaRegister: "سجل كخبير",
+  },
+  feed: en.feed,
+  auth: en.auth,
+  directory: en.directory,
+  profile: en.profile,
+  community: en.community,
+  support: en.support,
+  history: {
+    ...en.history,
+    clearConfirm: 'هل أنت متأكد أنك تريد مسح سجل البحث بالكامل نهائيًا؟'
+  },
+  saved: en.saved,
+  articles: en.articles,
+  institution: en.institution,
+  countries: en.countries,
+  hospital,
+};
+
+  

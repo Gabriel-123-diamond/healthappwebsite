@@ -1,0 +1,22 @@
+export const home = {
+    heroTag: "AI Health Discovery",
+    heroTitle: "How can we help you",
+    heroTitleSpan: "today?",
+    heroSubtitle: "Search for health topics across medical science and traditional herbal wisdom.",
+    featuresTitle: "The Future of Health Discovery",
+    featuresSubtitle: "Our system brings together medical data and traditional knowledge to provide reliable insights.",
+    feature1Title: "Trusted Research",
+    feature1Desc: "Every insight is linked to medical journals and research.",
+    feature2Title: "Virtual Consultations",
+    feature2Desc: "Connect with verified professionals through secure video calls.",
+    feature3Title: "Verified Network",
+    feature3Desc: "A trusted directory of doctors and wellness practitioners.",
+    feature4Title: "Easy Scheduling",
+    feature4Desc: "Simple booking system to connect with specialists at your convenience.",
+    feature5Title: "Health Feed",
+    feature5Desc: "A personalized stream of articles tailored to your interests.",
+    ctaTitle: "Join our Global Health Community",
+    ctaSubtitle: "Whether you are a patient or a professional, become a member of our network.",
+    ctaButton: "Explore Directory",
+    ctaRegister: "Register as Expert"
+  };

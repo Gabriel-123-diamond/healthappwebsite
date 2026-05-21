@@ -1,0 +1,25 @@
+{
+  "learningPage": {
+    "title": "Lernintelligenz",
+    "subtitle": "Meistern Sie Gesundheitsprotokolle durch strukturierte, evidenzbasierte Pfade.",
+    "loading": "PROTOKOLLE WERDEN GELADEN...",
+    "recommended": "EMPFOHLENE PROTOKOLLE",
+    "allCourses": "ALLE INTELLIGENZ-PFADE",
+    "allPaths": "ALLE INTELLIGENZ-PFADE",
+    "noPaths": "Keine Pfade entsprechen Ihren Kriterien.",
+    "modules": "Module",
+    "lessons": "Lektionen",
+    "startPath": "Pfad initialisieren",
+    "continuePath": "Protokoll fortsetzen",
+    "completePath": "Protokoll gemeistert",
+    "download": "Protokoll herunterladen",
+    "claimCert": "Zertifizierung anfordern",
+    "curatedBy": "Kuratiert von",
+    "enrollmentSuccess": "Erfolgreich für den Pfad angemeldet.",
+    "backToAll": "Back to All",
+    "availableOffline": "Available Offline",
+    "complete": "Complete",
+    "claimCertificate": "Claim Certification",
+    "modulesComingSoon": "Modules coming soon."
+  }
+}
