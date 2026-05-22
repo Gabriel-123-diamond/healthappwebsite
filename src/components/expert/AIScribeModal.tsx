@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, FileText, Brain, Save, CheckCircle2, Wand2 } from 'lucide-react';
 import { auth } from '@/lib/firebase';
+import { CONSULTATION_PRESETS, type ConsultationPreset } from './aiScribePresets';
 
 interface AIScribeModalProps {
   isOpen: boolean;
@@ -20,43 +21,7 @@ export function AIScribeModal({ isOpen, onClose, patientName }: AIScribeModalPro
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = React.useRef<any>(null);
 
-  const CONSULTATION_PRESETS = [
-    {
-      id: 'hypertension',
-      label: 'Hypertension Follow-up',
-      transcript: [
-        "Patient reports feeling well overall.",
-        "Blood pressure at home has been around 135/85.",
-        "No chest pain or shortness of breath.",
-        "Taking Amlodipine 5mg daily as prescribed.",
-        "Encouraged reduced salt intake and continued exercise."
-      ]
-    },
-    {
-      id: 'migraine',
-      label: 'Migraine Diagnostic',
-      transcript: [
-        "Patient presents with throbbing headache on left side.",
-        "Nausea and sensitivity to light reported during episodes.",
-        "Headaches occur 2-3 times per month.",
-        "Lasts about 6 hours if untreated.",
-        "Family history of migraines in mother."
-      ]
-    },
-    {
-      id: 'wellness',
-      label: 'Wellness Check-up',
-      transcript: [
-        "Routine physical exam.",
-        "Patient is active, exercises 4 times a week.",
-        "Diet is balanced, mostly plant-based.",
-        "Sleeping 7-8 hours per night.",
-        "No current health concerns reported."
-      ]
-    }
-  ];
-
-  const handlePresetSelect = (preset: typeof CONSULTATION_PRESETS[0]) => {
+  const handlePresetSelect = (preset: ConsultationPreset) => {
     setTranscriptChunks(preset.transcript);
     generateNotes(preset.transcript);
   };

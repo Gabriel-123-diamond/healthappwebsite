@@ -1,12 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Building2, Upload, Phone, Plus, Trash2, 
-  CheckCircle2, Loader2, ShieldCheck, Clock, Mail, CheckCircle
+  Upload, Phone, Plus, Trash2, 
+  Loader2, ShieldCheck, CheckCircle
 } from 'lucide-react';
-import { Link, useRouter } from '@/i18n/routing';
+import { useRouter } from '@/i18n/routing';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { institutionService } from '@/services/institutionService';
@@ -37,8 +36,6 @@ export default function InstitutionalSetupPage() {
         const profile = await userService.getUserProfile(user.uid);
         if (profile) {
           if (profile.institutionName) setInstitutionName(profile.institutionName);
-          
-          // Recover permit URL if it was already uploaded
           if ((profile as any).permitUrl) {
             setPermitUrl((profile as any).permitUrl);
           }
@@ -76,12 +73,9 @@ export default function InstitutionalSetupPage() {
     try {
       const url = await verificationService.uploadDocument(user.uid, file, 'hospital_permit');
       setPermitUrl(url);
-      
-      // Save to profile for persistence across refresh
       await userService.updateProfile(user.uid, {
         permitUrl: url
       } as any);
-      
     } catch (error) {
       console.error("Upload failed:", error);
     } finally {
@@ -148,7 +142,6 @@ export default function InstitutionalSetupPage() {
           </h1>
         </header>
 
-        {/* Progress Bar */}
         <div className="flex gap-2 mb-12">
           {[1, 2].map((i) => (
             <div key={i} className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${step >= i ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-white/10'}`} />
@@ -203,7 +196,7 @@ export default function InstitutionalSetupPage() {
               </div>
 
               <div className="space-y-6">
-                {contactNodes.map((node, idx) => (
+                {contactNodes.map((node) => (
                   <div key={node.id} className="p-6 bg-slate-50 dark:bg-white/5 rounded-3xl border border-slate-100 dark:border-white/5 space-y-4">
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-3">
